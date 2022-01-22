@@ -2,12 +2,61 @@ import org.jgrapht.*;
 import org.jgrapht.graph.*;
 import org.jgrapht.traverse.BreadthFirstIterator;
 import org.jgrapht.traverse.DepthFirstIterator;
+import org.jgrapht.traverse.RandomWalkVertexIterator;
 
 import java.io.*;
 import java.util.*;
 
 public class SubgraphIsomorphism {
-    private static int numBackTracking;
+    private static int numBackTracking; // keep track of backtracking calls
+
+
+    /**
+     * Saves a graph in a file
+     *                  Formatted :
+     *                  {Number of Vertex}
+     *                  {id} {label}
+     *                  {Number of edges for Vertex}
+     *                  {id outgoing vertex} {id incoming vertex}
+     *                  # - comments to skip
+     * @param graph graph to save
+     * @param outputFolderName location where saving graph
+     * @param graphName the name of the graph we are saving
+     * @return the location of the file
+     * @throws IOException
+     */
+    public static String writeGraph(Graph<Vertex, DefaultEdge> graph, String outputFolderName,
+                                    String graphName) throws IOException {
+        // write to output file
+        BufferedWriter writer = new BufferedWriter(new FileWriter(
+                outputFolderName+graphName));
+        writer.write("");
+
+        writer.append("# vertex information \n");
+        int numVertices = graph.vertexSet().size();
+        writer.append(numVertices+"\n");
+        Iterator<Vertex> iter = new DepthFirstIterator<>(graph);
+        while (iter.hasNext()) {
+            // get the next vertex and its edge
+            Vertex vertex = iter.next();
+            writer.append(vertex.getId() + " " + vertex.getAttributes().get("Label")+"\n");
+        }
+
+        writer.append("# edge information \n");
+        iter = new DepthFirstIterator<>(graph);
+        while (iter.hasNext()) {
+            // get the next vertex and its edge
+            Vertex vertex = iter.next();
+            writer.append(graph.degreeOf(vertex)+"\n");
+
+            for(Vertex neighbor: Graphs.neighborListOf(graph, vertex)){
+                writer.append(vertex.getId() + " " + neighbor.getId()+"\n");
+            }
+        }
+        writer.close();
+
+        return outputFolderName+graphName;
+    }
 
     /**
      * Create the graph for the proteins Dataset
@@ -17,6 +66,7 @@ public class SubgraphIsomorphism {
      *                  {id} {label}
      *                  {Number of edges for Vertex}
      *                  {id outgoing vertex} {id incoming vertex}
+     *                  # - comments to skip
      * @return associated graph
      * @throws IOException
      */
@@ -55,6 +105,10 @@ public class SubgraphIsomorphism {
             g.addVertex(v);
             idToVertex.put(vID, v);
 
+
+            // build the profile to include own label
+            v.addToProfile(v);
+
             line = br.readLine();
         }
 
@@ -90,8 +144,47 @@ public class SubgraphIsomorphism {
             }
             line = br.readLine();
         }
+        br.close();
 
         return g;
+    }
+
+    /**
+     * Calculates the statistics for a given graph.
+     * The number of subsets for a profile for each vertex
+     * @param graph the graph to calculate the statistics
+     * @param attributes the attributes we are looking at
+     */
+    public static void calculateStatistics(Graph<Vertex, DefaultEdge> graph, String[] attributes){
+        // keep track of a the possible values for a given attribute
+        Map<String, Set<String>> possibleValues = new HashMap<>();
+        for(String attribute: attributes){
+            possibleValues.put(attribute, new HashSet<>());
+        }
+        // keep track of the maximum degree of the graph
+        int maxDegree = 0;
+
+        // iterate through the vertices and calculate the possible combinations for the profiles
+        Iterator<Vertex> iter = new DepthFirstIterator<>(graph);
+        while(iter.hasNext()){
+            // get the graph vertex
+            Vertex v = iter.next();
+
+            // find the maximum degree
+            int degree = graph.degreeOf(v);
+            if(degree>maxDegree){
+                maxDegree = degree;
+            }
+
+            // find the possible subsets of each and the values of each of the attributes
+            Map<String, Set<String>> possibleValuesCurrent = v.calculateNumberProfileSubsets(attributes);
+            for(String attribute: attributes){
+                // keep track of the attribute values we have seen
+                possibleValues.get(attribute).addAll(possibleValuesCurrent.get(attribute));
+            }
+        }
+
+        // todo having difficulty finding all the possible subsets given the labels and max degree
     }
 
     /**
@@ -180,31 +273,29 @@ public class SubgraphIsomorphism {
                                                            Map<Vertex, Set<Vertex>> candididates,
                                                            double gamma, boolean groundTruth){
         ArrayList<Vertex> order = new ArrayList<>();
-        // if we're looking for the ground truth then order is by BFS
-        if(groundTruth) {
-            while (order.size() < candididates.size()) {
-                Iterator<Vertex> nodeIterator = candididates.keySet().iterator();
-                // find the node with the fewest amount of candidates
-                Vertex startingNode = nodeIterator.next();
-                // find the next vertex that is not in the order
-                while (order.contains(startingNode)) {
-                    startingNode = nodeIterator.next();
-                }
+        // if we're looking for the ground truth then order is by BFS TODO change when create new ordering
+        while (order.size() < candididates.size()) {
+            Iterator<Vertex> nodeIterator = candididates.keySet().iterator();
+            // find the node with the fewest amount of candidates
+            Vertex startingNode = nodeIterator.next();
+            // find the next vertex that is not in the order
+            while (order.contains(startingNode)) {
+                startingNode = nodeIterator.next();
+            }
 
-                for (Vertex currentNode : candididates.keySet()) {
-                    // update it when find a node with smaller candidate size and not yet in order
-                    if (candididates.get(startingNode).size() > candididates.get(currentNode).size()
-                            && !order.contains(currentNode)) {
-                        startingNode = currentNode;
-                    }
+            for (Vertex currentNode : candididates.keySet()) {
+                // update it when find a node with smaller candidate size and not yet in order
+                if (candididates.get(startingNode).size() > candididates.get(currentNode).size()
+                        && !order.contains(currentNode)) {
+                    startingNode = currentNode;
                 }
+            }
 
-                // do breadth first search with starting node
-                Iterator<Vertex> qIter = new BreadthFirstIterator<>(query, startingNode);
-                while (qIter.hasNext()) {
-                    Vertex vertex = qIter.next();
-                    order.add(vertex);
-                }
+            // do breadth first search with starting node
+            Iterator<Vertex> qIter = new BreadthFirstIterator<>(query, startingNode);
+            while (qIter.hasNext()) {
+                Vertex vertex = qIter.next();
+                order.add(vertex);
             }
         }
 
@@ -370,22 +461,23 @@ public class SubgraphIsomorphism {
     }
 
     /**
-     * Main function where the graphs are constructed and we find the subgraph isomorphisms
-     * @param args the command line arguments
+     * Appy subgraph isomorphism if already know both graphs
+     * @param queryFileName the file containing the query graph information
+     * @param targetFileName the file containing the target graph information
+     * @param outputFolderName the file which we will write the output to
+     * @param mainFolder the main folder that contains the graphs
      * @throws IOException
      */
-    public static void main(String[] args) throws IOException {
-        // get the info on the folder and file
-        final String proteinsFolder = args[0];
-        final String outputFileName = args[1];
+    public static void subgraphIsomorphismKnownGraphs(String queryFileName, String targetFileName,
+                                                      String outputFolderName, String mainFolder) throws IOException {
+        // find the individual folder for each
+        File queryFolder = new File(mainFolder + "query/");
+        File targetFolder = new File(mainFolder + "target/");
+        String outputFileName = outputFolderName + "test.txt";
 
-        Map<String, File> allQueryFiles = new HashMap<>();
-        for (File q : new File(proteinsFolder + "query\\").listFiles())
-            allQueryFiles.put(q.getName(), q);
-
-        Map<String, File> allTargetFiles = new HashMap<>();
-        for (File q : new File(proteinsFolder + "target\\").listFiles())
-            allTargetFiles.put(q.getName(), q);
+        // read the info from the file
+        File queryFile = new File(queryFolder, queryFileName);
+        File targetFile = new File(targetFolder, targetFileName);
 
         // if we're trying to find the ground truth
         boolean groundTruth = true;
@@ -393,39 +485,187 @@ public class SubgraphIsomorphism {
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName));
         writer.write("");
 
-        // iterate through all possible queries
-        for(String queryFileName: allQueryFiles.keySet()){
-            // iterate through all posibile targets
-            for(String targetFileName: allTargetFiles.keySet()) {
+        // create the graphs
+        Graph<Vertex, DefaultEdge> queryGraph = createProteinGraph(queryFile);
+        Graph<Vertex, DefaultEdge> targetGraph = createProteinGraph(targetFile);
 
-                // find the individual folder for each
-                File queryFolder = new File(proteinsFolder + "query/");
-                File targetFolder = new File(proteinsFolder + "target/");
+        boolean isInduced = true;
+        // find and display the isomorphisms
+        List<Map<Vertex, Vertex>>  subgraphIsomorphismInduced = matching(queryGraph, targetGraph,
+                new String[]{"Label"}, isInduced, 0.5, groundTruth);
 
-                // read the info from the file
-                File queryFile = new File(queryFolder, queryFileName);
-                File targetFile = new File(targetFolder, targetFileName);
+        displayIsomorphism(subgraphIsomorphismInduced, queryFileName, targetFileName, writer, isInduced);
+        System.out.println("============================");
+        writer.append("============================\n");
 
-                // create the graphs
-                Graph<Vertex, DefaultEdge> queryGraph = createProteinGraph(queryFile);
-                Graph<Vertex, DefaultEdge> targetGraph = createProteinGraph(targetFile);
+        writer.close();
+    }
 
-                boolean isInduced = true;
-                // find and display the isomorphisms
-                List<Map<Vertex, Vertex>>  subgraphIsomorphismInduced = matching(queryGraph, targetGraph,
-                        new String[]{"Label"}, isInduced, 0.5, groundTruth);
-                displayIsomorphism(subgraphIsomorphismInduced, queryFileName, targetFileName, writer, isInduced);
+    /**
+     * A function that will copy a vertex and create a new one
+     * @param vertex the vertex we are copying
+     * @param newId the id of the new vertex
+     * @return the copied vertex
+     */
+    public static Vertex copyVertex(Vertex vertex, int newId){
+        // copy the attributes
+        Map<String, String> newAttributes = new HashMap<>(vertex.getAttributes());
+        return new Vertex(newId, newAttributes);
+    }
 
-                isInduced = false;
-                // find and display the isomorphisms
-                List<Map<Vertex, Vertex>>  subgraphIsomorphism = matching(queryGraph, targetGraph,
-                        new String[]{"Label"}, isInduced, 0.5, groundTruth);
-                displayIsomorphism(subgraphIsomorphism, queryFileName, targetFileName, writer, isInduced);
-                System.out.println("============================");
-                writer.append("============================\n");
+    /**
+     * Create a new graph by performing a random walk on the target graph
+     * @param target target graph
+     * @param sizeQuery the maximum number of vertices in the query
+     * @param outputFileName the file we'll store the information while creating the graph
+     * @return the random graph
+     * @throws IOException
+     */
+    public static Graph<Vertex, DefaultEdge> randomGraph(Graph<Vertex, DefaultEdge> target, int sizeQuery,
+                                                         String outputFileName) throws IOException {
+        Graph<Vertex, DefaultEdge> queryGraph = new SimpleGraph<>(DefaultEdge.class);
+        // get a random vertex
+        Random rand = new Random();
+        int randVertexID = rand.nextInt(target.vertexSet().size());
+        Vertex randVertex = target.vertexSet().stream().filter(vertex -> vertex.getId() == randVertexID).findAny()
+                .get();
+
+        // keep track of equivalencies, so know when see a target vertex again
+        Map<Vertex, Vertex> seen = new HashMap<>();
+
+        // random walk starting at random vertex
+        Iterator<Vertex> iter = new RandomWalkVertexIterator(target, randVertex);
+        int currentId = seen.size();
+        // get the starting vertex, and create a copy
+        Vertex lastVertex = iter.next(); Vertex lastVertexCopy = copyVertex(lastVertex, currentId);
+        seen.put(lastVertex, lastVertexCopy);
+
+        // the maximum amount of vertices will check
+        int maxIteration = 100000;
+
+        // create a new vertex, by copying info
+        queryGraph.addVertex(lastVertexCopy);
+        // build the profile to include own label
+        lastVertexCopy.addToProfile(lastVertexCopy);
+
+        // perform the walk
+        while(iter.hasNext()) {
+            // keeps it from getting stuck in an infinite loop
+            maxIteration--;
+            if(maxIteration<0){
                 break;
             }
+
+            currentId = seen.size();
+            // stop when reach given size
+            if(currentId>=sizeQuery){
+                break;
+            }
+
+            // get the next vertex and its edge
+            Vertex nextVertex = iter.next(); Vertex nextVertexCopy = copyVertex(nextVertex, currentId);
+
+            // if we have already seen it, then use the previously made copy vertex
+            if(seen.containsKey(nextVertex)){
+                nextVertexCopy = seen.get(nextVertex);
+            }
+            // if we haven't seen it, then add new vertex to query graph
+            else {
+                seen.put(nextVertex, nextVertexCopy);
+                queryGraph.addVertex(nextVertexCopy);
+                // build the profile to include own label
+                nextVertexCopy.addToProfile(nextVertexCopy);
+            }
+
+            // only add edge if haven't seen it before in query
+            if(!queryGraph.containsEdge(lastVertexCopy, nextVertexCopy)) {
+                queryGraph.addEdge(lastVertexCopy, nextVertexCopy);
+
+                // build the profile of each
+                lastVertexCopy.addToProfile(nextVertexCopy);
+                nextVertexCopy.addToProfile(lastVertexCopy);
+            }
+
+            // keep track of last vertex to create edge
+            lastVertexCopy = nextVertexCopy;
+            lastVertex = nextVertex;
+        }
+
+        // write the mappings
+        // write to output file info when constructing graph
+        BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName));
+        writer.write(seen.toString()+"\n");
+        for(Vertex targetVertex: seen.keySet()){
+            writer.append(targetVertex.getId() + " " + targetVertex.getNumProfileSubsets()+"\n");
         }
         writer.close();
+
+        return queryGraph;
+    }
+
+    /**
+     * Main function where the graphs are constructed and we find the subgraph isomorphisms
+     * @param args the command line arguments
+     * @throws IOException
+     */
+    public static void main(String[] args) throws IOException {
+        // get the info on the folder and file
+        final String proteinsFolder = args[0];
+        final String outputFolderName = args[1];
+        final String targetFileName = args[2];
+
+        // if the two graphs are known
+        if(args.length == 4) {
+            final String queryFileName = args[3];
+            subgraphIsomorphismKnownGraphs(queryFileName, targetFileName, outputFolderName, proteinsFolder);
+            return;
+        }
+
+        // random Walk
+        boolean randomWalk = true;
+        // if we're trying to find the ground truth
+        boolean groundTruth = false;
+        boolean isInduced = true;
+
+        if(randomWalk) {
+            // create the target graph and random query graph
+            Graph<Vertex, DefaultEdge> targetGraph = createProteinGraph(
+                    new File(proteinsFolder + "target/" + targetFileName));
+            calculateStatistics(targetGraph, new String[]{"Label"});
+
+            // iterate through the different size of graphs
+            for(int size = 5; size<25; size++) {
+                // attemt 100 times for each size
+                for(int i = 1; i<10; i++) {
+                    File outputGraphFolder = new File(outputFolderName + "Graphs\\");
+                    int numGraphs = 0;
+                    if (outputGraphFolder.list() != null) {
+                        numGraphs = outputGraphFolder.list().length;
+                    }
+                    String graphName = "graph" + (numGraphs + 1) + ".txt";
+
+                    Graph<Vertex, DefaultEdge> queryGraph = randomGraph(targetGraph, size,
+                            outputFolderName + "GenerationInfo\\" + graphName);
+                    // save the graph
+                    String queryFileName = writeGraph(queryGraph, outputFolderName + "Graphs\\", graphName);
+
+                    // find and display the isomorphisms
+                    List<Map<Vertex, Vertex>> subgraphIsomorphismInduced = matching(queryGraph, targetGraph,
+                            new String[]{"Label"}, isInduced, 0.5, groundTruth);
+
+
+                    // write to output file
+                    BufferedWriter writer = new BufferedWriter(new FileWriter(
+                            outputFolderName + "Isomorphism\\" + graphName));
+                    writer.write("");
+                    displayIsomorphism(subgraphIsomorphismInduced, queryFileName, targetFileName, writer, isInduced);
+                    System.out.println("============================");
+                    writer.append("============================\n");
+
+                    writer.close();
+                }
+            }
+        }
+
     }
 }

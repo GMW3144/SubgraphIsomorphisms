@@ -1,9 +1,10 @@
 import java.util.*;
 
 public class Vertex {
-    final int id;
+    private final int id;
     private Map<String, String> attributes;
     private ArrayList<Map<String, String>> profile;
+    private Map<String, Integer> numProfileSubsets;
 
     /**
      * Constructor for vertex.  Must keep track of key and type of chemical
@@ -15,6 +16,7 @@ public class Vertex {
         this.attributes = attributes;
         // keeps track of neighbors attributes
         profile = new ArrayList<>();
+        numProfileSubsets = new HashMap<>();
     }
 
     /**
@@ -62,6 +64,8 @@ public class Vertex {
         return false;
     }
 
+    public int getId(){return id;}
+
     public Map<String, String> getAttributes() {
         return attributes;
     }
@@ -70,8 +74,52 @@ public class Vertex {
         return profile;
     }
 
+    public Map<String, Integer> getNumProfileSubsets(){ return numProfileSubsets;}
+
     public void addToProfile(Vertex neighbor){
         profile.add(neighbor.getAttributes());
+    }
+
+    public Map<String, Set<String>> calculateNumberProfileSubsets(String[] attributesToCheck){
+        // keep track of the possible values for each attributes
+        Map<String, Set<String>> possibleValues = new HashMap<>();
+
+        // iterate through the attributes
+        for(String attribute: attributesToCheck){
+            // build up individual profiles for current attribute
+            ArrayList<String> attributeProfile = new ArrayList<>();
+            // Current vertex labels for specific attribute
+            for(Map<String, String> currentP: profile){
+                attributeProfile.add(currentP.get(attribute));
+            }
+            Collections.sort(attributeProfile);
+
+            // keep track of the possible profile subsets
+            ArrayList<ArrayList<String>> possibleSubsets = new ArrayList<>();
+            // base case, size of 0
+            possibleSubsets.add(new ArrayList<>());
+
+            // iterate through all of the attributes, order does not matter so add alphabetically
+            for(String a: attributeProfile){
+                // keep track of the previous subsets before adding next element and iterate through them
+                ArrayList<ArrayList<String>> savedSubsets = new ArrayList<>(possibleSubsets);
+                for(ArrayList<String> previousSubsets: savedSubsets){
+                    // create a copy of the subset to add the attribute to
+                    ArrayList<String> newSubset = new ArrayList<>(previousSubsets);
+                    newSubset.add(a);
+
+                    // check if already subset
+                    if(!possibleSubsets.contains(newSubset)) {
+                        possibleSubsets.add(newSubset);
+                    }
+                }
+            }
+            numProfileSubsets.put(attribute, possibleSubsets.size());
+            possibleValues.put(attribute, new HashSet<>(attributeProfile));
+        }
+
+        // return the possible values it can be
+        return possibleValues;
     }
 
     public boolean profileSubset(Vertex neighbor, String[] attributesToCheck){
