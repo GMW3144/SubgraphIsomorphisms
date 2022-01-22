@@ -4,15 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6d0b8e23-97b2-4b58-991e-87f7b486f404" name="Default Changelist" comment="Adding ground truth">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/GroundTruth1.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/GroundTruth2.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/GroundTruthEvery6.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/Vertex.java" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/Vertex.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/SubgraphIsomorphism.class" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/SubgraphIsomorphism.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/Vertex.class" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/Vertex.class" afterDir="false" />
+    <list default="true" id="6d0b8e23-97b2-4b58-991e-87f7b486f404" name="Default Changelist" comment="Graph information and isomorphisms">
+      <change beforePath="$PROJECT_DIR$/ISProject/SubgraphIsomorphism/pom.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ISProject/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ISProject/SubgraphIsomorphism/src/main/java/Vertex.java" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -160,7 +155,21 @@
       <option name="project" value="LOCAL" />
       <updated>1642709293247</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="Created statistic for graphs and randomly created walks and performed subgraph isomorphism">
+      <created>1642880835220</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1642880835220</updated>
+    </task>
+    <task id="LOCAL-00012" summary="Graph information and isomorphisms">
+      <created>1642880874886</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1642880874886</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -220,7 +229,9 @@
     <MESSAGE value="Created ground truth for all combinations" />
     <MESSAGE value="Moved files" />
     <MESSAGE value="Adding ground truth" />
-    <option name="LAST_COMMIT_MESSAGE" value="Adding ground truth" />
+    <MESSAGE value="Created statistic for graphs and randomly created walks and performed subgraph isomorphism" />
+    <MESSAGE value="Graph information and isomorphisms" />
+    <option name="LAST_COMMIT_MESSAGE" value="Graph information and isomorphisms" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
