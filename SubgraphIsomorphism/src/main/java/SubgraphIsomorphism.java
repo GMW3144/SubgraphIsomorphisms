@@ -6,7 +6,6 @@ import org.jgrapht.traverse.DepthFirstIterator;
 import org.jgrapht.traverse.RandomWalkVertexIterator;
 import org.jgrapht.alg.matching.HopcroftKarpMaximumCardinalityBipartiteMatching;
 
-import javax.management.Query;
 import java.io.*;
 import java.util.*;
 
@@ -799,6 +798,14 @@ public class SubgraphIsomorphism {
         return queryGraph;
     }
 
+    /**
+     * Checks to see if the isomorphism is working, by performing subgraph isomorphism on a ground truth file
+     * @param groundTruth the ground truth containing the query/target graphs and their isomorphisms
+     * @param queryFolderName the location of the query graph
+     * @param targetFolderName the location of the target graph
+     * @param outputFileName the output file where problems are written
+     * @throws IOException
+     */
     public static void testAgainstGroundTruth(String groundTruth, String queryFolderName, String targetFolderName,
                                                  String outputFileName) throws IOException {
         // read from ground truth
