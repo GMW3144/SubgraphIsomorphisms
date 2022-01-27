@@ -4,12 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6d0b8e23-97b2-4b58-991e-87f7b486f404" name="Default Changelist" comment="Moved Isomorphism and vertex to one place">
+    <list default="true" id="6d0b8e23-97b2-4b58-991e-87f7b486f404" name="Default Changelist" comment="First attempt at GraphQL">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/Test/test.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Data/Output/Test/test.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/Vertex.java" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/Vertex.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/SubgraphIsomorphism.class" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/SubgraphIsomorphism.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/Vertex.class" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/Vertex.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -72,7 +71,7 @@
     <configuration name="SubgraphIsomorphism " type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="SubgraphIsomorphism" />
       <module name="SubgraphIsomorphism" />
-      <option name="PROGRAM_PARAMETERS" value="C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\ C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\Test\ backbones_1O54.grf backbones_1EMA.8.sub.grf" />
+      <option name="PROGRAM_PARAMETERS" value="Test C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\GroundTruth\GroundTruthEvery6.txt C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\query\ C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\ C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\Test\test.txt" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -178,7 +177,14 @@
       <option name="project" value="LOCAL" />
       <updated>1642881136814</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="First attempt at GraphQL">
+      <created>1643300524581</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1643300524581</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -241,7 +247,8 @@
     <MESSAGE value="Created statistic for graphs and randomly created walks and performed subgraph isomorphism" />
     <MESSAGE value="Graph information and isomorphisms" />
     <MESSAGE value="Moved Isomorphism and vertex to one place" />
-    <option name="LAST_COMMIT_MESSAGE" value="Moved Isomorphism and vertex to one place" />
+    <MESSAGE value="First attempt at GraphQL" />
+    <option name="LAST_COMMIT_MESSAGE" value="First attempt at GraphQL" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -268,13 +275,23 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>838</line>
+          <line>949</line>
           <option name="timeStamp" value="26" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>482</line>
-          <option name="timeStamp" value="34" />
+          <line>907</line>
+          <option name="timeStamp" value="35" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
+          <line>917</line>
+          <option name="timeStamp" value="37" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
+          <line>861</line>
+          <option name="timeStamp" value="56" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

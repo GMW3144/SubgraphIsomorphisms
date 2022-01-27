@@ -88,6 +88,7 @@ public class SubgraphIsomorphism {
 
         // iterate through the vertices
         for(int i = 0; i < numberVertices; i++) {
+            line = line.strip();
             // skip lines starting with "#"
             if (line.charAt(0) == '#') {
                 i--;
@@ -293,8 +294,8 @@ public class SubgraphIsomorphism {
 
                             // add to T''
                             List<Vertex> elementPrime = new ArrayList<>();
-                            elementPrime.add(uP);
-                            elementPrime.add(vP);
+                            elementPrime.add(copyToOrignial.get(uP));
+                            elementPrime.add(copyToOrignial.get(vP));
                             TPrimePrime.add(elementPrime);
                         }
                     }
@@ -366,7 +367,9 @@ public class SubgraphIsomorphism {
             // store u candidates
             candidates.put(u, uCandidates);
         }
-        pruneGlobally(query, target, candidates);
+        if(!groundTruth) {
+            pruneGlobally(query, target, candidates);
+        }
 
         return candidates;
     }
@@ -601,6 +604,24 @@ public class SubgraphIsomorphism {
         return results;
     }
 
+    public static List<String> isomorphismOrdered(List<Map<Vertex, Vertex>>  subgraphIsomorphism){
+        // convert the isomorphisms to strings
+        List<String> isomorphisms = new ArrayList<>();
+        for(Map<Vertex, Vertex> next: subgraphIsomorphism){
+            // keep track of the current isomorphism 'u->v;'
+            StringBuilder currentIsomorphism = new StringBuilder();
+            for(Vertex u: next.keySet()){
+                currentIsomorphism.append(u.toString()).append("->").append(next.get(u).toString()).append(";");
+            }
+            isomorphisms.add(currentIsomorphism.toString());
+        }
+
+        // sort the isomorphism so doesn't matter which order found
+        Collections.sort(isomorphisms);
+
+        return isomorphisms;
+    }
+
     /**
      * A uniform way to print the results of the isomorphisms.
      * @param subgraphIsomorphism the solutions to the isomorphism
@@ -629,19 +650,8 @@ public class SubgraphIsomorphism {
             writer.append("Non-induced isomorphisms. Total number subgraph isomorphisms: "+subgraphIsomorphism.size()+"\n");
         }
 
-        // convert the isomorphisms to strings
-        List<String> isomorphisms = new ArrayList<>();
-        for(Map<Vertex, Vertex> next: subgraphIsomorphism){
-            // keep track of the current isomorphism 'u->v;'
-            StringBuilder currentIsomorphism = new StringBuilder();
-            for(Vertex u: next.keySet()){
-                currentIsomorphism.append(u.toString()).append("->").append(next.get(u).toString()).append(";");
-            }
-            isomorphisms.add(currentIsomorphism.toString());
-        }
+        List<String> isomorphisms = isomorphismOrdered(subgraphIsomorphism);
 
-        // sort the isomorphism so doesn't matter which order found
-        Collections.sort(isomorphisms);
         int i = 1; // keep track of which isomorphism was printed
         for(String iso: isomorphisms){
             System.out.println("Isomorphism "+ i + ": " +iso);
@@ -654,22 +664,16 @@ public class SubgraphIsomorphism {
 
     /**
      * Appy subgraph isomorphism if already know both graphs
-     * @param queryFileName the file containing the query graph information
-     * @param targetFileName the file containing the target graph information
-     * @param outputFolderName the file which we will write the output to
-     * @param mainFolder the main folder that contains the graphs
+     * @param queryFileLocation the location of the file containing the query graph information
+     * @param targetFileLocation the location of file containing the target graph information
+     * @param outputFileName the file which we will write the output to
      * @throws IOException
      */
-    public static void subgraphIsomorphismKnownGraphs(String queryFileName, String targetFileName,
-                                                      String outputFolderName, String mainFolder) throws IOException {
-        // find the individual folder for each
-        File queryFolder = new File(mainFolder + "query/");
-        File targetFolder = new File(mainFolder + "target/");
-        String outputFileName = outputFolderName + "test.txt";
-
+    public static void subgraphIsomorphismKnownGraphs(String queryFileLocation, String targetFileLocation,
+                                                      String outputFileName) throws IOException {
         // read the info from the file
-        File queryFile = new File(queryFolder, queryFileName);
-        File targetFile = new File(targetFolder, targetFileName);
+        File queryFile = new File(queryFileLocation);
+        File targetFile = new File(targetFileLocation);
 
         // if we're trying to find the ground truth
         boolean groundTruth = true;
@@ -686,7 +690,7 @@ public class SubgraphIsomorphism {
         List<Map<Vertex, Vertex>>  subgraphIsomorphismInduced = matching(queryGraph, targetGraph,
                 new String[]{"Label"}, isInduced, 0.5, groundTruth);
 
-        displayIsomorphism(subgraphIsomorphismInduced, queryFileName, targetFileName, writer, isInduced);
+        displayIsomorphism(subgraphIsomorphismInduced, queryFile.getName(), targetFile.getName(), writer, isInduced);
         System.out.println("============================");
         writer.append("============================\n");
 
@@ -795,6 +799,100 @@ public class SubgraphIsomorphism {
         return queryGraph;
     }
 
+    public static void testAgainstGroundTruth(String groundTruth, String queryFolderName, String targetFolderName,
+                                                 String outputFileName) throws IOException {
+        // read from ground truth
+        BufferedReader br = new BufferedReader(new FileReader(groundTruth));
+        String line = br.readLine();
+
+        // write to output file when find error
+        BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName));
+        writer.write("There were the following incorrect subgraph isomorphisms: \n");
+
+        while(line!=null){
+            // get rid of whitespace
+            line = line.strip();
+
+            // check if comment
+            if(line.charAt(0) == '#'){
+                line = br.readLine();
+                continue;
+            }
+            // start of a new isomorphism
+            if(line.contains("Query Graph:")){
+                // keep track if we have seen a problem
+                boolean graphProblem = false;
+
+                String[] lineInfo = line.split(",");
+                String queryGraphName = lineInfo[0].split(":")[1].strip();
+                String targetGraphName = lineInfo[1].split(":")[1].strip();
+
+                File queryGraphFile = new File(queryFolderName+queryGraphName);
+                File targetGraphFile = new File(targetFolderName+targetGraphName);
+
+                // construct the graphs
+                Graph<Vertex, DefaultEdge> query = createProteinGraph(queryGraphFile);
+                Graph<Vertex, DefaultEdge> target = createProteinGraph(targetGraphFile);
+
+
+                // find if induced
+                boolean isInduced = true;
+                line = br.readLine();
+                while(line.charAt(0) == '#' || !line.toLowerCase(Locale.ROOT).contains("induced")){
+                    line = br.readLine();
+                }
+                // looking at a false induction
+                if(line.strip().toLowerCase(Locale.ROOT).contains("non-induced")){
+                    isInduced = false;
+                }
+                // keep track of string value
+                String outputString = "Non-induced";
+                if(isInduced){
+                    outputString = "Induced";
+                }
+
+
+                // find isomorphisms and how they are displayed
+                List<Map<Vertex, Vertex>> subgraphIsomorphism = matching(query, target,
+                        new String[]{"Label"}, isInduced, 0.5, false);
+                List<String> isomorphisms = isomorphismOrdered(subgraphIsomorphism);
+
+                int i = 1; // keep track of which isomorphism was printed
+                line = br.readLine().strip();
+                for(String iso: isomorphisms){
+                    // skip comments
+                    while(line.charAt(0) == '#'){
+                        line = br.readLine().strip();
+                    }
+                    String currentMatching = "Isomorphism "+ i + ": " +iso;
+                    i++;
+
+                    // compare with ground truth
+                    if(!currentMatching.equals(line)){
+                        writer.append("Incorrect "+outputString+" Matching! \n"
+                                +queryGraphFile.getName() +" : "+targetGraphFile.getName() +"\n");
+                        // state the differences
+                        writer.append("Correct : "+line+"\n");
+                        writer.append("Incorrect (found) : "+currentMatching+"\n");
+
+                        System.out.println("Problem Here! "+queryGraphFile +": "+targetGraphFile);
+                        graphProblem = true;
+                    }
+                    if(graphProblem){
+                        break;
+                    }
+                    line = br.readLine().strip();
+                }
+                if(!graphProblem) {
+                    System.out.println("Correct " + outputString + " Matching! " +
+                            queryGraphFile.getName() + ": " + targetGraphFile.getName());
+                }
+            }
+
+            line = br.readLine();
+        }
+    }
+
     /**
      * Main function where the graphs are constructed and we find the subgraph isomorphisms
      * @param args the command line arguments
@@ -802,27 +900,28 @@ public class SubgraphIsomorphism {
      */
     public static void main(String[] args) throws IOException {
         // get the info on the folder and file
-        final String proteinsFolder = args[0];
-        final String outputFolderName = args[1];
-        final String targetFileName = args[2];
+        final String method = args[0];
 
         // if the two graphs are known
-        if(args.length == 4) {
-            final String queryFileName = args[3];
-            subgraphIsomorphismKnownGraphs(queryFileName, targetFileName, outputFolderName, proteinsFolder);
-            return;
+        if(method.equals("KnownGraphs") && args.length == 4) {
+            final String queryLocation = args[1];
+            final String targetLocation = args[2];
+            final String outputFileName = args[3];
+
+            subgraphIsomorphismKnownGraphs(queryLocation, targetLocation, outputFileName);
         }
 
-        // random Walk
-        boolean randomWalk = true;
-        // if we're trying to find the ground truth
-        boolean groundTruth = false;
-        boolean isInduced = true;
+        else if(method.equals("RandomWalk")  && args.length == 3) {
+            // random Walk
+            // if we're trying to find the ground truth
+            boolean groundTruth = true;
+            boolean isInduced = true;
 
-        if(randomWalk) {
+            final String targetLocation = args[1];
+            final String outputFolderName = args[2];
+
             // create the target graph and random query graph
-            Graph<Vertex, DefaultEdge> targetGraph = createProteinGraph(
-                    new File(proteinsFolder + "target/" + targetFileName));
+            Graph<Vertex, DefaultEdge> targetGraph = createProteinGraph(new File(targetLocation));
             calculateStatistics(targetGraph, new String[]{"Label"});
 
             // iterate through the different size of graphs
@@ -850,13 +949,37 @@ public class SubgraphIsomorphism {
                     BufferedWriter writer = new BufferedWriter(new FileWriter(
                             outputFolderName + "Isomorphism\\" + graphName));
                     writer.write("");
-                    displayIsomorphism(subgraphIsomorphismInduced, queryFileName, targetFileName, writer, isInduced);
+                    displayIsomorphism(subgraphIsomorphismInduced, queryFileName, new File(targetLocation).getName(),
+                            writer, isInduced);
                     System.out.println("============================");
                     writer.append("============================\n");
 
                     writer.close();
                 }
             }
+        }
+
+        else if(method.equals("Test")  && args.length == 5){
+            final String groundTruthFile = args[1];
+            final String queryFolderName = args[2];
+            final String targetFolderName = args[3];
+            final String outputFileName = args[4];
+
+            testAgainstGroundTruth(groundTruthFile, queryFolderName, targetFolderName, outputFileName);
+        }
+
+        else{
+            System.out.println("Unknown Command.  Please use one of the following:");
+            System.out.println("KnownGraphs <queryFile> <targetFile> <outputFile>");
+            System.out.println("\t Find the subgraph isomorphism between two know graphs");
+            System.out.println("RandomWalk <targetFile> <outputFolder>");
+            System.out.println("\t Creates a query graph from the target graph using a random walk.");
+            System.out.println("\t Find the subgraph isomorphism between given target graph and random query graph");
+            System.out.println("\t Output folder must contain folders: \"GenerationInfo\", \"Graphs\", \"Isomorphism\"");
+            System.out.println("Test <groundTruthFile> <queryFolder> <targetFolder> <outputFile>");
+            System.out.println("\t Test the subgraph isomorphisms within the ground truth file.");
+            System.out.println("\t Must provide the location of the query and target folders.");
+            System.out.println("\t If there is any errors in the isomorphism it will be recorded in the output file.");
         }
 
     }
