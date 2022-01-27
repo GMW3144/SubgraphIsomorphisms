@@ -79,7 +79,12 @@ public class SubgraphIsomorphism {
         // create a new graph
         Graph<Vertex, DefaultEdge> g = new SimpleGraph<>(DefaultEdge.class);
         BufferedReader br = new BufferedReader(new FileReader(graphFile));
-        String line = br.readLine();
+        String line = br.readLine().strip();
+
+        // skip lines starting with "#"
+        while (line.charAt(0) == '#') {
+            line = br.readLine().strip();
+        }
 
         // get the number of vertices first
         int numberVertices = Integer.parseInt(line);
@@ -675,7 +680,7 @@ public class SubgraphIsomorphism {
         File targetFile = new File(targetFileLocation);
 
         // if we're trying to find the ground truth
-        boolean groundTruth = true;
+        boolean groundTruth = false;
         // write to output file
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName));
         writer.write("");
@@ -716,8 +721,8 @@ public class SubgraphIsomorphism {
      * @return the random graph
      * @throws IOException
      */
-    public static Graph<Vertex, DefaultEdge> randomGraph(Graph<Vertex, DefaultEdge> target, int sizeQuery,
-                                                         String outputFileName) throws IOException {
+    public static Graph<Vertex, DefaultEdge> randomGraph(Graph<Vertex, DefaultEdge> target, String targetLocation,
+                                                         int sizeQuery, String outputFileName) throws IOException {
         Graph<Vertex, DefaultEdge> queryGraph = new SimpleGraph<>(DefaultEdge.class);
         // get a random vertex
         Random rand = new Random();
@@ -789,7 +794,8 @@ public class SubgraphIsomorphism {
         // write the mappings
         // write to output file info when constructing graph
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName));
-        writer.write(seen.toString()+"\n");
+        writer.write(targetLocation + " \n");
+        writer.append(seen.toString()+"\n");
         for(Vertex targetVertex: seen.keySet()){
             writer.append(targetVertex.getId() + " " + targetVertex.getNumProfileSubsets()+"\n");
         }
@@ -942,8 +948,8 @@ public class SubgraphIsomorphism {
                     }
                     String graphName = "graph" + (numGraphs + 1) + ".txt";
 
-                    Graph<Vertex, DefaultEdge> queryGraph = randomGraph(targetGraph, size,
-                            outputFolderName + "GenerationInfo\\" + graphName);
+                    Graph<Vertex, DefaultEdge> queryGraph = randomGraph(targetGraph, targetLocation,
+                            size,outputFolderName + "GenerationInfo\\" + graphName);
                     // save the graph
                     String queryFileName = writeGraph(queryGraph, outputFolderName + "Graphs\\", graphName);
 
