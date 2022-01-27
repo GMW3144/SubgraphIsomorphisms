@@ -4,10 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6d0b8e23-97b2-4b58-991e-87f7b486f404" name="Default Changelist" comment="Graph information and isomorphisms">
-      <change beforePath="$PROJECT_DIR$/ISProject/SubgraphIsomorphism/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ISProject/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ISProject/SubgraphIsomorphism/src/main/java/Vertex.java" beforeDir="false" />
+    <list default="true" id="6d0b8e23-97b2-4b58-991e-87f7b486f404" name="Default Changelist" comment="Moved Isomorphism and vertex to one place">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/Vertex.java" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/Vertex.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/SubgraphIsomorphism.class" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/SubgraphIsomorphism.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/Vertex.class" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/Vertex.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -51,7 +53,7 @@
     <property name="Repository.Attach.Sources" value="false" />
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../Past Academics/GraphDatabases" />
     <property name="project.structure.last.edited" value="Project" />
     <property name="project.structure.proportion" value="0.15" />
     <property name="project.structure.side.proportion" value="0.2" />
@@ -70,7 +72,7 @@
     <configuration name="SubgraphIsomorphism " type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="SubgraphIsomorphism" />
       <module name="SubgraphIsomorphism" />
-      <option name="PROGRAM_PARAMETERS" value="C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\ C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\ backbones_2QRK.grf" />
+      <option name="PROGRAM_PARAMETERS" value="C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\ C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\Test\ backbones_1O54.grf backbones_1EMA.8.sub.grf" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -169,7 +171,14 @@
       <option name="project" value="LOCAL" />
       <updated>1642880874886</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Moved Isomorphism and vertex to one place">
+      <created>1642881136814</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1642881136814</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -231,7 +240,8 @@
     <MESSAGE value="Adding ground truth" />
     <MESSAGE value="Created statistic for graphs and randomly created walks and performed subgraph isomorphism" />
     <MESSAGE value="Graph information and isomorphisms" />
-    <option name="LAST_COMMIT_MESSAGE" value="Graph information and isomorphisms" />
+    <MESSAGE value="Moved Isomorphism and vertex to one place" />
+    <option name="LAST_COMMIT_MESSAGE" value="Moved Isomorphism and vertex to one place" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -258,13 +268,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>657</line>
+          <line>838</line>
           <option name="timeStamp" value="26" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>595</line>
-          <option name="timeStamp" value="27" />
+          <line>482</line>
+          <option name="timeStamp" value="34" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

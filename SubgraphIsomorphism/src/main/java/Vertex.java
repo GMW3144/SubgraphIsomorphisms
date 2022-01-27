@@ -64,22 +64,48 @@ public class Vertex {
         return false;
     }
 
+    /**
+     * Find the id
+     * @return id of current vertex
+     */
     public int getId(){return id;}
 
+    /**
+     * Find the attributes
+     * @return attributes of current vertex
+     */
     public Map<String, String> getAttributes() {
         return attributes;
     }
 
+    /**
+     * Find the profile
+     * @return profile of current vertex
+     */
     public ArrayList<Map<String, String>> getProfile() {
         return profile;
     }
 
+    /**
+     * Find the number of profile subsets
+     * @return numProfileSubsets of current vertex
+     */
     public Map<String, Integer> getNumProfileSubsets(){ return numProfileSubsets;}
 
+    /**
+     * Add the given vertex attribute to the profile of the current vertex
+     * @param neighbor the vertex who's attribute is being added to the current vertex profile
+     */
     public void addToProfile(Vertex neighbor){
         profile.add(neighbor.getAttributes());
     }
 
+    /**
+     * Calculates the number of possible subsets for a given vertex profile.  Includes the empty set and each entry must
+     * be unique.
+     * @param attributesToCheck the attributes we are using in the comparison
+     * @return all the possible subsets
+     */
     public Map<String, Set<String>> calculateNumberProfileSubsets(String[] attributesToCheck){
         // keep track of the possible values for each attributes
         Map<String, Set<String>> possibleValues = new HashMap<>();
@@ -122,6 +148,12 @@ public class Vertex {
         return possibleValues;
     }
 
+    /**
+     * Checks if the given vertex profile is a subset of the current vertex profile, given some attributes
+     * @param neighbor the vertex who's being compared to the current vertex profile
+     * @param attributesToCheck the attributes we are using in the comparison
+     * @return if it is a subset
+     */
     public boolean profileSubset(Vertex neighbor, String[] attributesToCheck){
         // check each attribute
         for(String a: attributesToCheck){

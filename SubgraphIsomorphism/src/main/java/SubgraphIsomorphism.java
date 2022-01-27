@@ -1,9 +1,12 @@
 import org.jgrapht.*;
+import org.jgrapht.alg.interfaces.MatchingAlgorithm;
 import org.jgrapht.graph.*;
 import org.jgrapht.traverse.BreadthFirstIterator;
 import org.jgrapht.traverse.DepthFirstIterator;
 import org.jgrapht.traverse.RandomWalkVertexIterator;
+import org.jgrapht.alg.matching.HopcroftKarpMaximumCardinalityBipartiteMatching;
 
+import javax.management.Query;
 import java.io.*;
 import java.util.*;
 
@@ -184,7 +187,7 @@ public class SubgraphIsomorphism {
             }
         }
 
-        // todo having difficulty finding all the possible subsets given the labels and max degree
+        // todo having difficulty finding all the possible subsets given the labels and max degree - frequency test
     }
 
     /**
@@ -215,6 +218,113 @@ public class SubgraphIsomorphism {
      */
     public static boolean localPruning(String[] attributes, Vertex u, Vertex v){
         return u.profileSubset(v, attributes);
+    }
+
+    public static void pruneGlobally(Graph<Vertex, DefaultEdge> query, Graph<Vertex, DefaultEdge> target,
+                                     Map<Vertex, Set<Vertex>> candidates){
+        // keep track of the previous candidates by their query/target vertex pair
+        Set<List<Vertex>> T = new HashSet<>();
+
+        // iterate through the query vertices
+        Iterator<Vertex> qIter = new DepthFirstIterator<>(query);
+        while(qIter.hasNext()){
+            // get the query vertex
+            Vertex u = qIter.next();
+            // iterate through the candidates of that graph
+            for(Vertex v : candidates.get(u)){
+                List<Vertex> element = new ArrayList<>();
+                element.add(u);
+                element.add(v);
+
+                // union T an <u, v>
+                T.add(element);
+            }
+        }
+
+        while(true){
+            // crate a new set T'
+            Set<List<Vertex>> TPrime = new HashSet<>();
+
+            // iterate through the T values
+            for(List<Vertex> pair: T) {
+                // get the u and v values from the pairs
+                Vertex u = pair.get(0);
+                Vertex v = pair.get(1);
+
+                // create a bipartite graph
+                // neighbors u - neighbors v
+                // edges are from candidate set
+
+                // create a new graph, which will be the biparite graph
+                Graph<Vertex, DefaultEdge> B = new SimpleGraph<>(DefaultEdge.class);
+                // keep track of where the copy came from
+                Map<Vertex, Vertex> copyToOrignial = new HashMap<>();
+                int id = 0; // keep track of the current id being added
+                // keep track of u neighbors added
+                Set<Vertex> uPVertices = new HashSet<>();
+                // add copy of the neighbors of u
+                for(Vertex uP : Graphs.neighborListOf(query, u)){
+                    Vertex uPCopy = copyVertex(uP, id); id++;
+                    copyToOrignial.put(uPCopy, uP);
+                    B.addVertex(uPCopy);
+                    uPVertices.add(uPCopy);
+                }
+                // keep track of the v neighbors added
+                Set<Vertex> vPVertices = new HashSet<>();
+                // add the neighbors of v
+                for(Vertex vP : Graphs.neighborListOf(target, v)){
+                    Vertex vPCopy = copyVertex(vP, id); id++; // create copy so target vertices with same id can be added
+                    copyToOrignial.put(vPCopy, vP);
+                    B.addVertex(vPCopy);
+                    vPVertices.add(vPCopy);
+                }
+
+                // crate a new set T''
+                Set<List<Vertex>> TPrimePrime = new HashSet<>();
+
+                // iterate through each combination in the bipartite graph
+                // iterate through the u values
+                for(Vertex uP: uPVertices) {
+                    for(Vertex vP: vPVertices) {
+                        // check if vP is a candidate of uP
+                        if(candidates.get(copyToOrignial.get(uP)).contains(copyToOrignial.get(vP))){
+                            // add edge between two values
+                            B.addEdge(uP, vP);
+
+                            // add to T''
+                            List<Vertex> elementPrime = new ArrayList<>();
+                            elementPrime.add(uP);
+                            elementPrime.add(vP);
+                            TPrimePrime.add(elementPrime);
+                        }
+                    }
+                }
+                // find the maximum matching of B
+                HopcroftKarpMaximumCardinalityBipartiteMatching<Vertex, DefaultEdge> matchingAlgorithm =
+                        new HopcroftKarpMaximumCardinalityBipartiteMatching<Vertex, DefaultEdge>(B, uPVertices, vPVertices);
+                MatchingAlgorithm.Matching<Vertex, DefaultEdge> matching = matchingAlgorithm.getMatching();
+
+                // matching does not contain all query vertices
+                if(matching.getEdges().size() != uPVertices.size()){
+                    candidates.get(u).remove(v);
+
+                    // build T'
+                    for(List<Vertex> pairPP: TPrimePrime) {
+                        // add to T' if not already there
+                        if(!TPrime.contains(pairPP)) {
+                            TPrime.add(pairPP);
+                        }
+                    }
+                }
+            }
+            if(TPrime.size() == 0){
+                break;
+            }
+            else{
+                T = TPrime;
+            }
+        }
+
     }
 
     /**
@@ -256,9 +366,40 @@ public class SubgraphIsomorphism {
             // store u candidates
             candidates.put(u, uCandidates);
         }
-
+        pruneGlobally(query, target, candidates);
 
         return candidates;
+    }
+
+    /**
+     * Calculate the size of the joins between current order and u.
+     * Calculation from GraphQL.
+     * @param query the query graph
+     * @param leftSize the previous order size of joins
+     * @param candididates the possible target vertices for the query vertices
+     * @param order the order we are checking the query vertices
+     * @param u the possible query vertex we are adding
+     * @param gamma the gamma value
+     * @return the size of joining u to the current order
+     */
+    public static double calculateSize(Graph<Vertex, DefaultEdge> query, double leftSize,
+                                       Map<Vertex, Set<Vertex>> candididates, ArrayList<Vertex> order, Vertex u,
+                                       double gamma){
+        // size(i) = size(i.left)*size(i.right)*gamma^connection(order, u)
+        double size = leftSize*candididates.get(u).size();
+        int power = 0;
+        // get the number of nodes it is currently connected to already within the order
+        for(Vertex v: order){
+            if(query.containsEdge(u, v)){
+                power++;
+            }
+        }
+
+        // multiply by gamma^power
+        for(int i = 0; i<power; i++){
+            size = size*gamma;
+        }
+        return size;
     }
 
     /**
@@ -273,29 +414,80 @@ public class SubgraphIsomorphism {
                                                            Map<Vertex, Set<Vertex>> candididates,
                                                            double gamma, boolean groundTruth){
         ArrayList<Vertex> order = new ArrayList<>();
-        // if we're looking for the ground truth then order is by BFS TODO change when create new ordering
-        while (order.size() < candididates.size()) {
-            Iterator<Vertex> nodeIterator = candididates.keySet().iterator();
-            // find the node with the fewest amount of candidates
-            Vertex startingNode = nodeIterator.next();
-            // find the next vertex that is not in the order
-            while (order.contains(startingNode)) {
-                startingNode = nodeIterator.next();
-            }
+        if(groundTruth) {
+            // if we're looking for the ground truth then order is by BFS TODO change when create new ordering
+            while (order.size() < candididates.size()) {
+                Iterator<Vertex> nodeIterator = candididates.keySet().iterator();
+                // find the node with the fewest amount of candidates
+                Vertex startingNode = nodeIterator.next();
+                // find the next vertex that is not in the order
+                while (order.contains(startingNode)) {
+                    startingNode = nodeIterator.next();
+                }
 
-            for (Vertex currentNode : candididates.keySet()) {
-                // update it when find a node with smaller candidate size and not yet in order
-                if (candididates.get(startingNode).size() > candididates.get(currentNode).size()
-                        && !order.contains(currentNode)) {
-                    startingNode = currentNode;
+                for (Vertex currentNode : candididates.keySet()) {
+                    // update it when find a node with smaller candidate size and not yet in order
+                    if (candididates.get(startingNode).size() > candididates.get(currentNode).size()
+                            && !order.contains(currentNode)) {
+                        startingNode = currentNode;
+                    }
+                }
+
+                // do breadth first search with starting node
+                Iterator<Vertex> qIter = new BreadthFirstIterator<>(query, startingNode);
+                while (qIter.hasNext()) {
+                    Vertex vertex = qIter.next();
+                    order.add(vertex);
+                }
+            }
+        }
+        else{
+            Iterator<Vertex> iter = new DepthFirstIterator<>(query);
+            // we do not know the next element or minimum candidate size so take first one we see
+            Vertex uNext = iter.next();
+            double min = candididates.get(uNext).size();
+
+            // keep track of the vertices we need to check, originally all the vertices in query graph
+            ArrayList<Vertex> toCheck = new ArrayList<>();
+            toCheck.add(uNext);
+
+            while(iter.hasNext()) {
+                // get the graph vertex
+                Vertex u = iter.next(); toCheck.add(u);
+                if(candididates.get(u).size() < min){
+                    uNext = u;
+                    min = candididates.get(u).size();
                 }
             }
 
-            // do breadth first search with starting node
-            Iterator<Vertex> qIter = new BreadthFirstIterator<>(query, startingNode);
-            while (qIter.hasNext()) {
-                Vertex vertex = qIter.next();
-                order.add(vertex);
+            // add the vertex with the smallest candidate set
+            order.add(uNext);
+            toCheck.remove(uNext);
+            // keep track of cost and total
+            double cost = min;
+            double total = cost;
+
+            // while there are still nodes to add
+            while(toCheck.size()>0){
+                Iterator<Vertex> toCheckIter = toCheck.iterator();
+                uNext = toCheckIter.next();
+                // don't know minimum
+                min = calculateSize(query, cost, candididates, order, uNext, gamma);
+
+                while(toCheckIter.hasNext()){
+                    Vertex u = toCheckIter.next();
+                    double currentSize = calculateSize(query, cost, candididates, order, u, gamma);
+                    // choose the minim size
+                    if(currentSize<min){
+                        uNext = u;
+                        min = currentSize;
+                    }
+                }
+
+                order.add(uNext);
+                toCheck.remove(uNext);
+                cost = min;
+                total += cost;
             }
         }
 
