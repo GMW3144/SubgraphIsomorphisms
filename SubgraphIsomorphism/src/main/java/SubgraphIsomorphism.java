@@ -1179,10 +1179,12 @@ public class SubgraphIsomorphism {
         if(minSup<=1){
             minSup = minSup*transactions.size();
         }
+        System.out.println("Graph: "+targetFile.getName());
         System.out.println("Number of Nodes: "+transactions.size());
         System.out.println("Minsup (integer): "+minSup);
         System.out.println("Minsup (percentage): "+minSup/transactions.size());
-        writer.append("Number of Nodes: "+transactions.size()+"\n"+
+        writer.append("Graph: "+targetFile.getName() + "("+targetFileLocation+")"+"\n"+
+                "Number of Nodes: "+transactions.size()+"\n"+
                 "Minsup (integer): "+minSup+"\n"+
                 "Minsup (percentage): "+minSup/transactions.size() + "\n");
 
@@ -1197,6 +1199,7 @@ public class SubgraphIsomorphism {
                 writer.append(frequentSubProfiles.get(itemset)+" \n\n");
             }
         }
+        writer.close();
     }
 
 
@@ -1222,12 +1225,22 @@ public class SubgraphIsomorphism {
         }
 
         else if(method.equals("FrequentDatasets") && args.length == 3){
-            final String targetLocation = args[1];
-            final String outputFileName = args[2];
+            final String targetFolderLocation = args[1];
+            final String outputFolderName = args[2];
 
             final double minSup = 0.1;
 
-            frequentDatasetMining(targetLocation, outputFileName,  new String[]{"Label"}, minSup);
+            // iterate through the possible target graphs
+            File [] files = new File(targetFolderLocation).listFiles();
+            for (int i = 0; i < files.length; i++){
+                if (files[i].isFile()){ //this line weeds out other directories/folders
+                    String targetLocation = String.valueOf(files[i]);
+                    String outputFileName = outputFolderName+files[i].getName();
+
+                    frequentDatasetMining(targetLocation, outputFileName,  new String[]{"Label"}, minSup);
+                    System.out.println("=================");
+                }
+            }
         }
 
         // create query graph from random walk
