@@ -8,7 +8,6 @@ import org.jgrapht.alg.matching.HopcroftKarpMaximumCardinalityBipartiteMatching;
 
 import java.io.*;
 import java.util.*;
-import java.util.jar.Attributes;
 
 public class SubgraphIsomorphism {
     private static int numBackTracking; // keep track of backtracking calls
@@ -158,6 +157,12 @@ public class SubgraphIsomorphism {
         return g;
     }
 
+    /**
+     * Checks if the main contains all of the subset elements.  Accounts for duplicates.
+     * @param main the main array that contents is being checked
+     * @param subset the subset array that is being check if subset of main
+     * @return if main contains all the elements in subset
+     */
     private static boolean listContainsAll(List<String> main, List<String> subset){
         // if there isn't enough elements in main
         if(main.size()<subset.size()){
@@ -946,6 +951,12 @@ public class SubgraphIsomorphism {
         }
     }
 
+    /**
+     * Performs apriori generation on a given large itemset.  Given that the large itemsets are of size k-1, it will
+     * create candidates of size k
+     * @param LkMin1 large itemsets of size k-1
+     * @return the candidates generated from the large itemsets
+     */
     private static List<List<String>> aprioriGen(List<List<String>> LkMin1){
         List<List<String>>Ck = new ArrayList<>();
 
@@ -955,14 +966,14 @@ public class SubgraphIsomorphism {
             for(int j = i; j< LkMin1.size(); j++){
                 List<String> itemsetJ = LkMin1.get(j);
 
-
                 // already in order so combine two
                 List<String> newItemset = new ArrayList<>();
 
                 boolean equivalentStart = (itemsetI.size() == itemsetJ.size());
                 // make sure the first elements are equivalent
                 for(int k = 0; k<itemsetI.size()-1; k++){
-                    if(itemsetI.get(k) != itemsetJ.get(k)){
+                    // if find an element not equivalent
+                    if(!itemsetI.get(k).equals(itemsetJ.get(k))){
                         equivalentStart = false;
                         break;
                     }
@@ -987,6 +998,11 @@ public class SubgraphIsomorphism {
         return Ck;
     }
 
+    /**
+     * Prune the large itemset candidates based off of the previous large itemsets.
+     * @param LkMin1 The large itemsets of size k-1
+     * @param Ck the candidate set containing itemsets of size k
+     */
     private static void aprioriPrune(List<List<String>> LkMin1, List<List<String>>Ck){
 
         // keep track of which candidates to remove
@@ -1016,6 +1032,15 @@ public class SubgraphIsomorphism {
 
     }
 
+    /**
+     * Perform apriori algorithm on the given transactions and attributes.  Also must provide the possible items and
+     * minimum support
+     * @param transactions the set of transactions within the database
+     * @param attributes  the attributes we are looking at
+     * @param items the set of possible items within the transactions
+     * @param minSup the minim support for the association rules
+     * @return the large itemsets
+     */
     private static Map<String, Map<List<String>, Set<Integer>>>  aprioriAlgo(Map<Integer, Map<String, List<String>>> transactions,
                                                                String[] attributes, Map<String, Set<String>> items,
                                                                double minSup){
@@ -1093,6 +1118,14 @@ public class SubgraphIsomorphism {
         return L;
     }
 
+    /**
+     * Convert the graphs profiles into a transactional database.  Then perform apriori algorithm on the new database
+     * @param targetFileLocation the location of the target graph
+     * @param outputFileName where we will output the findings
+     * @param attributes the attributes we are looking at
+     * @param minSup the minimum support
+     * @throws IOException
+     */
     private static void frequentDatasetMining(String targetFileLocation, String outputFileName,
                                               String[] attributes, double minSup) throws IOException {
         // read the info from the file
@@ -1142,6 +1175,7 @@ public class SubgraphIsomorphism {
         Map<String, Map<List<String>, Set<Integer>>>  frequentItemsets = aprioriAlgo(transactions, attributes, possibleItems, minSup);
 
 
+        // print out the information about the variables
         if(minSup<=1){
             minSup = minSup*transactions.size();
         }
@@ -1257,6 +1291,8 @@ public class SubgraphIsomorphism {
             System.out.println("Unknown Command.  Please use one of the following:");
             System.out.println("KnownGraphs <queryFile> <targetFile> <outputFile>");
             System.out.println("\t Find the subgraph isomorphism between two know graphs");
+            System.out.println("FrequentDatasets <targetFile> <outputFile>");
+            System.out.println("\t Finds the frequent profile subsets within the given graph.");
             System.out.println("RandomWalk <targetFile> <outputFolder>");
             System.out.println("\t Creates a query graph from the target graph using a random walk.");
             System.out.println("\t Find the subgraph isomorphism between given target graph and random query graph");

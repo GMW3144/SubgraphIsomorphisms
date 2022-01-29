@@ -100,12 +100,17 @@ public class Vertex {
         profile.add(neighbor.getAttributes());
     }
 
-    public List<String> findAttributeProfile(String attribute){
+    /**
+     * Finds a list of the attribue values for a given attribute
+     * @param attributesToCheck the attributes we are using to create the profile
+     * @return a list containing lexigraphically sorted values of an attribute
+     */
+    public List<String> findAttributeProfile(String attributesToCheck){
         // build up individual profiles for current attribute
         ArrayList<String> attributeProfile = new ArrayList<>();
         // Current vertex labels for specific attribute
         for(Map<String, String> currentP: profile){
-            attributeProfile.add(currentP.get(attribute));
+            attributeProfile.add(currentP.get(attributesToCheck));
         }
         Collections.sort(attributeProfile);
 
@@ -155,6 +160,12 @@ public class Vertex {
         return possibleValues;
     }
 
+    /**
+     * Checks if the main contains all of the subset elements.  Accounts for duplicates.
+     * @param main the main array that contents is being checked
+     * @param subset the subset array that is being check if subset of main
+     * @return if main contains all the elements in subset
+     */
     private boolean listContainsAll(List<String> main, List<String> subset){
         // if there isn't enough elements in main
         if(main.size()<subset.size()){
