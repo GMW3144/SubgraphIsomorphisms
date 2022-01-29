@@ -1228,7 +1228,7 @@ public class SubgraphIsomorphism {
             final String targetFolderLocation = args[1];
             final String outputFolderName = args[2];
 
-            final double minSup = 0.1;
+            final double minSup = 100;
 
             // iterate through the possible target graphs
             File [] files = new File(targetFolderLocation).listFiles();

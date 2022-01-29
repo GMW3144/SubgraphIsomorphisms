@@ -4,12 +4,310 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6d0b8e23-97b2-4b58-991e-87f7b486f404" name="Default Changelist" comment="Added comments">
+    <list default="true" id="6d0b8e23-97b2-4b58-991e-87f7b486f404" name="Default Changelist" comment="Perform frequent itemset mining on all target graphs">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/Test/test.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Data/Output/Test/test.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_140L.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_146L.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_147L.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_195L.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_196L.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_197L.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_198L.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_199L.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1AF7.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1APM.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1AUJ.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1BAZ.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1BDV.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1BES.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1C4F.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1CF0.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1CJF.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1CN1.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1D7E.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1DE9.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1DLO.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1DS2.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1DS3.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1DXY.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1EA8.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1EE1.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1EEI.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1EMA.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1EMC.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1EME.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1EMF.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1EMG.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1EMK.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1EML.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1EMM.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1EQV.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1F2K.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1FYD.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1FYK.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1G5U.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1GLC.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1GS9.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1GTO.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1H6R.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1H7I.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1HC8.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1HVS.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1ITH.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1JCN.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1JP4.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1JQD.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1K0F.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1KAP.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1KFM.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1KFN.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1KH0.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1LES.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1LR4.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1MDM.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1MUC.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1NOD.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1NTN.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1O54.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1OVO.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1PFX.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1QJ5.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1QMH.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1RA6.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1RA7.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1RH4.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1S02.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1S6Z.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1SPH.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1STA.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1TGG.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1TOA.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1TUL.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1U9F.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1U9H.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1UOW.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1VJQ.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1XFA.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1XIB.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1XIC.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1XID.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1XLC.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1XLD.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1XLE.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1XLF.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1XLG.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1XLH.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_1ZT7.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_200L.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_2AXQ.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_2EMD.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_2EMN.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_2FIB.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_2FNO.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_2FZ8.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_2FZ9.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_2G16.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_2G2S.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_2G3D.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_2G5Z.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_2G6E.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_2G80.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_2GI9.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_2JC4.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_2JKV.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_2NOD.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_2OUH.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_2PY0.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_2Q8P.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_2Q8Q.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_2QRJ.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_2QRK.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_2WPJ.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_2WPK.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_2WPL.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_2WPM.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_2X3T.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_2X9I.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_2X9J.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_2X9W.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_2X9X.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_3CKZ.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_3CL0.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_3D9I.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_3D9J.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_3D9K.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_3D9L.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_3EU4.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_3FIL.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_3GI1.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_3GLD.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_3GLE.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_3H5B.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_3I85.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_3NU1.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_3RIJ.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_3U3B.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/backbones_4DD8.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/bos_taurus_1FHB.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/bos_taurus_1KXL.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/bos_taurus_1QU5.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/bos_taurus_1RF8.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/bos_taurus_1ZTA.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/bos_taurus_2BTT.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/bos_taurus_2GB8.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/bos_taurus_2JTI.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/bos_taurus_2KBE.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/bos_taurus_2KS6.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/bos_taurus_2RQV.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/bos_taurus_4ASW.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/ecoli_1DMZ.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/ecoli_1FHB.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/ecoli_1KKX.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/ecoli_1KXL.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/ecoli_1RF8.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/ecoli_1UQV.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/ecoli_1ZTA.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/ecoli_2BTT.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/ecoli_2GB8.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/ecoli_2GGP.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/ecoli_2JTI.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/ecoli_2RQV.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/ecoli_4ASW.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/ecoli_K12_2BZT.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/ecoli_K12_2KDC.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/ecoli_K12_2KHO.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/ecoli_K12_2KLF.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/ecoli_K12_2L8B.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/ecoli_K12_2LP4.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/ecoli_K12_2LRK.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/ecoli_K12_2LRL.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/ecoli_K12_2LVW.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/ecoli_K12_2LZS.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/ecoli_k12_2K74.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_1AI0.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_1AIY.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_1B9G.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_1BJ8.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_1BOR.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_1BQT.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_1CDB.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_1CFH.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_1CFI.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_1DZC.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_1DZD.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_1FHT.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_1FSB.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_1G5J.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_1HRA.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_1KPP.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_1KPQ.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_1MGX.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_1OO9.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_1OQY.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_1Q8K.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_1U81.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_1URK.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_1UUC.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_1VHP.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_1ZLL.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2AIY.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2CR8.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2DJ8.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2DJY.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2E30.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2ECY.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2EE5.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2EQF.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2EYZ.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2GF1.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2GW6.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2H35.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2HYM.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2J5D.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2JOG.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2JRI.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2JV5.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2JXY.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2K4A.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2K4T.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2K5B.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2K7W.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2K8M.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2KA3.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2KBO.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2KDF.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2KDO.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2KE9.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2KEA.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2KEM.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2KI4.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2KJH.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2KM2.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2KR0.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2KRI.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2KS9.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2KSA.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2KSB.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2KTY.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2KUL.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2KWI.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2KZ1.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2L29.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2L5X.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2L7B.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2L7S.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2LAG.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2LEN.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2LGC.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2LKM.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2LNK.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2LNS.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2LP8.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2LQN.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2LQW.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2LXP.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2M04.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2M0G.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2M65.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2M6Z.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2OII.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2P01.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2P03.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_2TGF.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_3AIY.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_3GF1.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_3TGF.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_4AIY.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/human_5AIY.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/mus_musculus_1EGF.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/mus_musculus_1EPH.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/mus_musculus_1EPI.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/mus_musculus_1EPJ.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/mus_musculus_1U34.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/mus_musculus_1Z87.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/mus_musculus_2LCK.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/rattus_norvegicus_1F3R.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/rattus_norvegicus_1IET.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/rattus_norvegicus_1IEU.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/rattus_norvegicus_1K5W.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/rattus_norvegicus_1RGD.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/rattus_norvegicus_1RSO.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/rattus_norvegicus_2F33.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/rattus_norvegicus_2G9B.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/rattus_norvegicus_2KA9.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/rattus_norvegicus_2KHZ.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/rattus_norvegicus_2KLH.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/saccharomyces_cerevisiae_1FHB.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/saccharomyces_cerevisiae_1KXL.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/saccharomyces_cerevisiae_1RF8.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/saccharomyces_cerevisiae_1ZTA.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/saccharomyces_cerevisiae_2BTT.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/saccharomyces_cerevisiae_2GB8.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/saccharomyces_cerevisiae_2JTI.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/saccharomyces_cerevisiae_2RQV.grf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/saccharomyces_cerevisiae_4ASW.grf" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/SubgraphIsomorphism.class" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/SubgraphIsomorphism.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/Vertex.class" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/Vertex.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -72,7 +370,7 @@
     <configuration name="SubgraphIsomorphism " type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="SubgraphIsomorphism" />
       <module name="SubgraphIsomorphism" />
-      <option name="PROGRAM_PARAMETERS" value="FrequentDatasets C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\ C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\FrequentDatasetMining\" />
+      <option name="PROGRAM_PARAMETERS" value="FrequentDatasets C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\ C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\FrequentDatasetMining\oneHundred\" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -220,7 +518,14 @@
       <option name="project" value="LOCAL" />
       <updated>1643497918957</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="Perform frequent itemset mining on all target graphs">
+      <created>1643498754034</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1643498754034</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -288,7 +593,8 @@
     <MESSAGE value="Keep track of graph when writing the important info for random walk.  Ran graphQL on previously hard-to-find subgraph isomorphisms" />
     <MESSAGE value="First attempt on apriori algorithm" />
     <MESSAGE value="Added comments" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added comments" />
+    <MESSAGE value="Perform frequent itemset mining on all target graphs" />
+    <option name="LAST_COMMIT_MESSAGE" value="Perform frequent itemset mining on all target graphs" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -315,12 +621,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1278</line>
+          <line>1280</line>
           <option name="timeStamp" value="26" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1215</line>
+          <line>1216</line>
           <option name="timeStamp" value="35" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -340,7 +646,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1227</line>
+          <line>1228</line>
           <option name="timeStamp" value="84" />
         </line-breakpoint>
       </breakpoints>
