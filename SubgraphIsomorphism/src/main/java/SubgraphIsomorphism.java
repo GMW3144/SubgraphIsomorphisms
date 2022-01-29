@@ -8,6 +8,7 @@ import org.jgrapht.alg.matching.HopcroftKarpMaximumCardinalityBipartiteMatching;
 
 import java.io.*;
 import java.util.*;
+import java.util.jar.Attributes;
 
 public class SubgraphIsomorphism {
     private static int numBackTracking; // keep track of backtracking calls
@@ -27,7 +28,7 @@ public class SubgraphIsomorphism {
      * @return the location of the file
      * @throws IOException
      */
-    public static String writeGraph(Graph<Vertex, DefaultEdge> graph, String outputFolderName,
+    private static String writeGraph(Graph<Vertex, DefaultEdge> graph, String outputFolderName,
                                     String graphName) throws IOException {
         // write to output file
         BufferedWriter writer = new BufferedWriter(new FileWriter(
@@ -157,13 +158,51 @@ public class SubgraphIsomorphism {
         return g;
     }
 
+    private static boolean listContainsAll(List<String> main, List<String> subset){
+        // if there isn't enough elements in main
+        if(main.size()<subset.size()){
+            return false;
+        }
+
+        // assume that queryNodeProfile contained within profile
+        boolean contains = true;
+        int i = 0;
+        int j = 0;
+
+        // iterate through list
+        while(j<main.size() && i<subset.size()){
+            // if the query node label is greater then database label then exit
+            // since well never find matching label
+            if(subset.get(i).compareTo(main.get(j))<0){
+                contains = false;
+                break;
+            }
+
+            // if two values are equal then increment both, since we should consider next element
+            else if(main.get(j).compareTo(subset.get(i))==0){
+                i++; j++;
+            }
+
+            // there still may exist the value in set, so only increment database label
+            else {
+                j++;
+            }
+
+        }
+        // if all values are contained within the profile of database node
+        if(contains && i == subset.size()){
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Calculates the statistics for a given graph.
      * The number of subsets for a profile for each vertex
      * @param graph the graph to calculate the statistics
      * @param attributes the attributes we are looking at
      */
-    public static void calculateStatistics(Graph<Vertex, DefaultEdge> graph, String[] attributes){
+    private static void calculateStatistics(Graph<Vertex, DefaultEdge> graph, String[] attributes){
         // keep track of a the possible values for a given attribute
         Map<String, Set<String>> possibleValues = new HashMap<>();
         for(String attribute: attributes){
@@ -205,7 +244,7 @@ public class SubgraphIsomorphism {
      * @param v a vertex from the target graph
      * @return true if v is a candidate of u
      */
-    public static boolean labelDegreeFiltering(Graph<Vertex, DefaultEdge> query,
+    private static boolean labelDegreeFiltering(Graph<Vertex, DefaultEdge> query,
                                                Graph<Vertex, DefaultEdge> target, String[] attributes,
                                                Vertex u, Vertex v){
         int vDegree = target.degreeOf(v);
@@ -221,11 +260,11 @@ public class SubgraphIsomorphism {
      * @param v a vertex from the target graph
      * @return true if v is a candidate of u
      */
-    public static boolean localPruning(String[] attributes, Vertex u, Vertex v){
+    private static boolean localPruning(String[] attributes, Vertex u, Vertex v){
         return u.profileSubset(v, attributes);
     }
 
-    public static void pruneGlobally(Graph<Vertex, DefaultEdge> query, Graph<Vertex, DefaultEdge> target,
+    private static void pruneGlobally(Graph<Vertex, DefaultEdge> query, Graph<Vertex, DefaultEdge> target,
                                      Map<Vertex, Set<Vertex>> candidates){
         // keep track of the previous candidates by their query/target vertex pair
         Set<List<Vertex>> T = new HashSet<>();
@@ -339,7 +378,7 @@ public class SubgraphIsomorphism {
      * @param attributes the attributes (labels) that we are comparing
      * @return a candidates for each vertex within the query graph
      */
-    public static Map<Vertex, Set<Vertex>> computeCandidates(Graph<Vertex, DefaultEdge> query,
+    private static Map<Vertex, Set<Vertex>> computeCandidates(Graph<Vertex, DefaultEdge> query,
                                                              Graph<Vertex, DefaultEdge> target,
                                                              String[] attributes, boolean groundTruth){
         // keep track of the candidates for a given vertex
@@ -389,7 +428,7 @@ public class SubgraphIsomorphism {
      * @param gamma the gamma value
      * @return the size of joining u to the current order
      */
-    public static double calculateSize(Graph<Vertex, DefaultEdge> query, double leftSize,
+    private static double calculateSize(Graph<Vertex, DefaultEdge> query, double leftSize,
                                        Map<Vertex, Set<Vertex>> candididates, ArrayList<Vertex> order, Vertex u,
                                        double gamma){
         // size(i) = size(i.left)*size(i.right)*gamma^connection(order, u)
@@ -414,10 +453,11 @@ public class SubgraphIsomorphism {
      * smallest candidate set and then adds them in BFS order
      * @param query the query graph
      * @param candididates sets of candidates for each query vertex
-     * @param gamma
+     * @param gamma the gamma value
+     * @param groundTruth whether we are computing the ground truth
      * @return a list of the vertices in the order they should be checked
      */
-    public static ArrayList<Vertex> computeProcessingOrder(Graph<Vertex, DefaultEdge> query,
+    private static ArrayList<Vertex> computeProcessingOrder(Graph<Vertex, DefaultEdge> query,
                                                            Map<Vertex, Set<Vertex>> candididates,
                                                            double gamma, boolean groundTruth){
         ArrayList<Vertex> order = new ArrayList<>();
@@ -511,7 +551,7 @@ public class SubgraphIsomorphism {
      * @param isInduced whether matching is induced
      * @return true if u can be matched to v
      */
-    public static boolean isValid(Graph<Vertex, DefaultEdge> query, Graph<Vertex, DefaultEdge> target,
+    private static boolean isValid(Graph<Vertex, DefaultEdge> query, Graph<Vertex, DefaultEdge> target,
                                   Map<Vertex, Vertex> currentFunction, Vertex u, Vertex v,
                                   boolean isInduced){
         // iterate through neighbors of u
@@ -558,7 +598,7 @@ public class SubgraphIsomorphism {
      * @param allFunctionsFound all the solutions that were discoverd
      * @param isInduced whether matching is induced
      */
-    public static void subgraphIsomorphism(Graph<Vertex, DefaultEdge> query,
+    private static void subgraphIsomorphism(Graph<Vertex, DefaultEdge> query,
                                            Graph<Vertex, DefaultEdge> target,
                                            Map<Vertex, Set<Vertex>> candidates,
                                            ArrayList<Vertex> order, int i,
@@ -595,7 +635,7 @@ public class SubgraphIsomorphism {
      * @param gamma
      * @return the solutions to the subgraph isomorphism between the given graphs
      */
-    public static List<Map<Vertex, Vertex>> matching(Graph<Vertex, DefaultEdge> query,
+    private static List<Map<Vertex, Vertex>> matching(Graph<Vertex, DefaultEdge> query,
                                                      Graph<Vertex, DefaultEdge> target,
                                                      String[] attributes, boolean isInduced, double gamma,
                                                      boolean groundTruth){
@@ -608,7 +648,7 @@ public class SubgraphIsomorphism {
         return results;
     }
 
-    public static List<String> isomorphismOrdered(List<Map<Vertex, Vertex>>  subgraphIsomorphism){
+    private static List<String> isomorphismOrdered(List<Map<Vertex, Vertex>>  subgraphIsomorphism){
         // convert the isomorphisms to strings
         List<String> isomorphisms = new ArrayList<>();
         for(Map<Vertex, Vertex> next: subgraphIsomorphism){
@@ -633,7 +673,7 @@ public class SubgraphIsomorphism {
      * @param targetGraphName the name of the target graph
      * @param isInduced whiter isomorphisms are induced
      */
-    public static void displayIsomorphism(List<Map<Vertex, Vertex>>  subgraphIsomorphism,
+    private static void displayIsomorphism(List<Map<Vertex, Vertex>>  subgraphIsomorphism,
                                           String queryGraphName, String targetGraphName, BufferedWriter writer,
                                           boolean isInduced) throws IOException {
 
@@ -671,16 +711,17 @@ public class SubgraphIsomorphism {
      * @param queryFileLocation the location of the file containing the query graph information
      * @param targetFileLocation the location of file containing the target graph information
      * @param outputFileName the file which we will write the output to
+     * @param groundTruth if we're trying to find the ground truth
+     * @param isInduced if the isomorphism is induced
      * @throws IOException
      */
     public static void subgraphIsomorphismKnownGraphs(String queryFileLocation, String targetFileLocation,
-                                                      String outputFileName) throws IOException {
+                                                      String outputFileName, boolean groundTruth, boolean isInduced)
+            throws IOException {
         // read the info from the file
         File queryFile = new File(queryFileLocation);
         File targetFile = new File(targetFileLocation);
 
-        // if we're trying to find the ground truth
-        boolean groundTruth = false;
         // write to output file
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName));
         writer.write("");
@@ -689,7 +730,6 @@ public class SubgraphIsomorphism {
         Graph<Vertex, DefaultEdge> queryGraph = createProteinGraph(queryFile);
         Graph<Vertex, DefaultEdge> targetGraph = createProteinGraph(targetFile);
 
-        boolean isInduced = true;
         // find and display the isomorphisms
         List<Map<Vertex, Vertex>>  subgraphIsomorphismInduced = matching(queryGraph, targetGraph,
                 new String[]{"Label"}, isInduced, 0.5, groundTruth);
@@ -707,7 +747,7 @@ public class SubgraphIsomorphism {
      * @param newId the id of the new vertex
      * @return the copied vertex
      */
-    public static Vertex copyVertex(Vertex vertex, int newId){
+    private static Vertex copyVertex(Vertex vertex, int newId){
         // copy the attributes
         Map<String, String> newAttributes = new HashMap<>(vertex.getAttributes());
         return new Vertex(newId, newAttributes);
@@ -721,7 +761,7 @@ public class SubgraphIsomorphism {
      * @return the random graph
      * @throws IOException
      */
-    public static Graph<Vertex, DefaultEdge> randomGraph(Graph<Vertex, DefaultEdge> target, String targetLocation,
+    private static Graph<Vertex, DefaultEdge> randomGraph(Graph<Vertex, DefaultEdge> target, String targetLocation,
                                                          int sizeQuery, String outputFileName) throws IOException {
         Graph<Vertex, DefaultEdge> queryGraph = new SimpleGraph<>(DefaultEdge.class);
         // get a random vertex
@@ -906,6 +946,226 @@ public class SubgraphIsomorphism {
         }
     }
 
+    private static List<List<String>> aprioriGen(List<List<String>> LkMin1){
+        List<List<String>>Ck = new ArrayList<>();
+
+        // iterate through the possible joins
+        for(int i = 0; i< LkMin1.size(); i++){
+            List<String> itemsetI = LkMin1.get(i);
+            for(int j = i; j< LkMin1.size(); j++){
+                List<String> itemsetJ = LkMin1.get(j);
+
+
+                // already in order so combine two
+                List<String> newItemset = new ArrayList<>();
+
+                boolean equivalentStart = (itemsetI.size() == itemsetJ.size());
+                // make sure the first elements are equivalent
+                for(int k = 0; k<itemsetI.size()-1; k++){
+                    if(itemsetI.get(k) != itemsetJ.get(k)){
+                        equivalentStart = false;
+                        break;
+                    }
+                    newItemset.add(itemsetI.get(k));
+                }
+
+                // if the beginning isn't equal then the rest of the itemsetJ cannot be either
+                if(!equivalentStart){
+                    break;
+                }
+
+                // add from itemsetI
+                newItemset.add(itemsetI.get(itemsetI.size()-1));
+                // add from itemsetJ
+                newItemset.add(itemsetJ.get(itemsetJ.size()-1));
+
+                // then add to potentially large itemsets
+                Ck.add(newItemset);
+            }
+        }
+
+        return Ck;
+    }
+
+    private static void aprioriPrune(List<List<String>> LkMin1, List<List<String>>Ck){
+
+        // keep track of which candidates to remove
+        List<List<String>> toRemove = new ArrayList<>();
+        // check each cK subsets to see if in LkMin1
+        for(int i = 0 ; i < Ck.size(); i++){
+            List<String> C = Ck.get(i);
+            List<String> subset = new ArrayList<>(C);
+            // build subsets of size k-1
+            for(String element: C){
+                // remove one of the elements
+                subset.remove(element);
+                // check if subset is in previous large itemises
+                if(!LkMin1.contains(subset)){
+                    toRemove.add(C);
+                    break;
+                }
+                // add the element back in
+                subset.add(element);
+            }
+        }
+
+        // now remove the candidates
+        for(List<String> c:toRemove){
+            Ck.remove(c);
+        }
+
+    }
+
+    private static Map<String, Map<List<String>, Set<Integer>>>  aprioriAlgo(Map<Integer, Map<String, List<String>>> transactions,
+                                                               String[] attributes, Map<String, Set<String>> items,
+                                                               double minSup){
+        // make minSup an integer
+        if(minSup<=1){
+            minSup = minSup*transactions.size();
+        }
+
+        // find large profile itemsets (Profile, Vertices containing profile)
+        Map<String, Map<List<String>, Set<Integer>>> L = new HashMap<>();
+
+        // perform for each attribute
+        for(String a: attributes){
+            // get the possible items
+            Set<String> possibleItems = items.get(a);
+            // keep track of large datasets for particular attribute
+            Map<List<String>, Set<Integer>> aL = new HashMap<>();
+            List<List<String>> LkMin1 = new ArrayList<>();
+
+            // L1
+            // iterate through the items
+            for(String item: possibleItems){
+                ArrayList<String> c1 = new ArrayList<>();
+                c1.add(item);
+
+                Set<Integer> transactionsContainC1 = new HashSet<>();
+
+                // iterate through the transactions
+                for(int tid: transactions.keySet()){
+                    List<String> t = transactions.get(tid).get(a);
+
+                    if(listContainsAll(t, c1)){
+                        transactionsContainC1.add(tid);
+                    }
+                }
+                if(transactionsContainC1.size()>minSup){
+                    aL.put(c1, transactionsContainC1);
+                    LkMin1.add(c1);
+                }
+            }
+
+            // now continue until no more large datasets of a given size
+            while(LkMin1.size() != 0){
+                // iterate through the previous L_k-1 values to generate new set
+                List<List<String>> Ck = aprioriGen(LkMin1);
+                // prune the candidates
+                aprioriPrune(LkMin1, Ck);
+                // reset the past LkMin1
+                LkMin1 = new ArrayList<>();
+
+                // iterate through the candiates
+                for(List<String> C: Ck) {
+
+                    Set<Integer> transactionsContainC = new HashSet<>();
+
+                    // iterate through the transactions
+                    for (int tid : transactions.keySet()) {
+                        List<String> t = transactions.get(tid).get(a);
+
+                        if (listContainsAll(t, C)) {
+                            transactionsContainC.add(tid);
+                        }
+                    }
+                    if(transactionsContainC.size()>minSup){
+                        aL.put(C, transactionsContainC);
+                        LkMin1.add(C);
+                    }
+                }
+
+            }
+            L.put(a, aL);
+
+        }
+
+        return L;
+    }
+
+    private static void frequentDatasetMining(String targetFileLocation, String outputFileName,
+                                              String[] attributes, double minSup) throws IOException {
+        // read the info from the file
+        File targetFile = new File(targetFileLocation);
+
+        // write to output file
+        BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName));
+        writer.write("");
+
+        // create the graphs
+        Graph<Vertex, DefaultEdge> targetGraph = createProteinGraph(targetFile);
+
+        // retrieve the profile information from the target graph
+        // vertex and profile - transaction
+        Map<Integer, Map<String, List<String>>> transactions = new HashMap<>();
+        // keep track of itemset
+        Map<String, Set<String>> possibleItems = new HashMap<>();
+
+        // iterate through the vertices
+        Iterator<Vertex> iter = new DepthFirstIterator<>(targetGraph);
+        while (iter.hasNext()) {
+            // get the graph vertex
+            Vertex v = iter.next();
+            int vid = v.getId();
+            Map<String, List<String>> profilePerAttribute = new HashMap<>();
+
+            // iterate through the attributes
+            for(String a: attributes){
+                List<String> vAttributeProfile= v.findAttributeProfile(a);
+                profilePerAttribute.put(a, vAttributeProfile);
+            }
+
+            transactions.put(vid, profilePerAttribute);
+
+            // iterate through the vertex attributes
+            Map<String, String> vAttributes = v.getAttributes();
+            for(String attributeType : vAttributes.keySet()){
+                // if we have not seen the attribute type before, then need to create a new set
+                if(!possibleItems.containsKey(attributeType)){
+                    possibleItems.put(attributeType, new HashSet<>());
+                }
+                // add the attribute to the itemsets
+                possibleItems.get(attributeType).add(vAttributes.get(attributeType));
+            }
+        }
+
+        Map<String, Map<List<String>, Set<Integer>>>  frequentItemsets = aprioriAlgo(transactions, attributes, possibleItems, minSup);
+
+
+        if(minSup<=1){
+            minSup = minSup*transactions.size();
+        }
+        System.out.println("Number of Nodes: "+transactions.size());
+        System.out.println("Minsup (integer): "+minSup);
+        System.out.println("Minsup (percentage): "+minSup/transactions.size());
+        writer.append("Number of Nodes: "+transactions.size()+"\n"+
+                "Minsup (integer): "+minSup+"\n"+
+                "Minsup (percentage): "+minSup/transactions.size() + "\n");
+
+        // print out the frequent itemsets
+        for(String a: frequentItemsets.keySet()){
+            System.out.println("Attribute "+a);
+            writer.append("Attribute "+a+"\n");
+            Map<List<String>, Set<Integer>> frequentSubProfiles = frequentItemsets.get(a);
+            for(List<String> itemset : frequentSubProfiles.keySet()){
+                System.out.println(itemset + " appears in " +frequentSubProfiles.get(itemset).size()+" vertex profiles");
+                writer.append(itemset + " appears in " +frequentSubProfiles.get(itemset).size()+" vertex profiles:\n");
+                writer.append(frequentSubProfiles.get(itemset)+" \n\n");
+            }
+        }
+    }
+
+
     /**
      * Main function where the graphs are constructed and we find the subgraph isomorphisms
      * @param args the command line arguments
@@ -921,17 +1181,29 @@ public class SubgraphIsomorphism {
             final String targetLocation = args[2];
             final String outputFileName = args[3];
 
-            subgraphIsomorphismKnownGraphs(queryLocation, targetLocation, outputFileName);
+            boolean groundTruth = false;
+            boolean isInduced = true;
+
+            subgraphIsomorphismKnownGraphs(queryLocation, targetLocation, outputFileName, groundTruth, isInduced);
         }
 
+        else if(method.equals("FrequentDatasets") && args.length == 3){
+            final String targetLocation = args[1];
+            final String outputFileName = args[2];
+
+            final double minSup = 0.1;
+
+            frequentDatasetMining(targetLocation, outputFileName,  new String[]{"Label"}, minSup);
+        }
+
+        // create query graph from random walk
         else if(method.equals("RandomWalk")  && args.length == 3) {
-            // random Walk
+            final String targetLocation = args[1];
+            final String outputFolderName = args[2];
+
             // if we're trying to find the ground truth
             boolean groundTruth = true;
             boolean isInduced = true;
-
-            final String targetLocation = args[1];
-            final String outputFolderName = args[2];
 
             // create the target graph and random query graph
             Graph<Vertex, DefaultEdge> targetGraph = createProteinGraph(new File(targetLocation));

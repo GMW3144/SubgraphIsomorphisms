@@ -100,6 +100,18 @@ public class Vertex {
         profile.add(neighbor.getAttributes());
     }
 
+    public List<String> findAttributeProfile(String attribute){
+        // build up individual profiles for current attribute
+        ArrayList<String> attributeProfile = new ArrayList<>();
+        // Current vertex labels for specific attribute
+        for(Map<String, String> currentP: profile){
+            attributeProfile.add(currentP.get(attribute));
+        }
+        Collections.sort(attributeProfile);
+
+        return attributeProfile;
+    }
+
     /**
      * Calculates the number of possible subsets for a given vertex profile.  Includes the empty set and each entry must
      * be unique.
@@ -113,12 +125,7 @@ public class Vertex {
         // iterate through the attributes
         for(String attribute: attributesToCheck){
             // build up individual profiles for current attribute
-            ArrayList<String> attributeProfile = new ArrayList<>();
-            // Current vertex labels for specific attribute
-            for(Map<String, String> currentP: profile){
-                attributeProfile.add(currentP.get(attribute));
-            }
-            Collections.sort(attributeProfile);
+            List<String> attributeProfile = findAttributeProfile(attribute);
 
             // keep track of the possible profile subsets
             ArrayList<ArrayList<String>> possibleSubsets = new ArrayList<>();
@@ -148,6 +155,44 @@ public class Vertex {
         return possibleValues;
     }
 
+    private boolean listContainsAll(List<String> main, List<String> subset){
+        // if there isn't enough elements in main
+        if(main.size()<subset.size()){
+            return false;
+        }
+
+        // assume that queryNodeProfile contained within profile
+        boolean contains = true;
+        int i = 0;
+        int j = 0;
+
+        // iterate through list
+        while(j<main.size() && i<subset.size()){
+            // if the query node label is greater then database label then exit
+            // since well never find matching label
+            if(subset.get(i).compareTo(main.get(j))<0){
+                contains = false;
+                break;
+            }
+
+            // if two values are equal then increment both, since we should consider next element
+            else if(main.get(j).compareTo(subset.get(i))==0){
+                i++; j++;
+            }
+
+            // there still may exist the value in set, so only increment database label
+            else {
+                j++;
+            }
+
+        }
+        // if all values are contained within the profile of database node
+        if(contains && i == subset.size()){
+            return true;
+        }
+        return false;
+    }
+
     /**
      * Checks if the given vertex profile is a subset of the current vertex profile, given some attributes
      * @param neighbor the vertex who's being compared to the current vertex profile
@@ -171,7 +216,7 @@ public class Vertex {
                 attributeProfileNeighbor.add(currentN.get(a));
             }
 
-            if(!attributeProfileNeighbor.containsAll(attributeProfileCurrent)){
+            if(!listContainsAll(attributeProfileNeighbor, attributeProfileCurrent)){
                 return false;
             }
         }
