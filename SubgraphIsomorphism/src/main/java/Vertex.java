@@ -102,15 +102,15 @@ public class Vertex {
 
     /**
      * Finds a list of the attribue values for a given attribute
-     * @param attributesToCheck the attributes we are using to create the profile
+     * @param attributeToCheck the attribute we are using to create the profile
      * @return a list containing lexigraphically sorted values of an attribute
      */
-    public List<String> findAttributeProfile(String attributesToCheck){
+    public List<String> findAttributeProfile(String attributeToCheck){
         // build up individual profiles for current attribute
         ArrayList<String> attributeProfile = new ArrayList<>();
         // Current vertex labels for specific attribute
         for(Map<String, String> currentP: profile){
-            attributeProfile.add(currentP.get(attributesToCheck));
+            attributeProfile.add(currentP.get(attributeToCheck));
         }
         Collections.sort(attributeProfile);
 

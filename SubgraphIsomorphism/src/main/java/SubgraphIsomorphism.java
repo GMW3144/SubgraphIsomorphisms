@@ -1022,6 +1022,8 @@ public class SubgraphIsomorphism {
                 }
                 // add the element back in
                 subset.add(element);
+                // sort it back in correctly
+                Collections.sort(subset);
             }
         }
 
@@ -1044,7 +1046,7 @@ public class SubgraphIsomorphism {
     private static Map<String, Map<List<String>, Set<Integer>>>  aprioriAlgo(Map<Integer, Map<String, List<String>>> transactions,
                                                                String[] attributes, Map<String, Set<String>> items,
                                                                double minSup){
-        // make minSup an integer
+        // make minSup related to a number of vertices
         if(minSup<=1){
             minSup = minSup*transactions.size();
         }
@@ -1091,7 +1093,7 @@ public class SubgraphIsomorphism {
                 // reset the past LkMin1
                 LkMin1 = new ArrayList<>();
 
-                // iterate through the candiates
+                // iterate through the candidates
                 for(List<String> C: Ck) {
 
                     Set<Integer> transactionsContainC = new HashSet<>();
@@ -1193,10 +1195,15 @@ public class SubgraphIsomorphism {
             System.out.println("Attribute "+a);
             writer.append("Attribute "+a+"\n");
             Map<List<String>, Set<Integer>> frequentSubProfiles = frequentItemsets.get(a);
+            List<String> outputValues = new ArrayList<>();
             for(List<String> itemset : frequentSubProfiles.keySet()){
-                System.out.println(itemset + " appears in " +frequentSubProfiles.get(itemset).size()+" vertex profiles");
-                writer.append(itemset + " appears in " +frequentSubProfiles.get(itemset).size()+" vertex profiles:\n");
-                writer.append(frequentSubProfiles.get(itemset)+" \n\n");
+                outputValues.add(itemset + " appears in " +frequentSubProfiles.get(itemset).size()+" vertex profiles:\n"
+                        +frequentSubProfiles.get(itemset)+" \n\n");
+            }
+            Collections.sort(outputValues);
+            for(String output: outputValues){
+                System.out.print(output);
+                writer.append(output);
             }
         }
         writer.close();
@@ -1228,7 +1235,7 @@ public class SubgraphIsomorphism {
             final String targetFolderLocation = args[1];
             final String outputFolderName = args[2];
 
-            final double minSup = 100;
+            final double minSup = 0.1;
 
             // iterate through the possible target graphs
             File [] files = new File(targetFolderLocation).listFiles();
