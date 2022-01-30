@@ -227,6 +227,9 @@ public class Vertex {
                 attributeProfileNeighbor.add(currentN.get(a));
             }
 
+            Collections.sort(attributeProfileCurrent);
+            Collections.sort(attributeProfileNeighbor);
+
             if(!listContainsAll(attributeProfileNeighbor, attributeProfileCurrent)){
                 return false;
             }

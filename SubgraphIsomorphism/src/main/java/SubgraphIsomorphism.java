@@ -82,7 +82,7 @@ public class SubgraphIsomorphism {
         String line = br.readLine().strip();
 
         // skip lines starting with "#"
-        while (line.charAt(0) == '#') {
+        while (line.length()>0 && line.charAt(0) == '#') {
             line = br.readLine().strip();
         }
 
@@ -94,7 +94,7 @@ public class SubgraphIsomorphism {
         for(int i = 0; i < numberVertices; i++) {
             line = line.strip();
             // skip lines starting with "#"
-            if (line.charAt(0) == '#') {
+            if (line.length()>0 && line.charAt(0) == '#') {
                 i--;
                 continue;
             }
@@ -123,7 +123,7 @@ public class SubgraphIsomorphism {
         //iterate through the edges of each vertex
         while(line != null) {
             //skip lines starting with "#"
-            if (line.charAt(0) == '#') {
+            if (line.length()>0 && line.charAt(0) == '#') {
                 line = br.readLine();
                 continue;
             }
@@ -703,7 +703,6 @@ public class SubgraphIsomorphism {
 
         int i = 1; // keep track of which isomorphism was printed
         for(String iso: isomorphisms){
-            System.out.println("Isomorphism "+ i + ": " +iso);
             writer.append("Isomorphism "+ i + ": " +iso+"\n");
             i++;
         }
@@ -739,7 +738,7 @@ public class SubgraphIsomorphism {
         List<Map<Vertex, Vertex>>  subgraphIsomorphismInduced = matching(queryGraph, targetGraph,
                 new String[]{"Label"}, isInduced, 0.5, groundTruth);
 
-        displayIsomorphism(subgraphIsomorphismInduced, queryFile.getName(), targetFile.getName(), writer, isInduced);
+        displayIsomorphism(subgraphIsomorphismInduced, queryFileLocation, targetFileLocation, writer, isInduced);
         System.out.println("============================");
         writer.append("============================\n");
 
@@ -872,7 +871,7 @@ public class SubgraphIsomorphism {
             line = line.strip();
 
             // check if comment
-            if(line.charAt(0) == '#'){
+            if(line.length()>0 && line.charAt(0) == '#'){
                 line = br.readLine();
                 continue;
             }
@@ -896,7 +895,7 @@ public class SubgraphIsomorphism {
                 // find if induced
                 boolean isInduced = true;
                 line = br.readLine();
-                while(line.charAt(0) == '#' || !line.toLowerCase(Locale.ROOT).contains("induced")){
+                while(line.length()>0 && line.charAt(0) == '#' || !line.toLowerCase(Locale.ROOT).contains("induced")){
                     line = br.readLine();
                 }
                 // looking at a false induction
@@ -919,7 +918,7 @@ public class SubgraphIsomorphism {
                 line = br.readLine().strip();
                 for(String iso: isomorphisms){
                     // skip comments
-                    while(line.charAt(0) == '#'){
+                    while(line.length()>0 && line.charAt(0) == '#'){
                         line = br.readLine().strip();
                     }
                     String currentMatching = "Isomorphism "+ i + ": " +iso;
@@ -1209,6 +1208,218 @@ public class SubgraphIsomorphism {
         writer.close();
     }
 
+    public static void fdmGraph(String fdmFileLocation, String outputFolderName, boolean groundTruth,
+                                boolean isInduced, int profileSize, double gamma) throws IOException {
+        // get the information from the frequent dataset mining file
+        Graph<Vertex, DefaultEdge> target = null;
+        String graphLocation = "";
+        Map<List<String>, List<Integer>> frequentProfiles = new HashMap<>();
+        Double minsup = 0.0;
+
+        BufferedReader br = new BufferedReader(new FileReader(fdmFileLocation));
+        String line = br.readLine().strip();
+        while(line!=null){
+            line = line.strip();
+            // check if comment
+            if(line.length()>0 && line.charAt(0) == '#'){
+                line = br.readLine();
+                continue;
+            }
+
+
+            // start of a new isomorphism
+            else if(line.toLowerCase(Locale.ROOT).contains("graph:")){
+                String graphInfo = line.split(" ")[1];
+                graphLocation = graphInfo.split("\\(")[1].replace(")", "");
+                target = createProteinGraph(new File(graphLocation));
+            }
+
+            // information on the maximum support
+            else if(line.toLowerCase(Locale.ROOT).contains("minsup (integer):")) {
+                minsup = Double.valueOf(line.split(":")[1].strip());
+            }
+
+            // start of new itemset
+            else if(line.length()>0 && line.charAt(0) == '['){
+                List<String> currentItemset = new ArrayList<>();
+                // iterate through the words within the line
+                for(String item: line.split(" ")){
+                    // found the end of the itemset
+                    if(item.contains("]")){
+                       // remove the separator
+                       item = item.strip().replace("]", "").replace(",","");
+                       currentItemset.add(item);
+                       break;
+                    }
+                    // remove the separator
+                    item = item.strip().replace("[", "").replace(",","");
+                    currentItemset.add(item);
+                }
+                // get the vertices that contain profile
+                line = br.readLine().strip();
+                // check if comment
+                while(line.length()>0 &&  line.charAt(0) == '#'){
+                    line = br.readLine().strip();
+                }
+
+                List<Integer> verticesId = new ArrayList<>();
+                // iterate through the words within the line
+                for(String v: line.split(" ")){
+                    // found the end of the itemset
+                    if(v.contains("]")){
+                        // remove the separator
+                        v = v.strip().replace("]", "").replace(",","");
+                        verticesId.add(Integer.parseInt(v));
+                        break;
+                    }
+                    // remove the separator
+                    v = v.strip().replace("[", "").replace(",","");
+                    verticesId.add(Integer.parseInt(v));
+                }
+
+                // only add if the size of the items (profile) is equivalent the the profile size we are looking for
+                if(currentItemset.size() == profileSize) {
+                    frequentProfiles.put(currentItemset, verticesId);
+                }
+            }
+            line = br.readLine();
+        }
+
+        // keep track of the vertices we have seen
+        Map<Integer, Vertex> seen = new HashMap<>();
+
+        // keep track of the structure of the frequent profiles
+        Map<List<String>, String> frequentProfileShapes = new HashMap<>();
+        // keep track of the number of times the root occurs
+        Map<List<String>, Integer> numberTimesRootOccurs = new HashMap<>();
+
+        // look through the graph for each profile (and their vertices to see the structure)
+        // iterate through the frequent profiles
+        for(List<String> profile: frequentProfiles.keySet()){
+            Map<String, Integer> numberRoot = new HashMap<>();
+
+            // iterate through the vertices it appears in
+            for(Integer vID: frequentProfiles.get(profile)){
+                // convert the id to a vertex
+                Vertex v = null;
+                // if seen before then get the vertex
+                if(seen.containsKey(vID)){
+                    v = seen.get(vID);
+                }
+                else{
+                    v =  target.vertexSet().stream().filter(vertex -> vertex.getId() == vID).findAny()
+                            .get();
+                    seen.put(vID, v);
+                }
+
+                // keep track of the attribute of the vertex, and number of times it occurs
+                String attribute = v.getAttributes().get("Label"); //TODO must swith everything else to only have one attribute
+
+                // if haven't seen root attribute, then add to map
+                if(!numberRoot.containsKey(attribute)){
+                    numberRoot.put(attribute, 1);
+                }
+                // if have seen root, then increment number of occurrences
+                else{
+                    numberRoot.put(attribute, numberRoot.get(attribute)+1);
+                }
+            }
+
+            // select the attribue (root) that occurs the most
+            String root = numberRoot.keySet().iterator().next();
+            for(String currentRoot: numberRoot.keySet()){
+                // if there are more of the current root then replace
+                if(numberRoot.get(root)<numberRoot.get(currentRoot)){
+                    root = currentRoot;
+                }
+            }
+
+            // add the root that is most frequent to the frequent profile shapes if it meets the maximum support
+            if(numberRoot.get(root)>=minsup) {
+                frequentProfileShapes.put(profile, root);
+                numberTimesRootOccurs.put(profile, numberRoot.get(root));
+            }
+        }
+
+        // now we have the star shapes of the profiles
+        System.out.println(frequentProfileShapes);
+
+        // build query graphs from the star shaped query graphs
+        for(List<String> profile : frequentProfileShapes.keySet()){
+            // get the root vertex
+            String rootAttribute = frequentProfileShapes.get(profile);
+            // get the neighbor vertex
+            List<String> neighbors = new ArrayList<>(profile);
+            neighbors.remove(rootAttribute);
+
+            Graph<Vertex, DefaultEdge> query = new SimpleGraph<>(DefaultEdge.class);
+
+            // add the root
+            Map<String, String> rootAttributeValues = new HashMap<>();
+            rootAttributeValues.put("Label", rootAttribute);
+            Vertex root = new Vertex(0, rootAttributeValues);
+            query.addVertex(root); root.addToProfile(root);
+
+            int currentID = 1;
+            // add the other vertices and their edges
+            for(String neighborAttribute: neighbors){
+                Map<String, String> neighborAttributeValues = new HashMap<>();
+                neighborAttributeValues.put("Label", neighborAttribute);
+
+                // add the vertex, update profile
+                Vertex neighbor = new Vertex(currentID, neighborAttributeValues);
+                query.addVertex(neighbor); neighbor.addToProfile(neighbor);
+
+                // add the edge, update profile
+                query.addEdge(root, neighbor);
+                root.addToProfile(neighbor);
+                neighbor.addToProfile(root);
+
+                currentID++;
+            }
+
+            // store important information when using query graph
+            File outputGraphFolder = new File(outputFolderName+"Graphs\\");
+
+            int numGraphs = 0;
+            if (outputGraphFolder.list() != null) {
+                numGraphs = outputGraphFolder.list().length;
+            }
+            String graphName = "graph" + (numGraphs + 1) + ".txt";
+
+            // save the graph
+            String queryFileName = writeGraph(query, outputFolderName + "Graphs\\", graphName);
+
+            // now write the information to build the graph
+            BufferedWriter writer = new BufferedWriter(new FileWriter(
+                    outputFolderName+"GenerationInfo\\"+graphName));
+
+            writer.write("Used "+fdmFileLocation+" frequent dataset mining \n");
+            writer.append("Vertex with attribute "+ frequentProfileShapes.get(profile)
+                    + " and profile "+ profile +" occurs "+numberTimesRootOccurs.get(profile)
+                    + " times within the graph \n");
+            writer.close();
+
+            // now perform subgraph isomorphism
+            List<Map<Vertex, Vertex>> subgraphIsomorphismInduced = matching(query, target,
+                    new String[]{"Label"}, isInduced, gamma, groundTruth);
+
+
+            // write to output file
+            writer = new BufferedWriter(new FileWriter(
+                    outputFolderName + "Isomorphism\\" + graphName));
+            writer.write("");
+            displayIsomorphism(subgraphIsomorphismInduced, queryFileName, graphLocation,
+                    writer, isInduced);
+            System.out.println("============================");
+            writer.append("============================\n");
+
+            writer.close();
+
+        }
+
+    }
+
 
     /**
      * Main function where the graphs are constructed and we find the subgraph isomorphisms
@@ -1248,6 +1459,23 @@ public class SubgraphIsomorphism {
                     System.out.println("=================");
                 }
             }
+        }
+
+        else if(method.equals("FDMQuery") && args.length == 3){
+            final String fdmFileLocation = args[1];
+            final String outputFolderName = args[2];
+
+            // if we're trying to find the ground truth
+            boolean groundTruth = false;
+            boolean isInduced = true;
+            double gamma = 0.5;
+
+            // keep track of the minimum profile size while creating graph
+            int profileSize = 5; // itemsets must be this size
+            // TODO - if we choose greater than, then the values that are smaller make up the greater itemset sizes
+
+            // get the information from the fdm file
+            fdmGraph(fdmFileLocation, outputFolderName, groundTruth, isInduced, profileSize, gamma);
         }
 
         // create query graph from random walk
