@@ -2,21 +2,21 @@ import java.util.*;
 
 public class Vertex {
     private final int id;
-    private Map<String, String> attributes;
-    private ArrayList<Map<String, String>> profile;
-    private Map<String, Integer> numProfileSubsets;
+    private String label;
+    private ArrayList<String> profile;
+    private int numProfileSubsets;
 
     /**
      * Constructor for vertex.  Must keep track of key and type of chemical
      * @param id the key for the individual vertex (must be unique)
-     * @param attributes the attributes of the vertex
+     * @param label the attribute of the vertex
      */
-    public Vertex(int id, Map<String, String> attributes){
+    public Vertex(int id, String label){
         this.id = id;
-        this.attributes = attributes;
+        this.label = label;
         // keeps track of neighbors attributes
         profile = new ArrayList<>();
-        numProfileSubsets = new HashMap<>();
+        numProfileSubsets = 0;
     }
 
     /**
@@ -46,17 +46,14 @@ public class Vertex {
 
     /**
      * Check if the desired attributes are equivalent
-     * @param attributesToCheck attributes to be checked
      * @return if all of the attributes are equal
      */
-    public boolean sameAttributes(String[] attributesToCheck, Object o){
+    public boolean sameLabel(Object o){
         // check both are vertices
         if(o instanceof Vertex){
-            for(String a: attributesToCheck){
-                // if any of the attributes differ, then not equal
-                if(!(attributes.get(a)).equals((((Vertex) o).getAttributes()).get(a))){
-                    return false;
-                }
+            // if any of the attributes differ, then not equal
+            if(!(label).equals((((Vertex) o).getLabel()))){
+                return false;
             }
             // all desired attributes equal
             return true;
@@ -74,15 +71,15 @@ public class Vertex {
      * Find the attributes
      * @return attributes of current vertex
      */
-    public Map<String, String> getAttributes() {
-        return attributes;
+    public String getLabel() {
+        return label;
     }
 
     /**
      * Find the profile
      * @return profile of current vertex
      */
-    public ArrayList<Map<String, String>> getProfile() {
+    public ArrayList<String> getProfile() {
         return profile;
     }
 
@@ -90,74 +87,47 @@ public class Vertex {
      * Find the number of profile subsets
      * @return numProfileSubsets of current vertex
      */
-    public Map<String, Integer> getNumProfileSubsets(){ return numProfileSubsets;}
+    public int getNumProfileSubsets(){ return numProfileSubsets;}
 
     /**
-     * Add the given vertex attribute to the profile of the current vertex
+     * Add the given vertex attribute to the profile of the current vertex.  Profile is always lexicographically sorted
      * @param neighbor the vertex who's attribute is being added to the current vertex profile
      */
     public void addToProfile(Vertex neighbor){
-        profile.add(neighbor.getAttributes());
-    }
-
-    /**
-     * Finds a list of the attribue values for a given attribute
-     * @param attributeToCheck the attribute we are using to create the profile
-     * @return a list containing lexigraphically sorted values of an attribute
-     */
-    public List<String> findAttributeProfile(String attributeToCheck){
-        // build up individual profiles for current attribute
-        ArrayList<String> attributeProfile = new ArrayList<>();
-        // Current vertex labels for specific attribute
-        for(Map<String, String> currentP: profile){
-            attributeProfile.add(currentP.get(attributeToCheck));
-        }
-        Collections.sort(attributeProfile);
-
-        return attributeProfile;
+        profile.add(neighbor.getLabel());
+        Collections.sort(profile);
     }
 
     /**
      * Calculates the number of possible subsets for a given vertex profile.  Includes the empty set and each entry must
      * be unique.
-     * @param attributesToCheck the attributes we are using in the comparison
      * @return all the possible subsets
      */
-    public Map<String, Set<String>> calculateNumberProfileSubsets(String[] attributesToCheck){
-        // keep track of the possible values for each attributes
-        Map<String, Set<String>> possibleValues = new HashMap<>();
+    public ArrayList<ArrayList<String>> calculateNumberProfileSubsets(){
+        // keep track of the possible profile subsets
+        ArrayList<ArrayList<String>> possibleSubsets = new ArrayList<>();
+        // base case, size of 0
+        possibleSubsets.add(new ArrayList<>());
 
-        // iterate through the attributes
-        for(String attribute: attributesToCheck){
-            // build up individual profiles for current attribute
-            List<String> attributeProfile = findAttributeProfile(attribute);
+        // iterate through all of the attributes, order does not matter so add alphabetically
+        for(String a: profile) {
+            // keep track of the previous subsets before adding next element and iterate through them
+            ArrayList<ArrayList<String>> savedSubsets = new ArrayList<>(possibleSubsets);
+            for (ArrayList<String> previousSubsets : savedSubsets) {
+                // create a copy of the subset to add the attribute to
+                ArrayList<String> newSubset = new ArrayList<>(previousSubsets);
+                newSubset.add(a);
 
-            // keep track of the possible profile subsets
-            ArrayList<ArrayList<String>> possibleSubsets = new ArrayList<>();
-            // base case, size of 0
-            possibleSubsets.add(new ArrayList<>());
-
-            // iterate through all of the attributes, order does not matter so add alphabetically
-            for(String a: attributeProfile){
-                // keep track of the previous subsets before adding next element and iterate through them
-                ArrayList<ArrayList<String>> savedSubsets = new ArrayList<>(possibleSubsets);
-                for(ArrayList<String> previousSubsets: savedSubsets){
-                    // create a copy of the subset to add the attribute to
-                    ArrayList<String> newSubset = new ArrayList<>(previousSubsets);
-                    newSubset.add(a);
-
-                    // check if already subset
-                    if(!possibleSubsets.contains(newSubset)) {
-                        possibleSubsets.add(newSubset);
-                    }
+                // check if already subset
+                if (!possibleSubsets.contains(newSubset)) {
+                    possibleSubsets.add(newSubset);
                 }
             }
-            numProfileSubsets.put(attribute, possibleSubsets.size());
-            possibleValues.put(attribute, new HashSet<>(attributeProfile));
         }
+        numProfileSubsets=possibleSubsets.size();
 
         // return the possible values it can be
-        return possibleValues;
+        return possibleSubsets;
     }
 
     /**
@@ -207,33 +177,17 @@ public class Vertex {
     /**
      * Checks if the given vertex profile is a subset of the current vertex profile, given some attributes
      * @param neighbor the vertex who's being compared to the current vertex profile
-     * @param attributesToCheck the attributes we are using in the comparison
      * @return if it is a subset
      */
-    public boolean profileSubset(Vertex neighbor, String[] attributesToCheck){
-        // check each attribute
-        for(String a: attributesToCheck){
-            // build up individual profiles for current attribute
-            ArrayList<String> attributeProfileCurrent = new ArrayList<>();
-            ArrayList<String> attributeProfileNeighbor = new ArrayList<>();
+    public boolean profileSubset(Vertex neighbor){
+        // build up individual profiles for current attribute
+        ArrayList<String> attributeProfileCurrent = profile;
+        ArrayList<String> attributeProfileNeighbor = neighbor.getProfile();
 
-            // Current vertex labels for specific attribute
-            for(Map<String, String> currentP: profile){
-                attributeProfileCurrent.add(currentP.get(a));
-            }
-
-            // Neigbhor labels for specific attribute
-            for(Map<String, String> currentN: neighbor.getProfile()){
-                attributeProfileNeighbor.add(currentN.get(a));
-            }
-
-            Collections.sort(attributeProfileCurrent);
-            Collections.sort(attributeProfileNeighbor);
-
-            if(!listContainsAll(attributeProfileNeighbor, attributeProfileCurrent)){
-                return false;
-            }
+        if(!listContainsAll(attributeProfileNeighbor, attributeProfileCurrent)){
+            return false;
         }
+
         // all desired attributes equal
         return true;
     }
