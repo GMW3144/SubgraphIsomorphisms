@@ -922,7 +922,7 @@ public class SubgraphIsomorphism {
                                 .append(targetGraphFile.getName()).append("\n");
                         // state the differences
                         writer.append("Correct : ").append(line).append("\n");
-                        writer.append("Incorrect (found) : ").append(currentMatching).append("\n");
+                        writer.append("Incorrect (found) : ").append(currentMatching).append("\n\n");
 
                         System.out.println("Problem Here! "+queryGraphFile +": "+targetGraphFile);
                         graphProblem = true;
@@ -940,6 +940,7 @@ public class SubgraphIsomorphism {
 
             line = br.readLine();
         }
+        writer.close();
     }
 
     /**
