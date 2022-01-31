@@ -1208,8 +1208,23 @@ public class SubgraphIsomorphism {
         writer.close();
     }
 
+    /**
+     * Creates a graph from the frequent dataset mining and performs subgraph isomorphism on the new query graph and
+     * target graph from the frequent dataset mining
+     *
+     * @param fdmFileLocation the information from the frequent dataset mining
+     * @param outputFolderName location where saving graph information
+     * @param groundTruth if we are finding the ground truth with our isomorphism
+     * @param isInduced if the isomorphism is induced
+     * @param profileSize the size of the profile for the frequent itemset
+     * @param gamma the gamma value
+     * @param label the current label we are looking at
+     * @throws IOException
+     */
     public static void fdmGraph(String fdmFileLocation, String outputFolderName, boolean groundTruth,
-                                boolean isInduced, int profileSize, double gamma) throws IOException {
+                                boolean isInduced, int profileSize, double gamma, String label) throws IOException {
+        //TODO only works for one label...
+
         // get the information from the frequent dataset mining file
         Graph<Vertex, DefaultEdge> target = null;
         String graphLocation = "";
@@ -1225,7 +1240,6 @@ public class SubgraphIsomorphism {
                 line = br.readLine();
                 continue;
             }
-
 
             // start of a new isomorphism
             else if(line.toLowerCase(Locale.ROOT).contains("graph:")){
@@ -1313,7 +1327,7 @@ public class SubgraphIsomorphism {
                 }
 
                 // keep track of the attribute of the vertex, and number of times it occurs
-                String attribute = v.getAttributes().get("Label"); //TODO must swith everything else to only have one attribute
+                String attribute = v.getAttributes().get(label); //TODO must switch everything else to only have one attribute?
 
                 // if haven't seen root attribute, then add to map
                 if(!numberRoot.containsKey(attribute)){
@@ -1356,7 +1370,7 @@ public class SubgraphIsomorphism {
 
             // add the root
             Map<String, String> rootAttributeValues = new HashMap<>();
-            rootAttributeValues.put("Label", rootAttribute);
+            rootAttributeValues.put(label, rootAttribute);
             Vertex root = new Vertex(0, rootAttributeValues);
             query.addVertex(root); root.addToProfile(root);
 
@@ -1364,7 +1378,7 @@ public class SubgraphIsomorphism {
             // add the other vertices and their edges
             for(String neighborAttribute: neighbors){
                 Map<String, String> neighborAttributeValues = new HashMap<>();
-                neighborAttributeValues.put("Label", neighborAttribute);
+                neighborAttributeValues.put(label, neighborAttribute);
 
                 // add the vertex, update profile
                 Vertex neighbor = new Vertex(currentID, neighborAttributeValues);
@@ -1402,7 +1416,7 @@ public class SubgraphIsomorphism {
 
             // now perform subgraph isomorphism
             List<Map<Vertex, Vertex>> subgraphIsomorphismInduced = matching(query, target,
-                    new String[]{"Label"}, isInduced, gamma, groundTruth);
+                    new String[]{label}, isInduced, gamma, groundTruth);
 
 
             // write to output file
@@ -1469,13 +1483,14 @@ public class SubgraphIsomorphism {
             boolean groundTruth = false;
             boolean isInduced = true;
             double gamma = 0.5;
+            String label = "Label";
 
             // keep track of the minimum profile size while creating graph
-            int profileSize = 5; // itemsets must be this size
+            int profileSize = 3; // itemsets must be this size
             // TODO - if we choose greater than, then the values that are smaller make up the greater itemset sizes
 
             // get the information from the fdm file
-            fdmGraph(fdmFileLocation, outputFolderName, groundTruth, isInduced, profileSize, gamma);
+            fdmGraph(fdmFileLocation, outputFolderName, groundTruth, isInduced, profileSize, gamma, label);
         }
 
         // create query graph from random walk
@@ -1541,6 +1556,12 @@ public class SubgraphIsomorphism {
             System.out.println("\t Find the subgraph isomorphism between two know graphs");
             System.out.println("FrequentDatasets <targetFile> <outputFile>");
             System.out.println("\t Finds the frequent profile subsets within the given graph.");
+            System.out.println("FDMQuery <FDMFile> <outputFolder>");
+            System.out.println("\t Creates a query graph from the frequent dataset mining on a target graph.");
+            System.out.println("\t Information on the frequent dataset mining within folder, which can be created with FrequentDatasets.");
+            System.out.println("\t Find the subgraph isomorphism between given target graph and new query graph");
+            System.out.println("\t Output folder must contain folders: \"GenerationInfo\", \"Graphs\", \"Isomorphism\"");
+            System.out.println("\t Note: only works with one label");
             System.out.println("RandomWalk <targetFile> <outputFolder>");
             System.out.println("\t Creates a query graph from the target graph using a random walk.");
             System.out.println("\t Find the subgraph isomorphism between given target graph and random query graph");
