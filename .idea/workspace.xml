@@ -4,14 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6d0b8e23-97b2-4b58-991e-87f7b486f404" name="Default Changelist" comment="used different minimum supports (part 2)">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/Test/test.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Data/Output/Test/test.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/Vertex.java" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/Vertex.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/SubgraphIsomorphism.class" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/SubgraphIsomorphism.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/Vertex.class" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/Vertex.class" afterDir="false" />
-    </list>
+    <list default="true" id="6d0b8e23-97b2-4b58-991e-87f7b486f404" name="Default Changelist" comment="used different minimum supports (part 2)" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -285,7 +278,14 @@
       <option name="project" value="LOCAL" />
       <updated>1643645996705</updated>
     </task>
-    <option name="localTasksCounter" value="29" />
+    <task id="LOCAL-00029" summary="Converted the labeling to be string instead of attribute-value map">
+      <created>1643652033085</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1643652033085</updated>
+    </task>
+    <option name="localTasksCounter" value="30" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -361,7 +361,8 @@
     <MESSAGE value="Fixed minor issue with ordering" />
     <MESSAGE value="Fixed issues with isomorphism, and built query graph based off of the frequent dataset mining" />
     <MESSAGE value="Added some comments, and attempted other profile size values for FDMGraph" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added some comments, and attempted other profile size values for FDMGraph" />
+    <MESSAGE value="Converted the labeling to be string instead of attribute-value map" />
+    <option name="LAST_COMMIT_MESSAGE" value="Converted the labeling to be string instead of attribute-value map" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -388,32 +389,32 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1481</line>
+          <line>1484</line>
           <option name="timeStamp" value="26" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>906</line>
+          <line>909</line>
           <option name="timeStamp" value="56" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1154</line>
+          <line>1157</line>
           <option name="timeStamp" value="92" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1312</line>
+          <line>1315</line>
           <option name="timeStamp" value="96" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1344</line>
+          <line>1347</line>
           <option name="timeStamp" value="98" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1317</line>
+          <line>1320</line>
           <option name="timeStamp" value="105" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -438,12 +439,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1256</line>
+          <line>1259</line>
           <option name="timeStamp" value="113" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1447</line>
+          <line>1450</line>
           <option name="timeStamp" value="116" />
         </line-breakpoint>
       </breakpoints>

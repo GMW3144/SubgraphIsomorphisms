@@ -1386,6 +1386,44 @@ public class SubgraphIsomorphism {
 
     }
 
+    /**
+     * Creates a random graph from the target graph and performs subgraph isomorphism
+     *
+     * @param targetGraph the target graph
+     * @param targetLocation the location of the target
+     * @param size the size of the query graph
+     * @param outputFolderName the folder we are writing the graph information to
+     * @param graphName the name of the query graph
+     * @param isInduced if the isomorphism is induced
+     * @param groundTruth if we are finding the ground truth
+     * @param gamma the gamma value
+     * @throws IOException for the writer
+     */
+    public static void randomWalk(Graph<Vertex, DefaultEdge> targetGraph, String targetLocation, int size,
+                                  String outputFolderName, String graphName, boolean isInduced, boolean groundTruth,
+                                  double gamma) throws IOException {
+        Graph<Vertex, DefaultEdge> queryGraph = randomGraph(targetGraph, targetLocation,
+                size,outputFolderName + "GenerationInfo\\" + graphName);
+        // save the graph
+        String queryFileName = writeGraph(queryGraph, outputFolderName + "Graphs\\", graphName);
+
+        // find and display the isomorphisms
+        List<Map<Vertex, Vertex>> subgraphIsomorphismInduced = matching(queryGraph, targetGraph, isInduced,
+                gamma, groundTruth);
+
+
+        // write to output file
+        BufferedWriter writer = new BufferedWriter(new FileWriter(
+                outputFolderName + "Isomorphism\\" + graphName));
+        writer.write("");
+        displayIsomorphism(subgraphIsomorphismInduced, queryFileName, new File(targetLocation).getName(),
+                writer, isInduced, groundTruth);
+        System.out.println("============================");
+        writer.append("============================\n");
+
+        writer.close();
+    }
+
 
     /**
      * Main function where the graphs are constructed and we find the subgraph isomorphisms
@@ -1471,26 +1509,8 @@ public class SubgraphIsomorphism {
                     }
                     String graphName = "graph" + (numGraphs + 1) + ".txt";
 
-                    Graph<Vertex, DefaultEdge> queryGraph = randomGraph(targetGraph, targetLocation,
-                            size,outputFolderName + "GenerationInfo\\" + graphName);
-                    // save the graph
-                    String queryFileName = writeGraph(queryGraph, outputFolderName + "Graphs\\", graphName);
-
-                    // find and display the isomorphisms
-                    List<Map<Vertex, Vertex>> subgraphIsomorphismInduced = matching(queryGraph, targetGraph, isInduced,
-                            gamma, groundTruth);
-
-
-                    // write to output file
-                    BufferedWriter writer = new BufferedWriter(new FileWriter(
-                            outputFolderName + "Isomorphism\\" + graphName));
-                    writer.write("");
-                    displayIsomorphism(subgraphIsomorphismInduced, queryFileName, new File(targetLocation).getName(),
-                            writer, isInduced, groundTruth);
-                    System.out.println("============================");
-                    writer.append("============================\n");
-
-                    writer.close();
+                    randomWalk(targetGraph, targetLocation, size, outputFolderName, graphName, isInduced, groundTruth,
+                            gamma);
                 }
             }
         }
