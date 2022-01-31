@@ -1518,8 +1518,14 @@ public class SubgraphIsomorphism {
 
         else if(method.equals("Test")  && args.length == 5){
             final String groundTruthFile = args[1];
-            final String queryFolderName = args[2];
-            final String targetFolderName = args[3];
+            String queryFolderName = args[2];
+            if(queryFolderName.equals("_")){
+                queryFolderName = "";
+            }
+            String targetFolderName = args[3];
+            if(targetFolderName.equals("_")){
+                targetFolderName = "";
+            }
             final String outputFileName = args[4];
 
             double gamma = 0.5;
@@ -1545,7 +1551,8 @@ public class SubgraphIsomorphism {
             System.out.println("\t Output folder must contain folders: \"GenerationInfo\", \"Graphs\", \"Isomorphism\"");
             System.out.println("Test <groundTruthFile> <queryFolder> <targetFolder> <outputFile>");
             System.out.println("\t Test the subgraph isomorphisms within the ground truth file.");
-            System.out.println("\t Must provide the location of the query and target folders.");
+            System.out.println("\t Must provide the location of the query and target folders.  If path is contained within " +
+                    "ground truth folder, then give argument '_'");
             System.out.println("\t If there is any errors in the isomorphism it will be recorded in the output file.");
         }
 
