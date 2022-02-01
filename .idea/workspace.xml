@@ -6,8 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="6d0b8e23-97b2-4b58-991e-87f7b486f404" name="Default Changelist" comment="used different minimum supports (part 2)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/GenerationInfo/backbones_1AF7grf_Size3Minsup222.3_graph0.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/GenerationInfo/backbones_1AF7grf_Size3Minsup222.3_graph0.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/Graphs/backbones_1AF7grf_Size3Minsup222.3_graph0.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/Graphs/backbones_1AF7grf_Size3Minsup222.3_graph0.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/Test/test.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Data/Output/Test/test.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/SubgraphIsomorphism.class" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/SubgraphIsomorphism.class" afterDir="false" />
     </list>
@@ -72,7 +71,7 @@
     <configuration name="SubgraphIsomorphism " type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="SubgraphIsomorphism" />
       <module name="SubgraphIsomorphism" />
-      <option name="PROGRAM_PARAMETERS" value="KnownGraphs C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph137.txt C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\Test\Isomorphism\graphQLgraph137.txt" />
+      <option name="PROGRAM_PARAMETERS" value="Test C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\GroundTruth\GroundTruthEvery6.txt C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\query\ C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\ C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\Test\test.txt" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../../ISProject" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -416,57 +415,52 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>909</line>
+          <line>1012</line>
           <option name="timeStamp" value="56" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1333</line>
+          <line>1436</line>
           <option name="timeStamp" value="96" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1339</line>
+          <line>1442</line>
           <option name="timeStamp" value="105" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>627</line>
+          <line>668</line>
           <option name="timeStamp" value="107" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1506</line>
+          <line>1643</line>
           <option name="timeStamp" value="116" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1181</line>
+          <line>1284</line>
           <option name="timeStamp" value="118" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1286</line>
+          <line>1389</line>
           <option name="timeStamp" value="125" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1384</line>
+          <line>1487</line>
           <option name="timeStamp" value="130" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>399</line>
-          <option name="timeStamp" value="131" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1501</line>
+          <line>1638</line>
           <option name="timeStamp" value="136" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1456</line>
+          <line>1603</line>
           <option name="timeStamp" value="138" />
         </line-breakpoint>
       </breakpoints>
