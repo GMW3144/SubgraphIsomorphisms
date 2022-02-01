@@ -5,33 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6d0b8e23-97b2-4b58-991e-87f7b486f404" name="Default Changelist" comment="used different minimum supports (part 2)">
-      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/GenerationInfo/graph20.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/GenerationInfo/graph21.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/GenerationInfo/graph22.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/GenerationInfo/graph23.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/GenerationInfo/graph24.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/GenerationInfo/graph25.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/GenerationInfo/graph26.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/GenerationInfo/graph27.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/GenerationInfo/graph28.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/Graphs/graph20.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/Graphs/graph21.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/Graphs/graph22.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/Graphs/graph23.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/Graphs/graph24.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/Graphs/graph25.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/Graphs/graph26.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/Graphs/graph27.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/Graphs/graph28.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/Isomorphism/graph20.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/Isomorphism/graph21.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/Isomorphism/graph22.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/Isomorphism/graph23.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/Isomorphism/graph24.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/Isomorphism/graph25.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/Isomorphism/graph26.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/Isomorphism/graph27.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/Isomorphism/graph28.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/GenerationInfo/backbones_1AF7grf_Size3Minsup222.3_graph0.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/GenerationInfo/backbones_1AF7grf_Size3Minsup222.3_graph0.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/Graphs/backbones_1AF7grf_Size3Minsup222.3_graph0.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Data/Output/FrequentDatasetMining/Query/Graphs/backbones_1AF7grf_Size3Minsup222.3_graph0.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/SubgraphIsomorphism.class" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/SubgraphIsomorphism.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -94,7 +72,7 @@
     <configuration name="SubgraphIsomorphism " type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="SubgraphIsomorphism" />
       <module name="SubgraphIsomorphism" />
-      <option name="PROGRAM_PARAMETERS" value="FDMQuery C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\FrequentDatasetMining\fifty\backbones_1APM.grf C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\FrequentDatasetMining\Query\" />
+      <option name="PROGRAM_PARAMETERS" value="KnownGraphs C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph137.txt C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\Test\Isomorphism\graphQLgraph137.txt" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../../ISProject" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -480,6 +458,16 @@
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
           <line>399</line>
           <option name="timeStamp" value="131" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
+          <line>1501</line>
+          <option name="timeStamp" value="136" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
+          <line>1456</line>
+          <option name="timeStamp" value="138" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

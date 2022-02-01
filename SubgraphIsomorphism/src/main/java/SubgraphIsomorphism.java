@@ -1458,7 +1458,7 @@ public class SubgraphIsomorphism {
             final String targetLocation = args[2];
             final String outputFileName = args[3];
 
-            boolean groundTruth = true;
+            boolean groundTruth = false;
             boolean isInduced = true;
             double gamma = 0.5;
 
