@@ -2,7 +2,6 @@ Graph: backbones_1TGG.grf(C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\D
 Number of Nodes: 535
 Minsup (integer): 26.75
 Minsup (percentage): 0.05
-Attribute Label
 [C, C, C, H, H] appears in 46 vertex profiles:
 [131, 132, 196, 70, 455, 328, 456, 457, 402, 147, 403, 404, 277, 22, 278, 23, 87, 279, 88, 346, 477, 478, 224, 225, 101, 424, 425, 426, 109, 46, 110, 238, 494, 47, 111, 175, 495, 246, 247, 248, 312, 313, 378, 379, 61, 510] 
 

@@ -2,7 +2,6 @@ Graph: backbones_1DS3.grf(C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\D
 Number of Nodes: 734
 Minsup (integer): 36.7
 Minsup (percentage): 0.05
-Attribute Label
 [C, C, C, H, H] appears in 41 vertex profiles:
 [128, 705, 194, 450, 706, 707, 70, 326, 390, 327, 328, 404, 660, 405, 597, 22, 406, 215, 216, 536, 537, 91, 92, 480, 678, 105, 106, 362, 107, 300, 239, 240, 562, 436, 182, 630, 55, 56, 312, 253, 127] 
 

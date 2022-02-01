@@ -339,10 +339,10 @@ public class SubgraphIsomorphism {
                 // find the maximum matching of B
                 HopcroftKarpMaximumCardinalityBipartiteMatching<Vertex, DefaultEdge> matchingAlgorithm =
                         new HopcroftKarpMaximumCardinalityBipartiteMatching<>(B, uPVertices, vPVertices);
-                MatchingAlgorithm.Matching<Vertex, DefaultEdge> matching = matchingAlgorithm.getMatching();
+                MatchingAlgorithm.Matching<Vertex, DefaultEdge> bipartiteMatching = matchingAlgorithm.getMatching();
 
                 // matching does not contain all query vertices
-                if(matching.getEdges().size() != uPVertices.size()){
+                if(bipartiteMatching.getEdges().size() != uPVertices.size()){
                     candidates.get(u).remove(v);
 
                     // build T'
@@ -1162,7 +1162,24 @@ public class SubgraphIsomorphism {
         }
         Collections.sort(outputValues);
         for(String output: outputValues){
-            System.out.print(output);
+            for(int i = 0; i<output.length(); i++){
+                char c = output.charAt(i);
+                if(c == ']'){
+                    break;
+                }
+                System.out.print(c);
+            }
+            int numOccurances = 0;
+            for(String word: output.split(" ")){
+                try{
+                    numOccurances = Integer.parseInt(word);
+                    break;
+                }
+                catch (NumberFormatException nfe){
+                    continue;
+                }
+            }
+            System.out.println("]"+":"+numOccurances);
             writer.append(output);
         }
 
@@ -1315,6 +1332,7 @@ public class SubgraphIsomorphism {
 
         // now we have the star shapes of the profiles
         System.out.println(frequentProfileShapes);
+        int numGraphs = 0;
 
         // build query graphs from the star shaped query graphs
         for(List<String> profile : frequentProfileShapes.keySet()){
@@ -1346,13 +1364,9 @@ public class SubgraphIsomorphism {
             }
 
             // store important information when using query graph
-            File outputGraphFolder = new File(outputFolderName+"Graphs\\");
-
-            int numGraphs = 0;
-            if (outputGraphFolder.list() != null) {
-                numGraphs = outputGraphFolder.list().length;
-            }
-            String graphName = "graph" + (numGraphs + 1) + ".txt";
+            String graphName = new File(graphLocation).getName().replace(".", "")+"_Size"+profileSize
+                    +"Minsup"+minsup+"_graph" + (numGraphs) + ".txt";
+            numGraphs+=1;
 
             // save the graph
             String queryFileName = writeGraph(query, outputFolderName + "Graphs\\", graphName);
@@ -1432,8 +1446,11 @@ public class SubgraphIsomorphism {
      * @throws IOException for reader and writer
      */
     public static void main(String[] args) throws IOException {
-        // get the info on the folder and file
-        final String method = args[0];
+        String method = "";
+        if(args.length>0) {
+            // get the info on the folder and file
+            method = args[0];
+        }
 
         // if the two graphs are known
         if(method.equals("KnownGraphs") && args.length == 4) {
@@ -1441,7 +1458,7 @@ public class SubgraphIsomorphism {
             final String targetLocation = args[2];
             final String outputFileName = args[3];
 
-            boolean groundTruth = false;
+            boolean groundTruth = true;
             boolean isInduced = true;
             double gamma = 0.5;
 
@@ -1478,7 +1495,7 @@ public class SubgraphIsomorphism {
             double gamma = 0.5;
 
             // keep track of the minimum profile size while creating graph
-            int profileSize = 3; // itemsets must be this size
+            int profileSize = 5; // itemsets must be this size
             // TODO - if we choose greater than, then the values that are smaller make up the greater itemset sizes
 
             // get the information from the fdm file
@@ -1552,7 +1569,7 @@ public class SubgraphIsomorphism {
             System.out.println("Test <groundTruthFile> <queryFolder> <targetFolder> <outputFile>");
             System.out.println("\t Test the subgraph isomorphisms within the ground truth file.");
             System.out.println("\t Must provide the location of the query and target folders.  If path is contained within " +
-                    "ground truth folder, then give argument '_'");
+                    "ground truth folder, then give argument '_'.");
             System.out.println("\t If there is any errors in the isomorphism it will be recorded in the output file.");
         }
 

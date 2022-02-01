@@ -2,7 +2,6 @@ Graph: mus_musculus_1EPI.grf(C:\Users\Gabi\Desktop\IndependentStudy\GitHubProjec
 Number of Nodes: 794
 Minsup (integer): 39.7
 Minsup (percentage): 0.05
-Attribute Label
 [C, C, C, H, H] appears in 40 vertex profiles:
 [385, 4, 581, 773, 582, 774, 263, 648, 715, 140, 209, 83, 84, 343, 471, 535, 280, 667, 668, 31, 159, 547, 739, 548, 612, 740, 613, 362, 299, 430, 496, 754, 691, 52, 53, 119, 636, 317, 190, 318] 
 

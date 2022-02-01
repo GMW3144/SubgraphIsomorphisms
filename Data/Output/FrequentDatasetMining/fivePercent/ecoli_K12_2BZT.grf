@@ -2,7 +2,6 @@ Graph: ecoli_K12_2BZT.grf(C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\D
 Number of Nodes: 1049
 Minsup (integer): 52.45
 Minsup (percentage): 0.05
-Attribute Label
 [C, C, C, H, H] appears in 71 vertex profiles:
 [770, 515, 4, 132, 133, 262, 903, 650, 1037, 1038, 784, 785, 533, 534, 662, 922, 156, 284, 157, 30, 799, 800, 801, 550, 682, 172, 428, 429, 49, 305, 50, 306, 51, 694, 822, 957, 319, 575, 706, 452, 197, 198, 71, 840, 331, 718, 719, 981, 859, 604, 732, 860, 733, 222, 350, 486, 616, 1000, 362, 363, 109, 241, 498, 1012, 885, 1013, 376, 377, 378, 635, 636] 
 
