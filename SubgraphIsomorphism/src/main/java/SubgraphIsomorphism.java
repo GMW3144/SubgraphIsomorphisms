@@ -1380,8 +1380,11 @@ public class SubgraphIsomorphism {
         // iterate through vertices of graph1
         List<Vertex> leaf2 = findLeafNodes(graph2);
 
+        // maximum edge
+        Vertex maxV1 = leaf1.get(0);
+        Vertex maxV2 = leaf2.get(0);
+        int maxCommonElements = -1;
 
-        Map<DefaultEdge, Integer> edgePossibilities = new HashMap<>();
         // iterate through leaf vertices of graph 1
         for(Vertex v: leaf1){
             Vertex vP = oldToNew.get(v);
@@ -1390,8 +1393,10 @@ public class SubgraphIsomorphism {
                 Vertex uP = oldToNew.get(u);
                 String uLabel = u.getLabel();
 
-                // two vertices create an edge
-                DefaultEdge edge = combinedGraph.getEdge(vP, uP);
+                // two vertices must be equivalent to merge them
+                if(!vLabel.equals(uLabel)){
+                    continue;
+                }
 
                 // look at the vertices they have in common
                 List<Integer> possibleMappings1 = graph1LeafMappings.get(vLabel);
@@ -1401,22 +1406,45 @@ public class SubgraphIsomorphism {
                 int i2 = 0;
 
                 while(i1<possibleMappings1.size() && i2 < possibleMappings2.size()){
-                    int e1 = possibleMappings1.get(i1);
-                    int e2 = possibleMappings2.get(i2);
-                    if(e1 == e2){
+                    int v1 = possibleMappings1.get(i1);
+                    int v2 = possibleMappings2.get(i2);
+                    // same element
+                    if(v1 == v2){
                         commonElements++;
                         i1++; i2++;
                     }
-                    else if(e1 < e2){
+                    // need to look at next vertex in graph1
+                    else if(v1 < v2){
                         i1++;
                     }
+                    // need to look at next vertex in graph2
                     else{
                         i2++;
                     }
                 }
-                edgePossibilities.put(edge, commonElements);
+                if(commonElements>maxCommonElements){
+                    maxV1 = vP;
+                    maxV2 = uP;
+
+                    maxCommonElements = commonElements;
+                }
             }
         }
+
+        // union the two most likely vertices
+        // update the neighbors profiles from removing the vertex
+        // add in new edge
+        for(Vertex v : Graphs.neighborListOf(combinedGraph, maxV1)){
+            // remove maxV1 the profile
+            v.removeFromProfile(maxV1);
+
+            // add new edge between vertex and maxV2, update profile
+            combinedGraph.addEdge(maxV2, v);
+            v.addToProfile(maxV2);
+            maxV2.addToProfile(v);
+        }
+        // remove the vertex in each
+        combinedGraph.removeVertex(maxV1);
 
         return combinedGraph;
     }

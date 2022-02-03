@@ -98,6 +98,10 @@ public class Vertex {
         Collections.sort(profile);
     }
 
+    public void removeFromProfile(Vertex neighbor){
+        profile.remove(neighbor.getLabel()); // should remain sorted
+    }
+
     /**
      * Calculates the number of possible subsets for a given vertex profile.  Includes the empty set and each entry must
      * be unique.
