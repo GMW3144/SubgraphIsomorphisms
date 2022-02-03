@@ -1686,67 +1686,64 @@ public class SubgraphIsomorphism {
         // union two star graphs
         Graph<Vertex, DefaultEdge> query = unionGraphs(starGraph1, starGraph2, starGraph1LeafMappings, starGraph2LeafMappings);
 
-        for(int i = 0; i<starGraphs.size(); i++){
-            query = starGraphs.get(i);
-            List<String> profile = starGraphsProfiles.get(i);
+        // store important information when using query graph
+        File outputGraphFolder = new File(outputFolderName + "Graphs\\");
+        int numGraphs = 0;
+        if (outputGraphFolder.list() != null) {
+            numGraphs = outputGraphFolder.list().length;
+        }
+        String graphName = "graph" + (numGraphs + 1) + ".txt";
 
-            // store important information when using query graph
-            File outputGraphFolder = new File(outputFolderName + "Graphs\\");
-            int numGraphs = 0;
-            if (outputGraphFolder.list() != null) {
-                numGraphs = outputGraphFolder.list().length;
-            }
-            String graphName = "graph" + (numGraphs + 1) + ".txt";
+        // save the graph
+        String queryFileName = writeGraph(query, outputFolderName + "Graphs\\", graphName);
 
-            // save the graph
-            String queryFileName = writeGraph(query, outputFolderName + "Graphs\\", graphName);
+        // now write the information to build the graph
+        BufferedWriter writer = new BufferedWriter(new FileWriter(outputFolderName+"GenerationInfo\\"+graphName));
 
-            // now write the information to build the graph
-            BufferedWriter writer = new BufferedWriter(new FileWriter(
-                    outputFolderName+"GenerationInfo\\"+graphName));
+        writer.write("Used "+fdmFileLocation+" frequent dataset mining \n");
+        writer.append("Combined two graphs:");
+        writer.append("Vertex with attribute "+ frequentProfileShapes.get(starGraph1Profile)
+                + " and profile "+ starGraph1Profile +" occurs "+starGraph1NumOccurances
+                + " times within the graph \n"
+                +"Vertex with attribute "+ frequentProfileShapes.get(starGraph2Profile)
+                + " and profile "+ starGraph2Profile +" occurs "+starGraph2NumOccurances
+                + " times within the graph \n");
+        writer.close();
 
-            writer.write("Used "+fdmFileLocation+" frequent dataset mining \n");
-            writer.append("Vertex with attribute "+ frequentProfileShapes.get(profile)
-                    + " and profile "+ profile +" occurs "+numberTimesRootOccurs.get(profile)
-                    + " times within the graph \n");
-            writer.close();
-
-            // now perform subgraph isomorphism
-            List<Map<Vertex, Vertex>> subgraphIsomorphism = new ArrayList<>();
-            if(algorithm.equals("groundTruth")) {
-                subgraphIsomorphism = groundTruthMatching(query, target, isInduced);
-            }
-            else if(algorithm.equals("graphQL")){
-                subgraphIsomorphism = graphQL(query, target, isInduced, gamma);
-            }
-            else{
-                System.out.println("Specify one of the following algorithms: ");
-                System.out.println("\t groundTruth: finds the ground truth isomorphism.  Only uses LDA in pruning and BFS for ordering.");
-                System.out.println("\t graphQL: uses the GraphQL algorithm.");
-
-                // write to output file
-                writer = new BufferedWriter(new FileWriter(
-                        outputFolderName + "Isomorphism\\" + graphName));
-                writer.write("Algorithm specified is not valid.\n");
-                writer.append("Specify one of the following algorithms: \n" +
-                        "\t groundTruth: finds the ground truth isomorphism.  Only uses LDA in pruning and BFS for ordering.\n" +
-                        "\t graphQL: uses the GraphQL algorithm.\n");
-                writer.close();
-
-                return;
-            }
+        // now perform subgraph isomorphism
+        List<Map<Vertex, Vertex>> subgraphIsomorphism;
+        if(algorithm.equals("groundTruth")) {
+            subgraphIsomorphism = groundTruthMatching(query, target, isInduced);
+        }
+        else if(algorithm.equals("graphQL")){
+            subgraphIsomorphism = graphQL(query, target, isInduced, gamma);
+        }
+        else{
+            System.out.println("Specify one of the following algorithms: ");
+            System.out.println("\t groundTruth: finds the ground truth isomorphism.  Only uses LDA in pruning and BFS for ordering.");
+            System.out.println("\t graphQL: uses the GraphQL algorithm.");
 
             // write to output file
             writer = new BufferedWriter(new FileWriter(
                     outputFolderName + "Isomorphism\\" + graphName));
-            writer.write("");
-            displayIsomorphism(subgraphIsomorphism, queryFileName, graphLocation, writer, isInduced, algorithm);
-            System.out.println("============================");
-            writer.append("============================\n");
-
+            writer.write("Algorithm specified is not valid.\n");
+            writer.append("Specify one of the following algorithms: \n" +
+                    "\t groundTruth: finds the ground truth isomorphism.  Only uses LDA in pruning and BFS for ordering.\n" +
+                    "\t graphQL: uses the GraphQL algorithm.\n");
             writer.close();
 
+            return;
         }
+
+        // write to output file
+        writer = new BufferedWriter(new FileWriter(
+                outputFolderName + "Isomorphism\\" + graphName));
+        writer.write("");
+        displayIsomorphism(subgraphIsomorphism, queryFileName, graphLocation, writer, isInduced, algorithm);
+        System.out.println("============================");
+        writer.append("============================\n");
+
+        writer.close();
 
     }
 
