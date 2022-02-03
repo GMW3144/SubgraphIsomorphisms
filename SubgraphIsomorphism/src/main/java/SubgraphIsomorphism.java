@@ -1290,6 +1290,57 @@ public class SubgraphIsomorphism {
         writer.close();
     }
 
+    public static int findMostFrequentStructure(List<Graph<Vertex, DefaultEdge>> starGraphs,
+                                                                       List<List<String>> starGraphsProfiles,
+                                                                       Map<List<String>, Integer> numberTimesRootOccurs){
+
+        // keep track of most frequent graph
+        Graph<Vertex, DefaultEdge> mostFrequentStarGraph = null;
+        int mostFrequent = -1;
+        int location = -1;
+
+        // iterate through the graphs and appropriate information
+        for(int i = 0; i<starGraphs.size(); i++){
+            Graph<Vertex, DefaultEdge> graph = starGraphs.get(i);
+            List<String> profile = starGraphsProfiles.get(i);
+            int numberOccurances = numberTimesRootOccurs.get(profile);
+
+            if(mostFrequentStarGraph == null || numberOccurances>mostFrequent){
+                mostFrequentStarGraph = graph;
+                mostFrequent = numberOccurances;
+                location = i;
+            }
+        }
+
+        return location;
+    }
+
+    public static List<Vertex> findLeafNodes(Graph<Vertex, DefaultEdge> graph){
+        // the leaf nodes
+        List<Vertex> leaf = new ArrayList<>();
+        // iterate through vertices and only included vertices of degree 1
+        Iterator<Vertex> vertexIterator = new DepthFirstIterator<>(graph);
+        while(vertexIterator.hasNext()) {
+            // get the query vertex
+            Vertex u = vertexIterator.next();
+            if(graph.degreeOf(u) == 1){
+                leaf.add(u);
+            }
+        }
+        return leaf;
+    }
+
+    public static Graph<Vertex, DefaultEdge> unionGraphs(Graph<Vertex, DefaultEdge> graph1,
+                                                         Graph<Vertex, DefaultEdge> graph2){
+        Graph<Vertex, DefaultEdge> combinedGraph = graph1;
+
+        List<Vertex> leaf1 = findLeafNodes(graph1);
+        // iterate through vertices of graph1
+        List<Vertex> leaf2 = findLeafNodes(graph2);
+
+        return combinedGraph;
+    }
+
     /**
      * Creates a graph from the frequent dataset mining and performs subgraph isomorphism on the new query graph and
      * target graph from the frequent dataset mining
@@ -1385,11 +1436,15 @@ public class SubgraphIsomorphism {
         Map<List<String>, String> frequentProfileShapes = new HashMap<>();
         // keep track of the number of times the root occurs
         Map<List<String>, Integer> numberTimesRootOccurs = new HashMap<>();
+        // keep track of neighbor vertices and labels for a given profile and root
+        Map<List<String>, Map<String, List<Integer>>> neighborInfo = new HashMap<>();
 
         // look through the graph for each profile (and their vertices to see the structure)
         // iterate through the frequent profiles
         for(List<String> profile: frequentProfiles.keySet()){
             Map<String, Integer> numberRoot = new HashMap<>();
+            // keep track for a given root the label and corresponding vertices ids
+            Map<String, Map<String, List<Integer>>> currentNeighborInfo = new HashMap<>();
 
             // iterate through the vertices it appears in
             for(Integer vID: frequentProfiles.get(profile)){
@@ -1411,10 +1466,33 @@ public class SubgraphIsomorphism {
                 // if haven't seen root attribute, then add to map
                 if(!numberRoot.containsKey(label)){
                     numberRoot.put(label, 1);
+                    currentNeighborInfo.put(label, new HashMap<>()); // keep track of profile with root
                 }
                 // if have seen root, then increment number of occurrences
                 else{
                     numberRoot.put(label, numberRoot.get(label)+1);
+                }
+
+                List<String> neighborsOfProfile = new ArrayList<>(profile);
+                neighborsOfProfile.remove(label);
+
+                // get the information label
+                Map<String, List<Integer>> neighborMapping = currentNeighborInfo.get(label);
+                // add the neighbors information
+                for(Vertex neighbor: Graphs.neighborListOf(target, v)){
+                    String neighborLabel = neighbor.getLabel();
+                    // only account for the labels within the profile excluding the current root
+                    if(!neighborsOfProfile.contains(neighborLabel)){
+                        continue;
+                    }
+                    // get the id of the neighbor, and keep track of it
+                    int neighborId = neighbor.getId(); seen.put(neighborId, neighbor);
+                    // new label for the neighbors
+                    if(!neighborMapping.containsKey(neighborLabel)){
+                        neighborMapping.put(neighborLabel, new ArrayList<>());
+                    }
+                    // keep track of the neighbor vertices
+                    neighborMapping.get(neighborLabel).add(neighborId);
                 }
             }
 
@@ -1431,15 +1509,18 @@ public class SubgraphIsomorphism {
             if(numberRoot.get(root)>=minsup) {
                 frequentProfileShapes.put(profile, root);
                 numberTimesRootOccurs.put(profile, numberRoot.get(root));
+                neighborInfo.put(profile, currentNeighborInfo.get(root));
             }
         }
 
         // now we have the star shapes of the profiles
         System.out.println(frequentProfileShapes);
-        int numGraphs = 0;
+        // store the graphs to union
+        List<Graph<Vertex, DefaultEdge>> starGraphs = new ArrayList<>();
+        List<List<String>> starGraphsProfiles = new ArrayList<>();
 
         // build query graphs from the star shaped query graphs
-        for(List<String> profile : frequentProfileShapes.keySet()){
+        for(List<String> profile : frequentProfileShapes.keySet()) {
             // get the root vertex
             String rootLabel = frequentProfileShapes.get(profile);
             // get the neighbor vertex
@@ -1450,14 +1531,16 @@ public class SubgraphIsomorphism {
 
             // add the root
             Vertex root = new Vertex(0, rootLabel);
-            query.addVertex(root); root.addToProfile(root);
+            query.addVertex(root);
+            root.addToProfile(root);
 
             int currentID = 1;
             // add the other vertices and their edges
-            for(String neighborLabel: neighbors){
+            for (String neighborLabel : neighbors) {
                 // add the vertex, update profile
                 Vertex neighbor = new Vertex(currentID, neighborLabel);
-                query.addVertex(neighbor); neighbor.addToProfile(neighbor);
+                query.addVertex(neighbor);
+                neighbor.addToProfile(neighbor);
 
                 // add the edge, update profile
                 query.addEdge(root, neighbor);
@@ -1467,10 +1550,36 @@ public class SubgraphIsomorphism {
                 currentID++;
             }
 
+            starGraphs.add(query); starGraphsProfiles.add(profile);
+        }
+
+
+        // keep track of two most frequent graph
+        int locationStarGraph1 = findMostFrequentStructure(starGraphs, starGraphsProfiles, numberTimesRootOccurs);
+        Graph<Vertex, DefaultEdge> starGraph1 = starGraphs.remove(locationStarGraph1);
+        List<String> starGraph1Profile = starGraphsProfiles.remove(locationStarGraph1);
+        int starGraph1NumOccurances = numberTimesRootOccurs.remove(starGraph1Profile);
+
+
+        int locationStarGraph2  = findMostFrequentStructure(starGraphs, starGraphsProfiles,
+                numberTimesRootOccurs);
+        Graph<Vertex, DefaultEdge> starGraph2 = starGraphs.remove(locationStarGraph2);
+        List<String> starGraph2Profile = starGraphsProfiles.remove(locationStarGraph2);
+        int starGraph2NumOccurances = numberTimesRootOccurs.remove(starGraph2Profile);
+
+        // union two star graphs
+
+        for(int i = 0; i<starGraphs.size(); i++){
+            Graph<Vertex, DefaultEdge> query = starGraphs.get(i);
+            List<String> profile = starGraphsProfiles.get(i);
+
             // store important information when using query graph
-            String graphName = new File(graphLocation).getName().replace(".", "")+"_Size"+profileSize
-                    +"Minsup"+minsup+"_graph" + (numGraphs) + ".txt";
-            numGraphs+=1;
+            File outputGraphFolder = new File(outputFolderName + "Graphs\\");
+            int numGraphs = 0;
+            if (outputGraphFolder.list() != null) {
+                numGraphs = outputGraphFolder.list().length;
+            }
+            String graphName = "graph" + (numGraphs + 1) + ".txt";
 
             // save the graph
             String queryFileName = writeGraph(query, outputFolderName + "Graphs\\", graphName);
@@ -1633,7 +1742,7 @@ public class SubgraphIsomorphism {
             final String outputFolderName = args[2];
 
             // keep track of the minimum profile size while creating graph
-            int profileSize = 4; // itemsets must be this size
+            int profileSize = 3; // itemsets must be this size
             // TODO - if we choose greater than, then the values that are smaller make up the greater itemset sizes
 
             // get the information from the fdm file
