@@ -1331,12 +1331,92 @@ public class SubgraphIsomorphism {
     }
 
     public static Graph<Vertex, DefaultEdge> unionGraphs(Graph<Vertex, DefaultEdge> graph1,
-                                                         Graph<Vertex, DefaultEdge> graph2){
-        Graph<Vertex, DefaultEdge> combinedGraph = graph1;
+                                                         Graph<Vertex, DefaultEdge> graph2,
+                                                         Map<String, List<Integer>> graph1LeafMappings,
+                                                         Map<String, List<Integer>> graph2LeafMappings){
+        Graph<Vertex, DefaultEdge> combinedGraph = new SimpleGraph<>(DefaultEdge.class);
+        Map<Vertex, Vertex> oldToNew = new HashMap<>();
+        // add the vertices to the combined graph
+        int id = 0;
+        for(Vertex v: graph1.vertexSet()){
+            Vertex copyVertex = copyVertex(v, id);
+            combinedGraph.addVertex(copyVertex); copyVertex.addToProfile(copyVertex);
+            oldToNew.put(v, copyVertex);
+            id++;
+        }
+        for(Vertex v: graph2.vertexSet()){
+            Vertex copyVertex = copyVertex(v, id);
+            combinedGraph.addVertex(copyVertex); copyVertex.addToProfile(copyVertex);
+            oldToNew.put(v, copyVertex);
+            id++;
+        }
+        // add origninal edges back in
+        for(Vertex v: graph1.vertexSet()){
+            for(Vertex u: Graphs.neighborListOf(graph1, v)) {
+                Vertex vP = oldToNew.get(v);
+                Vertex uP = oldToNew.get(u);
+                if(!combinedGraph.containsEdge(vP, uP)) {
+                    combinedGraph.addEdge(vP, uP);
+
+                    vP.addToProfile(uP);
+                    uP.addToProfile(vP);
+                }
+            }
+        }
+        for(Vertex v: graph2.vertexSet()){
+            for(Vertex u: Graphs.neighborListOf(graph2, v)) {
+                Vertex vP = oldToNew.get(v);
+                Vertex uP = oldToNew.get(u);
+                if(!combinedGraph.containsEdge(vP, uP)) {
+                    combinedGraph.addEdge(vP, uP);
+
+                    vP.addToProfile(uP);
+                    uP.addToProfile(vP);
+                }
+            }
+        }
 
         List<Vertex> leaf1 = findLeafNodes(graph1);
         // iterate through vertices of graph1
         List<Vertex> leaf2 = findLeafNodes(graph2);
+
+
+        Map<DefaultEdge, Integer> edgePossibilities = new HashMap<>();
+        // iterate through leaf vertices of graph 1
+        for(Vertex v: leaf1){
+            Vertex vP = oldToNew.get(v);
+            String vLabel = v.getLabel();
+            for(Vertex u : leaf2){
+                Vertex uP = oldToNew.get(u);
+                String uLabel = u.getLabel();
+
+                // two vertices create an edge
+                DefaultEdge edge = combinedGraph.getEdge(vP, uP);
+
+                // look at the vertices they have in common
+                List<Integer> possibleMappings1 = graph1LeafMappings.get(vLabel);
+                List<Integer> possibleMappings2 = graph2LeafMappings.get(uLabel);
+                int commonElements = 0;
+                int i1 = 0;
+                int i2 = 0;
+
+                while(i1<possibleMappings1.size() && i2 < possibleMappings2.size()){
+                    int e1 = possibleMappings1.get(i1);
+                    int e2 = possibleMappings2.get(i2);
+                    if(e1 == e2){
+                        commonElements++;
+                        i1++; i2++;
+                    }
+                    else if(e1 < e2){
+                        i1++;
+                    }
+                    else{
+                        i2++;
+                    }
+                }
+                edgePossibilities.put(edge, commonElements);
+            }
+        }
 
         return combinedGraph;
     }
@@ -1509,6 +1589,11 @@ public class SubgraphIsomorphism {
             if(numberRoot.get(root)>=minsup) {
                 frequentProfileShapes.put(profile, root);
                 numberTimesRootOccurs.put(profile, numberRoot.get(root));
+
+                // first sort the vertices
+                for(String neighborLabel : currentNeighborInfo.get(root).keySet()) {
+                    Collections.sort(currentNeighborInfo.get(root).get(neighborLabel));
+                }
                 neighborInfo.put(profile, currentNeighborInfo.get(root));
             }
         }
@@ -1518,6 +1603,8 @@ public class SubgraphIsomorphism {
         // store the graphs to union
         List<Graph<Vertex, DefaultEdge>> starGraphs = new ArrayList<>();
         List<List<String>> starGraphsProfiles = new ArrayList<>();
+        // keep track of the vertix id, want all to be different
+        int currentId = 0;
 
         // build query graphs from the star shaped query graphs
         for(List<String> profile : frequentProfileShapes.keySet()) {
@@ -1530,15 +1617,15 @@ public class SubgraphIsomorphism {
             Graph<Vertex, DefaultEdge> query = new SimpleGraph<>(DefaultEdge.class);
 
             // add the root
-            Vertex root = new Vertex(0, rootLabel);
+            Vertex root = new Vertex(currentId, rootLabel);
             query.addVertex(root);
             root.addToProfile(root);
 
-            int currentID = 1;
+            currentId++;
             // add the other vertices and their edges
             for (String neighborLabel : neighbors) {
                 // add the vertex, update profile
-                Vertex neighbor = new Vertex(currentID, neighborLabel);
+                Vertex neighbor = new Vertex(currentId, neighborLabel);
                 query.addVertex(neighbor);
                 neighbor.addToProfile(neighbor);
 
@@ -1547,7 +1634,7 @@ public class SubgraphIsomorphism {
                 root.addToProfile(neighbor);
                 neighbor.addToProfile(root);
 
-                currentID++;
+                currentId++;
             }
 
             starGraphs.add(query); starGraphsProfiles.add(profile);
@@ -1559,18 +1646,20 @@ public class SubgraphIsomorphism {
         Graph<Vertex, DefaultEdge> starGraph1 = starGraphs.remove(locationStarGraph1);
         List<String> starGraph1Profile = starGraphsProfiles.remove(locationStarGraph1);
         int starGraph1NumOccurances = numberTimesRootOccurs.remove(starGraph1Profile);
-
+        Map<String, List<Integer>> starGraph1LeafMappings = neighborInfo.remove(starGraph1Profile);
 
         int locationStarGraph2  = findMostFrequentStructure(starGraphs, starGraphsProfiles,
                 numberTimesRootOccurs);
         Graph<Vertex, DefaultEdge> starGraph2 = starGraphs.remove(locationStarGraph2);
         List<String> starGraph2Profile = starGraphsProfiles.remove(locationStarGraph2);
         int starGraph2NumOccurances = numberTimesRootOccurs.remove(starGraph2Profile);
+        Map<String, List<Integer>> starGraph2LeafMappings = neighborInfo.remove(starGraph2Profile);
 
         // union two star graphs
+        Graph<Vertex, DefaultEdge> query = unionGraphs(starGraph1, starGraph2, starGraph1LeafMappings, starGraph2LeafMappings);
 
         for(int i = 0; i<starGraphs.size(); i++){
-            Graph<Vertex, DefaultEdge> query = starGraphs.get(i);
+            query = starGraphs.get(i);
             List<String> profile = starGraphsProfiles.get(i);
 
             // store important information when using query graph

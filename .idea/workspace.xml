@@ -317,7 +317,14 @@
       <option name="project" value="LOCAL" />
       <updated>1643737853637</updated>
     </task>
-    <option name="localTasksCounter" value="34" />
+    <task id="LOCAL-00034" summary="Accounted for possible mappings for leaf of star graph">
+      <created>1643908437565</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1643908437565</updated>
+    </task>
+    <option name="localTasksCounter" value="35" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -369,7 +376,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added proteins" />
     <MESSAGE value="Created ground truth for all combinations" />
     <MESSAGE value="Moved files" />
     <MESSAGE value="Adding ground truth" />
@@ -394,7 +400,8 @@
     <MESSAGE value="Some fixes with test" />
     <MESSAGE value="Allows ground truth to not need a folder name" />
     <MESSAGE value="Split up ground truth and graphQL, to make easier to implement other algorithms" />
-    <option name="LAST_COMMIT_MESSAGE" value="Split up ground truth and graphQL, to make easier to implement other algorithms" />
+    <MESSAGE value="Accounted for possible mappings for leaf of star graph" />
+    <option name="LAST_COMMIT_MESSAGE" value="Accounted for possible mappings for leaf of star graph" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -431,7 +438,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1753</line>
+          <line>1824</line>
           <option name="timeStamp" value="116" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -441,28 +448,48 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1443</line>
+          <line>1505</line>
           <option name="timeStamp" value="125" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1748</line>
+          <line>1819</line>
           <option name="timeStamp" value="136" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1713</line>
+          <line>1784</line>
           <option name="timeStamp" value="138" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1571</line>
+          <line>1642</line>
           <option name="timeStamp" value="175" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1557</line>
+          <line>1626</line>
           <option name="timeStamp" value="178" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
+          <line>1336</line>
+          <option name="timeStamp" value="179" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
+          <line>1640</line>
+          <option name="timeStamp" value="181" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
+          <line>1378</line>
+          <option name="timeStamp" value="182" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
+          <line>1575</line>
+          <option name="timeStamp" value="184" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -471,6 +498,11 @@
         <PinnedItemInfo parentTag="Vertex" memberName="attributes" />
       </pinned-members>
     </pin-to-top-manager>
+    <watches-manager>
+      <configuration name="Application">
+        <watch expression="graph1" />
+      </configuration>
+    </watches-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/GitHubProject$SubgraphIsomorphism_.ic" NAME="SubgraphIsomorphism  Coverage Results" MODIFIED="1642870587296" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />
