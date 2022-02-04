@@ -41,7 +41,22 @@ public class Vertex {
      * @return if the two objects are equal
      */
     public boolean equals(Object o){
-        return (o instanceof Vertex) && (id == (((Vertex) o).id));
+        return (o instanceof Vertex) && (this.getId() == (((Vertex) o).getId()));
+    }
+
+    /**
+     * Compares current vertex with given vertex based on id
+     * @param v vertex to compare to
+     * @return how the id compares (0 - equal, 1 - greater than, -1 - less than)
+     */
+    public int compareTo(Vertex v){
+        if(this.id == v.getId()){
+            return 0;
+        }
+        if(this.id < v.getId()){
+            return -1;
+        }
+        return 1;
     }
 
     /**
