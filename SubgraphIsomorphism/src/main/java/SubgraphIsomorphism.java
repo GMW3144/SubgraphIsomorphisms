@@ -257,6 +257,13 @@ public class SubgraphIsomorphism {
         return u.profileSubset(v);
     }
 
+    /**
+     * Perform global pruning on the candidates of the query vertices. Checks if the substructure of the neighbors can
+     * be mapped to the substructure of the target vertex neighbors
+     * @param query the query graph
+     * @param target the target graph
+     * @param candidates the candidates
+     */
     private static void pruneGlobally(Graph<Vertex, DefaultEdge> query, Graph<Vertex, DefaultEdge> target,
                                      Map<Vertex, Set<Vertex>> candidates){
         // keep track of the previous candidates by their query/target vertex pair
@@ -1290,6 +1297,14 @@ public class SubgraphIsomorphism {
         writer.close();
     }
 
+    /**
+     * Given star graphs and the number of times they occur within the target graph, retire the index of the most
+     * frequent star graph
+     * @param starGraphs the star graphs
+     * @param starGraphsProfiles the profile of the root of the star graph
+     * @param numberTimesRootOccurs the number of times the star graph of a given profile occurs
+     * @return the index of the most frequent star graph
+     */
     public static int findMostFrequentStructure(List<Graph<Vertex, DefaultEdge>> starGraphs,
                                                                        List<List<String>> starGraphsProfiles,
                                                                        Map<List<String>, Integer> numberTimesRootOccurs){
@@ -1315,6 +1330,11 @@ public class SubgraphIsomorphism {
         return location;
     }
 
+    /**
+     * For a given graph find the leaf nodes, which are vertices with only one neighbor
+     * @param graph the graph in question
+     * @return leaf nodes of the graph
+     */
     public static List<Vertex> findLeafNodes(Graph<Vertex, DefaultEdge> graph){
         // the leaf nodes
         List<Vertex> leaf = new ArrayList<>();
@@ -1330,7 +1350,15 @@ public class SubgraphIsomorphism {
         return leaf;
     }
 
-    public static Graph<Vertex, DefaultEdge> unionGraphs(Graph<Vertex, DefaultEdge> graph1,
+    /**
+     * Union two graphs by combining two vertices of the same label into one
+     * @param graph1 the first graph to merge
+     * @param graph2 the other graph to merge
+     * @param graph1LeafMappings the possible vertices in the target graph that the leaf nodes of graph1 can map to
+     * @param graph2LeafMappings the possible vertices in the target graph that the leaf nodes of graph2 can map to
+     * @return a new graph that merges the two given graphs
+     */
+    public static Graph<Vertex, DefaultEdge> unionGraphsByMerge(Graph<Vertex, DefaultEdge> graph1,
                                                          Graph<Vertex, DefaultEdge> graph2,
                                                          Map<String, List<Integer>> graph1LeafMappings,
                                                          Map<String, List<Integer>> graph2LeafMappings){
@@ -1684,7 +1712,7 @@ public class SubgraphIsomorphism {
         Map<String, List<Integer>> starGraph2LeafMappings = neighborInfo.remove(starGraph2Profile);
 
         // union two star graphs
-        Graph<Vertex, DefaultEdge> query = unionGraphs(starGraph1, starGraph2, starGraph1LeafMappings, starGraph2LeafMappings);
+        Graph<Vertex, DefaultEdge> query = unionGraphsByMerge(starGraph1, starGraph2, starGraph1LeafMappings, starGraph2LeafMappings);
 
         // store important information when using query graph
         File outputGraphFolder = new File(outputFolderName + "Graphs\\");

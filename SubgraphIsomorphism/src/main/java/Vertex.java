@@ -98,6 +98,10 @@ public class Vertex {
         Collections.sort(profile);
     }
 
+    /**
+     * Removes the neighbors label from the current vertex profile
+     * @param neighbor the vertex being removed
+     */
     public void removeFromProfile(Vertex neighbor){
         profile.remove(neighbor.getLabel()); // should remain sorted
     }
