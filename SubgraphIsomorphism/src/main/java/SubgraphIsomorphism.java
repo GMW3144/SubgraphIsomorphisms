@@ -1298,7 +1298,7 @@ public class SubgraphIsomorphism {
     }
 
     /**
-     * Given star graphs and the number of times they occur within the target graph, retire the index of the most
+     * Given star graphs and the number of times they occur within the target graph, return the index of the most
      * frequent star graph
      * @param starGraphs the star graphs
      * @param starGraphsProfiles the profile of the root of the star graph
@@ -1306,8 +1306,8 @@ public class SubgraphIsomorphism {
      * @return the index of the most frequent star graph
      */
     public static int findMostFrequentStructure(List<Graph<Vertex, DefaultEdge>> starGraphs,
-                                                                       List<List<String>> starGraphsProfiles,
-                                                                       Map<List<String>, Integer> numberTimesRootOccurs){
+                                                List<List<String>> starGraphsProfiles,
+                                                Map<List<String>, List<Vertex>> numberTimesRootOccurs){
 
         // keep track of most frequent graph
         Graph<Vertex, DefaultEdge> mostFrequentStarGraph = null;
@@ -1318,7 +1318,7 @@ public class SubgraphIsomorphism {
         for(int i = 0; i<starGraphs.size(); i++){
             Graph<Vertex, DefaultEdge> graph = starGraphs.get(i);
             List<String> profile = starGraphsProfiles.get(i);
-            int numberOccurances = numberTimesRootOccurs.get(profile);
+            int numberOccurances = numberTimesRootOccurs.get(profile).size();
 
             if(mostFrequentStarGraph == null || numberOccurances>mostFrequent){
                 mostFrequentStarGraph = graph;
@@ -1351,7 +1351,7 @@ public class SubgraphIsomorphism {
     }
 
     /**
-     * Add graph to exisiting graph by copying vertices and edges
+     * Add graph to existing graph by copying vertices and edges
      * @param combinedGraph the graph we are adding to
      * @param graph the graph we are adding
      * @param id the next free node id we may use
@@ -1387,16 +1387,13 @@ public class SubgraphIsomorphism {
 
     /**
      * Union two graphs by combining two vertices of the same label into one
-     * @param graph1 the first graph to merge
-     * @param graph2 the other graph to merge
-     * @param graph1LeafMappings the possible vertices in the target graph that the leaf nodes of graph1 can map to
-     * @param graph2LeafMappings the possible vertices in the target graph that the leaf nodes of graph2 can map to
      * @return a new graph that merges the two given graphs
      */
-    public static Graph<Vertex, DefaultEdge> unionGraphsByMerge(Graph<Vertex, DefaultEdge> graph1,
-                                                         Graph<Vertex, DefaultEdge> graph2,
-                                                         Map<String, List<Vertex>> graph1LeafMappings,
-                                                         Map<String, List<Vertex>> graph2LeafMappings){
+    public static Graph<Vertex, DefaultEdge> unionGraphsByMerge(Graph<Vertex, DefaultEdge> target,
+                                                                Graph<Vertex, DefaultEdge> graph1,
+                                                                Graph<Vertex, DefaultEdge> graph2,
+                                                                List<Vertex> graph1Roots, List<Vertex> graph2Roots,
+                                                                double threshold){
         Graph<Vertex, DefaultEdge> combinedGraph = new SimpleGraph<>(DefaultEdge.class);
         Map<Vertex, Vertex> oldToNew = new HashMap<>();
         // add the vertices and edges of individual graphs to the combined graph
@@ -1407,72 +1404,103 @@ public class SubgraphIsomorphism {
         List<Vertex> leaf1 = findLeafNodes(graph1);
         // iterate through vertices of graph1
         List<Vertex> leaf2 = findLeafNodes(graph2);
-
-        // maximum edge
-        Vertex maxV1 = leaf1.get(0);
-        Vertex maxV2 = leaf2.get(0);
-        int maxCommonElements = -1;
-
-        // iterate through leaf vertices of graph 1
-        for(Vertex v: leaf1){
-            Vertex vP = oldToNew.get(v);
-            String vLabel = v.getLabel();
-            for(Vertex u : leaf2){
-                Vertex uP = oldToNew.get(u);
-                String uLabel = u.getLabel();
-
-                // two vertices must be equivalent to merge them
-                if(!vLabel.equals(uLabel)){
+        List<List<Vertex>> possibleMerge = new ArrayList<>();
+        // iterate through the possible leaf merging
+        for(Vertex l1: leaf1) {
+            for (Vertex l2 : leaf2) {
+                if (!l1.sameLabel(l2)) {
                     continue;
                 }
+                possibleMerge.add(Arrays.asList(oldToNew.get(l1), oldToNew.get(l2)));
+            }
+        }
 
-                // look at the vertices they have in common
-                List<Vertex> possibleMappings1 = graph1LeafMappings.get(vLabel);
-                List<Vertex> possibleMappings2 = graph2LeafMappings.get(uLabel);
-                int commonElements = 0;
-                int i1 = 0;
-                int i2 = 0;
 
-                while(i1<possibleMappings1.size() && i2 < possibleMappings2.size()){
-                    int v1 = possibleMappings1.get(i1).getId();
-                    int v2 = possibleMappings2.get(i2).getId();
-                    // same element
-                    if(v1 == v2){
-                        commonElements++;
-                        i1++; i2++;
-                    }
-                    // need to look at next vertex in graph1
-                    else if(v1 < v2){
-                        i1++;
-                    }
-                    // need to look at next vertex in graph2
-                    else{
-                        i2++;
-                    }
+        // keep track of the vertices to merge (possibly)
+        Map<List<Vertex>, Integer> possilbeVerticesToMerge = new HashMap<>();
+
+
+        // iterate through the two roots
+        for(Vertex root1: graph1Roots){
+            Set<Vertex> neighbors1 = Graphs.neighborSetOf(target, root1);
+            for(Vertex root2: graph2Roots){
+                // each star graph should be mapped to individual roots
+                if(root1==root2){
+                    continue;
                 }
-                if(commonElements>maxCommonElements){
-                    maxV1 = vP;
-                    maxV2 = uP;
+                Set<Vertex> neighbors2 = Graphs.neighborSetOf(target, root2);
 
-                    maxCommonElements = commonElements;
+                // get their common vertices
+                Set<Vertex> commonNeighbors = new HashSet<>(neighbors1);
+                commonNeighbors.retainAll(neighbors2);
+
+                // if there are no common neighbors then continue
+                if(commonNeighbors.size() == 0) continue;
+
+                // iterate through the possible leaf pairings
+                for(List<Vertex> merge: possibleMerge) {
+                    Vertex l1 = merge.get(0);
+                    // iterate through common neighbors
+                    for (Vertex n : commonNeighbors) {
+                        // check that the common neighbor has the same label
+                        if (!n.sameLabel(l1)) {
+                            continue;
+                        }
+
+                        // count the number of times can merge a given vertex
+                        if (!possilbeVerticesToMerge.containsKey(merge)) {
+                            possilbeVerticesToMerge.put(merge, 1);
+                        } else {
+                            possilbeVerticesToMerge.put(merge, possilbeVerticesToMerge.get(merge) + 1);
+                        }
+                    }
                 }
             }
+        }
+
+        HashMap<List<Vertex>, Integer> verticesToMerge = new HashMap<>();
+        // clean up vertices to merge
+        for(List<Vertex> merge: possilbeVerticesToMerge.keySet()){
+            Vertex v1 = merge.get(0);
+            Vertex v2 = merge.get(1);
+
+            boolean conflict = false;
+            // iterate through previous merges
+            for(List<Vertex> previousMerge: verticesToMerge.keySet()){
+                if(previousMerge.contains(v1) || previousMerge.contains(v2)){
+                    if(verticesToMerge.get(previousMerge)<possilbeVerticesToMerge.get(merge)){
+                        verticesToMerge.put(merge, possilbeVerticesToMerge.get(merge));
+                    }
+                    conflict = true;
+                }
+            }
+            if(!conflict && possilbeVerticesToMerge.get(merge)>threshold){
+                verticesToMerge.put(merge, possilbeVerticesToMerge.get(merge));
+            }
+        }
+
+        if(verticesToMerge.size() == 0){
+            return null;
         }
 
         // union the two most likely vertices
         // update the neighbors profiles from removing the vertex
         // add in new edge
-        for(Vertex v : Graphs.neighborListOf(combinedGraph, maxV1)){
-            // remove maxV1 the profile
-            v.removeFromProfile(maxV1);
+        for(List<Vertex> merge : verticesToMerge.keySet()) {
+            Vertex v1 = merge.get(0);
+            Vertex v2 = merge.get(1);
+            for (Vertex v : Graphs.neighborListOf(combinedGraph, v1)) {
+                // remove maxV1 the profile
+                v.removeFromProfile(v1);
 
-            // add new edge between vertex and maxV2, update profile
-            combinedGraph.addEdge(maxV2, v);
-            v.addToProfile(maxV2);
-            maxV2.addToProfile(v);
+                // add new edge between vertex and maxV2, update profile
+                combinedGraph.addEdge(v2, v);
+                v.addToProfile(v2);
+                v2.addToProfile(v);
+            }
+            // remove the vertex in each
+            combinedGraph.removeVertex(v1);
         }
-        // remove the vertex in each
-        combinedGraph.removeVertex(maxV1);
 
         return combinedGraph;
     }
@@ -1486,11 +1514,11 @@ public class SubgraphIsomorphism {
      * @param graph2LeafMappings the possible vertices in the target graph that the leaf nodes of graph2 can map to
      * @return a new graph that merges the two given graphs
      */
-    public static Graph<Vertex, DefaultEdge> unionGraphsByEdge(Graph<Vertex, DefaultEdge> graph1,
-                                                                Graph<Vertex, DefaultEdge> graph2,
-                                                                Graph<Vertex, DefaultEdge> target,
-                                                                Map<String, List<Vertex>> graph1LeafMappings,
-                                                                Map<String, List<Vertex>> graph2LeafMappings){
+    public static Graph<Vertex, DefaultEdge> unionGraphsByEdge(Graph<Vertex, DefaultEdge> target,
+                                                               Graph<Vertex, DefaultEdge> graph1,
+                                                               Graph<Vertex, DefaultEdge> graph2,
+                                                               List<Vertex> graph1Roots, List<Vertex> graph2Roots,
+                                                               double threshold){
         Graph<Vertex, DefaultEdge> combinedGraph = new SimpleGraph<>(DefaultEdge.class);
         Map<Vertex, Vertex> oldToNew = new HashMap<>();
         // add the vertices and edges to the combined graph
@@ -1499,51 +1527,81 @@ public class SubgraphIsomorphism {
         addSubgraph(combinedGraph, graph2, id, oldToNew);
 
         List<Vertex> leaf1 = findLeafNodes(graph1);
+        List<String> labels1 = new ArrayList<>();
+        // keep track of one vertex for each label.  This will be the vertex included in the new edge
+        Map<String, Vertex> labelToVertex1 = new HashMap<>();
+        for(Vertex l1: leaf1){
+            labels1.add(l1.getLabel());
+            labelToVertex1.put(l1.getLabel(), oldToNew.get(l1));
+        }
         // iterate through vertices of graph1
         List<Vertex> leaf2 = findLeafNodes(graph2);
+        List<String> labels2 = new ArrayList<>();
+        // keep track of one vertex for each label.  This will be the vertex included in the new edge
+        Map<String, Vertex> labelToVertex2 = new HashMap<>();
+        for(Vertex l2: leaf2){
+            labels2.add(l2.getLabel());
+            labelToVertex2.put(l2.getLabel(), oldToNew.get(l2));
+        }
 
+        // keep track of the vertices to merge (possibly)
+        Map<List<Vertex>, Integer> possilbeEdges = new HashMap<>();
 
-        // maximum edge
-        Vertex outgoingVertex = leaf1.get(0);
-        Vertex incomingVertex = leaf2.get(0);
-        int maxNumberEdges = -1;
+        // iterate through the two roots
+        for(Vertex root1: graph1Roots) {
+            Set<Vertex> neighbors1 = Graphs.neighborSetOf(target, root1);
+            // only keep the neighbors with the profile of graph1
+            neighbors1.removeIf(n1 -> !labels1.contains(n1.getLabel()));
 
-        // iterate through leaf vertices of graph 1
-        for(Vertex v: leaf1){
-            // find corresponding vertex within the combined graph
-            Vertex vP = oldToNew.get(v);
-            String vLabel = v.getLabel();
-            // iterate through leaf vertices of graph 2
-            for(Vertex u : leaf2){
-                // find corresponding vertex within the combined graph
-                Vertex uP = oldToNew.get(u);
-                String uLabel = u.getLabel();
+            // get the neighbors of
+            for (Vertex root2 : graph2Roots) {
+                Set<Vertex> neighbors2 = Graphs.neighborSetOf(target, root2);
+                // only keep the neighbors with the profile of graph1
+                neighbors2.removeIf(n2 -> !labels2.contains(n2.getLabel()));
 
-                // look at the vertices they have in common
-                List<Vertex> possibleMappings1 = graph1LeafMappings.get(vLabel);
-                List<Vertex> possibleMappings2 = graph2LeafMappings.get(uLabel);
-                int currentNumberEdges = 0;
+                // now we must iterate through possible edges
+                for(Vertex n1: neighbors1){
+                    for(Vertex n2: neighbors2){
+                        // if there exists an edge
+                        if(target.containsEdge(n1, n2)){
+                            // add an edge with the two labels
+                            List<Vertex> newEdge = new ArrayList<>();
+                            newEdge.add(labelToVertex1.get(n1.getLabel()));
+                            newEdge.add(labelToVertex2.get(n2.getLabel()));
 
-                for(Vertex v1: possibleMappings1){
-                    for (Vertex v2: possibleMappings2){
-                        if(target.containsEdge(v1, v2)){
-                            currentNumberEdges++;
+                            // if a new edge
+                            if(!possilbeEdges.containsKey(newEdge)){
+                                possilbeEdges.put(newEdge, 1);
+                            }
+                            // if we have seen the edge before
+                            else{
+                                possilbeEdges.put(newEdge, possilbeEdges.get(newEdge)+1);
+                            }
+
                         }
                     }
-                }
-
-
-                if(currentNumberEdges>maxNumberEdges){
-                    outgoingVertex = vP;
-                    incomingVertex = uP;
-
-                    maxNumberEdges = currentNumberEdges;
                 }
             }
         }
 
-        // add an edge between outgoing and incoming vertex
-        combinedGraph.addEdge(outgoingVertex, incomingVertex);
+        // only keep edges past a threshold
+        for(List<Vertex> edge : possilbeEdges.keySet()){
+            if(possilbeEdges.get(edge)<threshold){
+                possilbeEdges.remove(edge);
+            }
+        }
+
+        // if there are no edges then return null
+        if(possilbeEdges.isEmpty()){
+            return null;
+        }
+
+        // otherwised update the graph
+        for(List<Vertex> edge: possilbeEdges.keySet()){
+            combinedGraph.addEdge(edge.get(0), edge.get(1));
+            edge.get(0).addToProfile(edge.get(1));
+            edge.get(1).addToProfile(edge.get(0));
+        }
 
         return combinedGraph;
     }
@@ -1642,16 +1700,12 @@ public class SubgraphIsomorphism {
         // keep track of the structure of the frequent profiles
         Map<List<String>, String> frequentProfileShapes = new HashMap<>();
         // keep track of the number of times the root occurs
-        Map<List<String>, Integer> numberTimesRootOccurs = new HashMap<>();
-        // keep track of neighbor vertices and labels for a given profile and root
-        Map<List<String>, Map<String, List<Vertex>>> neighborInfo = new HashMap<>();
+        Map<List<String>, List<Vertex>> verticesRootOccurs = new HashMap<>();
 
         // look through the graph for each profile (and their vertices to see the structure)
         // iterate through the frequent profiles
         for(List<String> profile: frequentProfiles.keySet()){
-            Map<String, Integer> numberRoot = new HashMap<>();
-            // keep track for a given root the label and corresponding vertices ids
-            Map<String, Map<String, List<Vertex>>> currentNeighborInfo = new HashMap<>();
+            Map<String, List<Vertex>> rootVertices = new HashMap<>();
 
             // iterate through the vertices it appears in
             for(Integer vID: frequentProfiles.get(profile)){
@@ -1671,58 +1725,30 @@ public class SubgraphIsomorphism {
                 String label = v.getLabel();
 
                 // if haven't seen root attribute, then add to map
-                if(!numberRoot.containsKey(label)){
-                    numberRoot.put(label, 1);
-                    currentNeighborInfo.put(label, new HashMap<>()); // keep track of profile with root
+                if(!rootVertices.containsKey(label)){
+                    List<Vertex> vertexWithRoot = new ArrayList<>();
+                    vertexWithRoot.add(v);
+                    rootVertices.put(label, vertexWithRoot);
                 }
                 // if have seen root, then increment number of occurrences
                 else{
-                    numberRoot.put(label, numberRoot.get(label)+1);
-                }
-
-                List<String> neighborsOfProfile = new ArrayList<>(profile);
-                neighborsOfProfile.remove(label);
-
-                // get the information label
-                Map<String, List<Vertex>> neighborMapping = currentNeighborInfo.get(label);
-                // add the neighbors information
-                for(Vertex neighbor: Graphs.neighborListOf(target, v)){
-                    String neighborLabel = neighbor.getLabel();
-                    // only account for the labels within the profile excluding the current root
-                    if(!neighborsOfProfile.contains(neighborLabel)){
-                        continue;
-                    }
-                    // get the id of the neighbor, and keep track of it
-                    int neighborId = neighbor.getId(); seen.put(neighborId, neighbor);
-                    // new label for the neighbors
-                    if(!neighborMapping.containsKey(neighborLabel)){
-                        neighborMapping.put(neighborLabel, new ArrayList<>());
-                    }
-                    // keep track of the neighbor vertices
-                    neighborMapping.get(neighborLabel).add(neighbor);
+                    rootVertices.get(label).add(v);
                 }
             }
 
-            // select the attribue (root) that occurs the most
-            String root = numberRoot.keySet().iterator().next();
-            for(String currentRoot: numberRoot.keySet()){
+            // select the attribute (root) that occurs the most
+            String root = rootVertices.keySet().iterator().next();
+            for(String currentRoot: rootVertices.keySet()){
                 // if there are more of the current root then replace
-                if(numberRoot.get(root)<numberRoot.get(currentRoot)){
+                if(rootVertices.get(root).size()<rootVertices.get(currentRoot).size()){
                     root = currentRoot;
                 }
             }
 
             // add the root that is most frequent to the frequent profile shapes if it meets the maximum support
-            if(numberRoot.get(root)>=minsup) {
+            if(rootVertices.get(root).size()>=minsup) {
                 frequentProfileShapes.put(profile, root);
-                numberTimesRootOccurs.put(profile, numberRoot.get(root));
-
-                // first sort the vertices
-                for(String neighborLabel : currentNeighborInfo.get(root).keySet()) {
-                    Collections.sort(currentNeighborInfo.get(root).get(neighborLabel),
-                            Vertex::compareTo);
-                }
-                neighborInfo.put(profile, currentNeighborInfo.get(root));
+                verticesRootOccurs.put(profile, rootVertices.get(root));
             }
         }
 
@@ -1770,21 +1796,27 @@ public class SubgraphIsomorphism {
 
 
         // keep track of two most frequent graph
-        int locationStarGraph1 = findMostFrequentStructure(starGraphs, starGraphsProfiles, numberTimesRootOccurs);
+        int locationStarGraph1 = findMostFrequentStructure(starGraphs, starGraphsProfiles, verticesRootOccurs);
         Graph<Vertex, DefaultEdge> starGraph1 = starGraphs.remove(locationStarGraph1);
         List<String> starGraph1Profile = starGraphsProfiles.remove(locationStarGraph1);
-        int starGraph1NumOccurances = numberTimesRootOccurs.remove(starGraph1Profile);
-        Map<String, List<Vertex>> starGraph1LeafMappings = neighborInfo.remove(starGraph1Profile);
+        List<Vertex> starGraph1Roots = verticesRootOccurs.get(starGraph1Profile);
+        int starGraph1NumOccurances = verticesRootOccurs.remove(starGraph1Profile).size();
 
-        int locationStarGraph2  = findMostFrequentStructure(starGraphs, starGraphsProfiles,
-                numberTimesRootOccurs);
+        int locationStarGraph2  = findMostFrequentStructure(starGraphs, starGraphsProfiles, verticesRootOccurs);
         Graph<Vertex, DefaultEdge> starGraph2 = starGraphs.remove(locationStarGraph2);
         List<String> starGraph2Profile = starGraphsProfiles.remove(locationStarGraph2);
-        int starGraph2NumOccurances = numberTimesRootOccurs.remove(starGraph2Profile);
-        Map<String, List<Vertex>> starGraph2LeafMappings = neighborInfo.remove(starGraph2Profile);
+        List<Vertex> starGraph2Roots = verticesRootOccurs.get(starGraph2Profile);
+        int starGraph2NumOccurances = verticesRootOccurs.remove(starGraph2Profile).size();
 
         // union two star graphs
-        Graph<Vertex, DefaultEdge> query = unionGraphsByEdge(starGraph1, starGraph2, target, starGraph1LeafMappings, starGraph2LeafMappings);
+        Graph<Vertex, DefaultEdge> query = unionGraphsByMerge(target, starGraph1, starGraph2, starGraph1Roots,
+                starGraph2Roots, 100);
+                //unionGraphsByEdge(starGraph1, starGraph2, target, starGraph1LeafMappings, starGraph2LeafMappings);
+
+        if(query == null){
+            System.out.println("Threshold too high");
+            return;
+        }
 
         // store important information when using query graph
         File outputGraphFolder = new File(outputFolderName + "Graphs\\");
@@ -1952,15 +1984,23 @@ public class SubgraphIsomorphism {
         }
 
         else if(method.equals("FDMQuery") && args.length == 3){
-            final String fdmFileLocation = args[1];
+            final String fdmFolder = args[1];
             final String outputFolderName = args[2];
 
             // keep track of the minimum profile size while creating graph
-            int profileSize = 4; // itemsets must be this size
+            int profileSize = 3; // itemsets must be this size
             // TODO - if we choose greater than, then the values that are smaller make up the greater itemset sizes
 
-            // get the information from the fdm file
-            fdmGraph(fdmFileLocation, outputFolderName, isInduced, profileSize, gamma, algorithm);
+            // iterate through the possible target graphs
+            File [] files = new File(fdmFolder).listFiles();
+            for (int i = 0; i < files.length; i++) {
+                if (files[i].isFile()) { //this line weeds out other directories/folders
+                    String targetLocation = String.valueOf(files[i]);
+
+                    // get the information from the fdm file
+                    fdmGraph(targetLocation, outputFolderName, isInduced, profileSize, gamma, algorithm);
+                }
+            }
         }
 
         // create query graph from random walk

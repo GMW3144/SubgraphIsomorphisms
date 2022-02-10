@@ -1,1 +1,6 @@
-There were the following incorrect subgraph isomorphisms using graphQL: 
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\Test\Graphs\graph15.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\ecoli_1RF8.grf
+Number Backtracking: 0
+Induced isomorphisms. Total number subgraph isomorphisms: 0
+# algorithm : graphQL
+
+============================
