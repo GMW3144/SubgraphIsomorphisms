@@ -7,6 +7,7 @@ import org.jgrapht.traverse.RandomWalkVertexIterator;
 import org.jgrapht.alg.matching.HopcroftKarpMaximumCardinalityBipartiteMatching;
 
 import java.io.*;
+import java.time.temporal.ValueRange;
 import java.util.*;
 
 public class SubgraphIsomorphism {
@@ -1528,24 +1529,30 @@ public class SubgraphIsomorphism {
 
         List<Vertex> leaf1 = findLeafNodes(graph1);
         List<String> labels1 = new ArrayList<>();
-        // keep track of one vertex for each label.  This will be the vertex included in the new edge
-        Map<String, Vertex> labelToVertex1 = new HashMap<>();
+        // keep track of the vertices of a given label
+        Map<String, List<Vertex>> vertexOfLabel1 = new HashMap<>();
         for(Vertex l1: leaf1){
             labels1.add(l1.getLabel());
-            labelToVertex1.put(l1.getLabel(), oldToNew.get(l1));
+            if(!vertexOfLabel1.containsKey(l1.getLabel())){
+                vertexOfLabel1.put(l1.getLabel(), new ArrayList<>());
+            }
+            vertexOfLabel1.get(l1.getLabel()).add(oldToNew.get(l1));
         }
         // iterate through vertices of graph1
         List<Vertex> leaf2 = findLeafNodes(graph2);
         List<String> labels2 = new ArrayList<>();
-        // keep track of one vertex for each label.  This will be the vertex included in the new edge
-        Map<String, Vertex> labelToVertex2 = new HashMap<>();
+        // keep track of the vertices of a given label
+        Map<String, List<Vertex>> vertexOfLabel2 = new HashMap<>();
         for(Vertex l2: leaf2){
             labels2.add(l2.getLabel());
-            labelToVertex2.put(l2.getLabel(), oldToNew.get(l2));
+            if(!vertexOfLabel2.containsKey(l2.getLabel())){
+                vertexOfLabel2.put(l2.getLabel(), new ArrayList<>());
+            }
+            vertexOfLabel2.get(l2.getLabel()).add(oldToNew.get(l2));
         }
 
         // keep track of the vertices to merge (possibly)
-        Map<List<Vertex>, Integer> possilbeEdges = new HashMap<>();
+        Map<List<String>, Integer> possilbeEdges = new HashMap<>();
 
         // iterate through the two roots
         for(Vertex root1: graph1Roots) {
@@ -1565,9 +1572,9 @@ public class SubgraphIsomorphism {
                         // if there exists an edge
                         if(target.containsEdge(n1, n2)){
                             // add an edge with the two labels
-                            List<Vertex> newEdge = new ArrayList<>();
-                            newEdge.add(labelToVertex1.get(n1.getLabel()));
-                            newEdge.add(labelToVertex2.get(n2.getLabel()));
+                            List<String> newEdge = new ArrayList<>();
+                            newEdge.add(n1.getLabel());
+                            newEdge.add(n2.getLabel());
 
                             // if a new edge
                             if(!possilbeEdges.containsKey(newEdge)){
@@ -1585,7 +1592,7 @@ public class SubgraphIsomorphism {
         }
 
         // only keep edges past a threshold
-        for(List<Vertex> edge : possilbeEdges.keySet()){
+        for(List<String> edge : possilbeEdges.keySet()){
             if(possilbeEdges.get(edge)<threshold){
                 possilbeEdges.remove(edge);
             }
@@ -1597,10 +1604,22 @@ public class SubgraphIsomorphism {
         }
 
         // otherwised update the graph
-        for(List<Vertex> edge: possilbeEdges.keySet()){
-            combinedGraph.addEdge(edge.get(0), edge.get(1));
-            edge.get(0).addToProfile(edge.get(1));
-            edge.get(1).addToProfile(edge.get(0));
+        for(List<String> edge: possilbeEdges.keySet()){
+            List<Vertex> v1Choices = vertexOfLabel1.get(edge.get(0));
+            if(v1Choices.isEmpty()){
+                continue;
+            }
+            List<Vertex> v2Choices = vertexOfLabel2.get(edge.get(1));
+            if(v2Choices.isEmpty()){
+                continue;
+            }
+
+            Vertex v1 = v1Choices.remove(0);
+            Vertex v2 = v2Choices.remove(0);
+
+            combinedGraph.addEdge(v1, v2);
+            v1.addToProfile(v2);
+            v2.addToProfile(v1);
         }
 
         return combinedGraph;
@@ -1809,7 +1828,7 @@ public class SubgraphIsomorphism {
         int starGraph2NumOccurances = verticesRootOccurs.remove(starGraph2Profile).size();
 
         // union two star graphs
-        Graph<Vertex, DefaultEdge> query = unionGraphsByMerge(target, starGraph1, starGraph2, starGraph1Roots,
+        Graph<Vertex, DefaultEdge> query = unionGraphsByEdge(target, starGraph1, starGraph2, starGraph1Roots,
                 starGraph2Roots, 100);
                 //unionGraphsByEdge(starGraph1, starGraph2, target, starGraph1LeafMappings, starGraph2LeafMappings);
 
