@@ -1388,6 +1388,12 @@ public class SubgraphIsomorphism {
 
     /**
      * Union two graphs by combining two vertices of the same label into one
+     * @param target the target graph
+     * @param graph1 the first graph to merge
+     * @param graph2 the other graph to merge
+     * @param graph1Roots the vertices in the target graph that are the root of stargraph1
+     * @param graph2Roots the vertices in the target graph that are the root of stargraph2
+     * @param threshold the number of edges that must exist in order to be included
      * @return a new graph that merges the two given graphs
      */
     public static Graph<Vertex, DefaultEdge> unionGraphsByMerge(Graph<Vertex, DefaultEdge> target,
@@ -1509,10 +1515,12 @@ public class SubgraphIsomorphism {
 
     /**
      * Union two graphs by combining two vertices of the same label into one
+     * @param target the target graph
      * @param graph1 the first graph to merge
      * @param graph2 the other graph to merge
-     * @param graph1LeafMappings the possible vertices in the target graph that the leaf nodes of graph1 can map to
-     * @param graph2LeafMappings the possible vertices in the target graph that the leaf nodes of graph2 can map to
+     * @param graph1Roots the vertices in the target graph that are the root of stargraph1
+     * @param graph2Roots the vertices in the target graph that are the root of stargraph2
+     * @param threshold the number of edges that must exist in order to be included
      * @return a new graph that merges the two given graphs
      */
     public static Graph<Vertex, DefaultEdge> unionGraphsByEdge(Graph<Vertex, DefaultEdge> target,
