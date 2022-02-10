@@ -1604,9 +1604,14 @@ public class SubgraphIsomorphism {
             }
         }
 
+        // if there are no edges then return null
+        if(possilbeEdges.isEmpty()){
+            return null;
+        }
+
         // only keep edges past a threshold
-        for(List<String> edge : possilbeEdges.keySet()){
-            if(possilbeEdges.get(edge)<threshold){
+        for(List<String> edge : new HashSet<>(possilbeEdges.keySet())) {
+            if (possilbeEdges.get(edge) < threshold) {
                 possilbeEdges.remove(edge);
             }
         }
