@@ -1577,6 +1577,11 @@ public class SubgraphIsomorphism {
                 // now we must iterate through possible edges
                 for(Vertex n1: neighbors1){
                     for(Vertex n2: neighbors2){
+                        // avoid double counting
+                        if(n1 == root2 || n2 == root1){
+                            continue;
+                        }
+
                         // if there exists an edge
                         if(target.containsEdge(n1, n2)){
                             // add an edge with the two labels

@@ -70,7 +70,7 @@
     <configuration name="SubgraphIsomorphism " type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="SubgraphIsomorphism" />
       <module name="SubgraphIsomorphism" />
-      <option name="PROGRAM_PARAMETERS" value="FDMQuery C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\FrequentDatasetMining\tenPercent\ C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\Test\" />
+      <option name="PROGRAM_PARAMETERS" value="FDMQuery C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\FrequentDatasetMining\tenPercent\ C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\Test\AddEdge\" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../../ISProject" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -366,7 +366,21 @@
       <option name="project" value="LOCAL" />
       <updated>1644505244669</updated>
     </task>
-    <option name="localTasksCounter" value="41" />
+    <task id="LOCAL-00041" summary="Fixed so can create multiple edges even if have the same label">
+      <created>1644509690757</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1644509690757</updated>
+    </task>
+    <task id="LOCAL-00042" summary="Fixed commenting">
+      <created>1644509836779</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1644509836779</updated>
+    </task>
+    <option name="localTasksCounter" value="43" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -418,8 +432,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="First attempt at GraphQL" />
-    <MESSAGE value="Added a way to check against ground truth" />
     <MESSAGE value="Keep track of graph when writing the important info for random walk.  Ran graphQL on previously hard-to-find subgraph isomorphisms" />
     <MESSAGE value="First attempt on apriori algorithm" />
     <MESSAGE value="Added comments" />
@@ -443,7 +455,9 @@
     <MESSAGE value="Added some comments" />
     <MESSAGE value="Attempt union by edge" />
     <MESSAGE value="First attempt at combining graphs by edge" />
-    <option name="LAST_COMMIT_MESSAGE" value="First attempt at combining graphs by edge" />
+    <MESSAGE value="Fixed so can create multiple edges even if have the same label" />
+    <MESSAGE value="Fixed commenting" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed commenting" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -480,7 +494,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>2026</line>
+          <line>2039</line>
           <option name="timeStamp" value="116" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -490,7 +504,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1978</line>
+          <line>1991</line>
           <option name="timeStamp" value="138" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -500,27 +514,27 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1830</line>
+          <line>1843</line>
           <option name="timeStamp" value="190" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1522</line>
+          <line>1530</line>
           <option name="timeStamp" value="191" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1397</line>
+          <line>1403</line>
           <option name="timeStamp" value="201" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1489</line>
+          <line>1495</line>
           <option name="timeStamp" value="204" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1864</line>
+          <line>1877</line>
           <option name="timeStamp" value="205" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -535,18 +549,23 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1461</line>
+          <line>1467</line>
           <option name="timeStamp" value="216" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1441</line>
+          <line>1447</line>
           <option name="timeStamp" value="218" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1594</line>
-          <option name="timeStamp" value="223" />
+          <line>1637</line>
+          <option name="timeStamp" value="225" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
+          <line>1587</line>
+          <option name="timeStamp" value="226" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
