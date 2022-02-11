@@ -1923,7 +1923,7 @@ public class SubgraphIsomorphism {
         // now write the information to build the graph
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFolderName+"GenerationInfo\\"+graphName));
         writer.write("Used "+fdmFileLocation+" frequent dataset mining \n"+
-                "Combined two graphs: \n"+
+                "Combined two graphs with method "+connectionMethod+": \n"+
                 "Vertex with attribute "+ frequentProfileShapes.get(starGraph1Profile)
                 + " and profile "+ starGraph1Profile +" occurs "+starGraph1NumOccurrences
                 + " times within the graph \n"
@@ -1931,13 +1931,14 @@ public class SubgraphIsomorphism {
                 + " and profile "+ starGraph2Profile +" occurs "+starGraph2NumOccurrences
                 + " times within the graph \n");
 
+        // now perform subgraph isomorphism
+        List<Map<Vertex, Vertex>> subgraphIsomorphism = matching(query, target, isInduced, gamma);
+
         writer.append("\n");
         // write to statistics file
         displayGraphStatistics(queryFileName, query, graphLocation, target, writer);
         writer.close();
 
-        // now perform subgraph isomorphism
-        List<Map<Vertex, Vertex>> subgraphIsomorphism = matching(query, target, isInduced, gamma);
         if(subgraphIsomorphism == null){
             // write to output files
             writer = new BufferedWriter(new FileWriter(
@@ -1946,7 +1947,6 @@ public class SubgraphIsomorphism {
             writer.close();
             return;
         }
-
         // write to output file
         writer = new BufferedWriter(new FileWriter(
                 outputFolderName + "Isomorphism\\" + graphName));
@@ -1969,7 +1969,7 @@ public class SubgraphIsomorphism {
      * @param isInduced if the isomorphism is induced
      * @param gamma the gamma value
      * @throws IOException for the writer
-     * @return if randomwalk was successful
+     * @return if random walk was successful
      */
     public static int randomWalk(Graph<Vertex, DefaultEdge> targetGraph, String targetLocation, int size,
                                   String outputFolderName, String graphName, boolean isInduced, double gamma)
