@@ -1,6 +1,5 @@
-Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\Test\Graphs\graph15.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\ecoli_1RF8.grf
-Number Backtracking: 0
-Induced isomorphisms. Total number subgraph isomorphisms: 0
-# algorithm : graphQL
-
-============================
+There were the following incorrect subgraph isomorphisms using : 
+Algorithm specified is not valid.
+Specify one of the following algorithms: 
+	 groundTruth: finds the ground truth isomorphism.  Only uses LDA in pruning and BFS for ordering.
+	 graphQL: uses the GraphQL algorithm.

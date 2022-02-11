@@ -19,7 +19,7 @@ public class SubgraphIsomorphism {
     private static String algorithmName = ""; // algorithm in use
 
     // error message if didn't find isomorphism algorithm
-    private static final String noAlgorithmFound = "Algorithm specified is not valid.\n " +
+    private static final String noAlgorithmFound = "Algorithm specified is not valid.\n" +
             "Specify one of the following algorithms: \n" +
             "\t groundTruth: finds the ground truth isomorphism.  Only uses LDA in pruning and BFS for ordering.\n" +
             "\t graphQL: uses the GraphQL algorithm.\n";
@@ -807,8 +807,13 @@ public class SubgraphIsomorphism {
         // find and display the isomorphisms
         List<Map<Vertex, Vertex>> subgraphIsomorphism = matching(queryGraph, targetGraph, isInduced, gamma);
         if(subgraphIsomorphism==null){
-            // write to output file
+            // write to output files
             BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName));
+            writer.write(noAlgorithmFound);
+            writer.close();
+
+            // write to output files
+            writer = new BufferedWriter(new FileWriter(outputStatisticsName));
             writer.write(noAlgorithmFound);
             writer.close();
             return;
@@ -1241,7 +1246,7 @@ public class SubgraphIsomorphism {
         if(minSup<=1){
             minSup = minSup*transactions.size();
         }
-        String graphInfo = "Graph: "+targetFile.getName()+
+        String graphInfo = "Graph: "+targetFile.getName()+ "("+targetFileLocation+")"+
                 "\nNumber of Nodes: "+transactions.size()+
                 "\nMinimum Support (integer): "+minSup+
                 "\nMinimum Support (percentage): "+minSup/transactions.size();
@@ -1838,19 +1843,6 @@ public class SubgraphIsomorphism {
             starGraphs.add(query); starGraphsProfiles.add(profile);
         }
 
-        // keep track of two most frequent graph
-        int locationStarGraph1 = findMostFrequentStructure(starGraphs, starGraphsProfiles, verticesRootOccurs);
-        Graph<Vertex, DefaultEdge> starGraph1 = starGraphs.remove(locationStarGraph1);
-        List<String> starGraph1Profile = starGraphsProfiles.remove(locationStarGraph1);
-        List<Vertex> starGraph1Roots = verticesRootOccurs.get(starGraph1Profile);
-        int starGraph1NumOccurrences = verticesRootOccurs.remove(starGraph1Profile).size();
-
-        int locationStarGraph2  = findMostFrequentStructure(starGraphs, starGraphsProfiles, verticesRootOccurs);
-        Graph<Vertex, DefaultEdge> starGraph2 = starGraphs.remove(locationStarGraph2);
-        List<String> starGraph2Profile = starGraphsProfiles.remove(locationStarGraph2);
-        List<Vertex> starGraph2Roots = verticesRootOccurs.get(starGraph2Profile);
-        int starGraph2NumOccurrences = verticesRootOccurs.remove(starGraph2Profile).size();
-
         // store important information when using query graph
         File outputGraphFolder = new File(outputFolderName + "Graphs\\");
         int numGraphs = 0;
@@ -1858,6 +1850,35 @@ public class SubgraphIsomorphism {
             numGraphs = outputGraphFolder.list().length;
         }
         String graphName = "graph" + (numGraphs + 1) + ".txt";
+
+
+        // keep track of two most frequent graph
+        int locationStarGraph1 = findMostFrequentStructure(starGraphs, starGraphsProfiles, verticesRootOccurs);
+        // if we couldn't find a star graph
+        if(locationStarGraph1 == -1){
+            System.out.println("No star graphs found");
+            return;
+        }
+        Graph<Vertex, DefaultEdge> starGraph1 = starGraphs.remove(locationStarGraph1);
+        List<String> starGraph1Profile = starGraphsProfiles.remove(locationStarGraph1);
+        List<Vertex> starGraph1Roots = verticesRootOccurs.get(starGraph1Profile);
+        int starGraph1NumOccurrences = verticesRootOccurs.remove(starGraph1Profile).size();
+
+        int locationStarGraph2  = findMostFrequentStructure(starGraphs, starGraphsProfiles, verticesRootOccurs);
+        // if we couldn't find a star graph
+        if(locationStarGraph2 == -1){// write to graph file that couldn't find a connection (because of threshold or not connectable)
+            BufferedWriter writer = new BufferedWriter(new FileWriter(outputFolderName+"Graphs\\"+graphName));
+            writer.write(thresholdToHigh);
+            writer.append("Only one profile of given size.\n");
+            writer.close();
+            System.out.println(thresholdToHigh);
+            System.out.println("Only one profile of given size.");
+            return;
+        }
+        Graph<Vertex, DefaultEdge> starGraph2 = starGraphs.remove(locationStarGraph2);
+        List<String> starGraph2Profile = starGraphsProfiles.remove(locationStarGraph2);
+        List<Vertex> starGraph2Roots = verticesRootOccurs.get(starGraph2Profile);
+        int starGraph2NumOccurrences = verticesRootOccurs.remove(starGraph2Profile).size();
 
         // union two star graphs
         Graph<Vertex, DefaultEdge> query = null; numCombined = new HashMap<>();
@@ -1896,19 +1917,6 @@ public class SubgraphIsomorphism {
 
         // now write the information to build the graph
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFolderName+"GenerationInfo\\"+graphName));
-
-        // now perform subgraph isomorphism
-        List<Map<Vertex, Vertex>> subgraphIsomorphism = matching(query, target, isInduced, gamma);
-        if(subgraphIsomorphism == null){
-            // write to output file
-            writer = new BufferedWriter(new FileWriter(
-                    outputFolderName + "Isomorphism\\" + graphName));
-            writer.write(noAlgorithmFound);
-            writer.close();
-
-            return;
-        }
-
         writer.write("Used "+fdmFileLocation+" frequent dataset mining \n"+
                 "Combined two graphs: \n"+
                 "Vertex with attribute "+ frequentProfileShapes.get(starGraph1Profile)
@@ -1922,6 +1930,17 @@ public class SubgraphIsomorphism {
         // write to statistics file
         displayGraphStatistics(queryFileName, query, graphLocation, target, writer);
         writer.close();
+
+        // now perform subgraph isomorphism
+        List<Map<Vertex, Vertex>> subgraphIsomorphism = matching(query, target, isInduced, gamma);
+        if(subgraphIsomorphism == null){
+            // write to output files
+            writer = new BufferedWriter(new FileWriter(
+                    outputFolderName + "Isomorphism\\" + graphName));
+            writer.write(noAlgorithmFound);
+            writer.close();
+            return;
+        }
 
         // write to output file
         writer = new BufferedWriter(new FileWriter(
@@ -1945,8 +1964,9 @@ public class SubgraphIsomorphism {
      * @param isInduced if the isomorphism is induced
      * @param gamma the gamma value
      * @throws IOException for the writer
+     * @return if randomwalk was successful
      */
-    public static void randomWalk(Graph<Vertex, DefaultEdge> targetGraph, String targetLocation, int size,
+    public static int randomWalk(Graph<Vertex, DefaultEdge> targetGraph, String targetLocation, int size,
                                   String outputFolderName, String graphName, boolean isInduced, double gamma)
             throws IOException {
 
@@ -1969,7 +1989,7 @@ public class SubgraphIsomorphism {
             writer.write(noAlgorithmFound);
             writer.close();
 
-            return;
+            return -1;
         }
 
         // write to output file
@@ -1981,6 +2001,7 @@ public class SubgraphIsomorphism {
         writer.append("============================\n");
         writer.close();
 
+        return 1;
     }
 
     /**
@@ -1999,7 +2020,7 @@ public class SubgraphIsomorphism {
         // print out graph
         writer.write("Graph Statistics: \n"+
                 "Query: "+ queryName + "\n"+
-                "Target: " + targetName + "\n");
+                "Target: " + targetName + "\n\n");
 
         // distribution of num subsets for each vertex
         Map<Integer, Integer> distributionTarget = new HashMap<>();
@@ -2033,12 +2054,15 @@ public class SubgraphIsomorphism {
             writer.append("\t").append(String.valueOf(d)).append(":")
                     .append(String.valueOf(distributionTarget.get(d))).append("\n");
         }
+        writer.append("\n");
 
-
+        writer.append("Used algorithm: " +algorithmName+"\n");
         // number of backtracking in isomorphism
         writer.append("Number backtracking calls: ").append(String.valueOf(numBackTracking)).append("\n");
         // number of possible matchings
         writer.append("Total number of possible matchings: "+target.vertexSet().size()*query.vertexSet().size()+"\n");
+
+        writer.append("\n");
         // number pruned from local pruning
         writer.append("Number pruned from local pruning: ").append(String.valueOf(numLocalPruning)).append("\n");
         // number pruned from global pruning
@@ -2072,7 +2096,7 @@ public class SubgraphIsomorphism {
             mainMethod = args[0];
         }
         // basic information for isomorphism
-        algorithmName = "graphQL";
+        algorithmName = "";
         // groundTruth, graphQL
         boolean isInduced = true;
         double gamma = 0.5;
@@ -2088,11 +2112,10 @@ public class SubgraphIsomorphism {
                     gamma);
         }
 
-        else if(mainMethod.equals("FrequentDatasets") && args.length == 3){
+        else if(mainMethod.equals("FrequentDatasets") && args.length == 4){
             final String targetFolderLocation = args[1];
             final String outputFolderName = args[2];
-
-            final double minSup = 0.1;
+            double minSup = Double.parseDouble(args[3]);
 
             // iterate through the possible target graphs
             File [] files = new File(targetFolderLocation).listFiles();
@@ -2107,14 +2130,12 @@ public class SubgraphIsomorphism {
             }
         }
 
-        else if(mainMethod.equals("FDMQuery") && args.length == 3){
+        else if(mainMethod.equals("FDMQuery") && args.length == 5){
             final String fdmFile = args[1];
             final String outputFolderName = args[2];
-
             // keep track of the minimum profile size while creating graph
-            int profileSize = 3; // itemsets must be this size
-            // TODO - if we choose greater than, then the values that are smaller make up the greater itemset sizes
-            String connectionMethod = "merge";
+            int profileSize = Integer.parseInt(args[3]);// itemsets must be this size
+            final String connectionMethod = args[4];
 
             // get the information from the fdm file
             fdmGraph(fdmFile, outputFolderName, isInduced, profileSize, gamma, connectionMethod);
@@ -2140,7 +2161,9 @@ public class SubgraphIsomorphism {
                     }
                     String graphName = "graph" + (numGraphs + 1) + ".txt";
 
-                    randomWalk(targetGraph, targetLocation, size, outputFolderName, graphName, isInduced, gamma);
+                    if(randomWalk(targetGraph, targetLocation, size, outputFolderName, graphName, isInduced, gamma) == -1){
+                        return;
+                    }
                 }
             }
         }
@@ -2161,27 +2184,26 @@ public class SubgraphIsomorphism {
         }
 
         else{
-            System.out.println("Unknown Command.  Please use one of the following:");
-            System.out.println("KnownGraphs <queryFile> <targetFile> <outputFile> <statisticsFile>");
-            System.out.println("\t Find the subgraph isomorphism between two know graphs.");
-            System.out.println("\t Prints Isomorphisms to output file and statistics to StatisticsFile.");
-            System.out.println("FrequentDatasets <targetFile> <outputFile>");
-            System.out.println("\t Finds the frequent profile subsets within the given graph.");
-            System.out.println("FDMQuery <FDMFile> <outputFolder>");
-            System.out.println("\t Creates a query graph from the frequent dataset mining on a target graph.");
-            System.out.println("\t Information on the frequent dataset mining within folder, which can be created with FrequentDatasets.");
-            System.out.println("\t Find the subgraph isomorphism between given target graph and new query graph");
-            System.out.println("\t Output folder must contain folders: \"GenerationInfo\", \"Graphs\", \"Isomorphism\"");
-            System.out.println("\t Note: only works with one label");
-            System.out.println("RandomWalk <targetFile> <outputFolder>");
-            System.out.println("\t Creates a query graph from the target graph using a random walk.");
-            System.out.println("\t Find the subgraph isomorphism between given target graph and random query graph");
-            System.out.println("\t Output folder must contain folders: \"GenerationInfo\", \"Graphs\", \"Isomorphism\"");
-            System.out.println("Test <groundTruthFile> <queryFolder> <targetFolder> <outputFile>");
-            System.out.println("\t Test the subgraph isomorphisms within the ground truth file.");
-            System.out.println("\t Must provide the location of the query and target folders.  If path is contained within " +
-                    "ground truth folder, then give argument '_'.");
-            System.out.println("\t If there is any errors in the isomorphism it will be recorded in the output file.");
+            System.out.println("Unknown Command.  Please use one of the following:"+
+                    "\nKnownGraphs <queryFile> <targetFile> <outputFile> <statisticsFile>"+
+                    "\n\t Find the subgraph isomorphism between two know graphs."+
+                    "\n\t Prints Isomorphisms to output file and statistics to StatisticsFile."+
+                    "\nFrequentDatasets <targetFile> <outputFile> <minSup>"+
+                    "\n\t Finds the frequent profile subsets from the given graphs and minimum support."+
+                    "\nFDMQuery <FDMFile> <outputFolder> <profileSize> <connectionMethod>"+
+                    "\n\t Creates a query graph from the frequent dataset mining on a target graph of a given profile size."+
+                    "\n\t Information on the frequent dataset mining within folder, which can be created with FrequentDatasets."+
+                    "\n\t Find the subgraph isomorphism between given target graph and new query graph."+
+                    "\n\t Output folder must contain folders: \"GenerationInfo\", \"Graphs\", \"Isomorphism\"."+
+                    "\nRandomWalk <targetFile> <outputFolder>"+
+                    "\n\t Creates a query graph from the target graph using a random walk." +
+                    "\n\t Find the subgraph isomorphism between given target graph and random query graph"+
+                    "\n\t Output folder must contain folders: \"GenerationInfo\", \"Graphs\", \"Isomorphism\""+
+                    "\nTest <groundTruthFile> <queryFolder> <targetFolder> <outputFile>"+
+                    "\n\t Test the subgraph isomorphisms within the ground truth file."+
+                    "\n\t Must provide the location of the query and target folders.  If path is contained within " +
+                    "ground truth folder, then give argument '_'."+
+                    "\n\t If there is any errors in the isomorphism it will be recorded in the output file.");
         }
 
     }
