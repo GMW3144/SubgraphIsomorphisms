@@ -14,8 +14,24 @@ public class SubgraphIsomorphism {
     private static int numBackTracking = -1; // keep track of backtracking calls
     private static int numLocalPruning = -1; // keep track of how much pruned locally
     private static int numGlobalPruned = -1; // keep track of how much pruned globally
+    private static double totalCostGraphQL = -1; // keep track of the total cost when computing the order for GraphQL
     private static Map<List<Vertex>, Integer> numCombined = null; // keep track of the statistics when combine graphs
     private static String algorithmName = ""; // algorithm in use
+
+    // error message if didn't find isomorphism algorithm
+    private static final String noAlgorithmFound = "Algorithm specified is not valid.\n " +
+            "Specify one of the following algorithms: \n" +
+            "\t groundTruth: finds the ground truth isomorphism.  Only uses LDA in pruning and BFS for ordering.\n" +
+            "\t graphQL: uses the GraphQL algorithm.\n";
+    // error message if didn't find connection algorithm
+    private static final String noConnectionMethodFound = "Connection type of graphs specified is not valid.\n " +
+            "Specify one of the following connections methods: \n" +
+            "\t merge: merge two vertices of the same label.\n" +
+            "\t edge: create an edge between two vertices.\n";
+    // error message if threshold is too high
+    private static final String thresholdToHigh = "Threshold too large for graph or graphs not connectable";
+    // error message if minimum support is too high
+    private static final String minSupToHigh = "Minimum support too large for graph";
 
 
     /**
@@ -206,18 +222,14 @@ public class SubgraphIsomorphism {
     private static void calculateStatistics(Graph<Vertex, DefaultEdge> graph){
         // keep track of a the possible labels within the graph
         Set<String> possibleValues = new HashSet<>();
-        // keep track of the possilbe subsets
+        // keep track of the possible subsets
         Set<ArrayList<String>> possibleSubsets = new HashSet<>();
 
         // keep track of the maximum degree of the graph
         int maxDegree = 0;
 
         // iterate through the vertices and calculate the possible combinations for the profiles
-        Iterator<Vertex> iter = new DepthFirstIterator<>(graph);
-        while(iter.hasNext()){
-            // get the graph vertex
-            Vertex v = iter.next();
-
+        for(Vertex v: graph.vertexSet()){
             // find the maximum degree
             int degree = graph.degreeOf(v);
             if(degree>maxDegree){
@@ -273,10 +285,7 @@ public class SubgraphIsomorphism {
         Set<List<Vertex>> T = new HashSet<>();
 
         // iterate through the query vertices
-        Iterator<Vertex> qIter = new DepthFirstIterator<>(query);
-        while(qIter.hasNext()){
-            // get the query vertex
-            Vertex u = qIter.next();
+        for(Vertex u: query.vertexSet()){
             // iterate through the candidates of that graph
             for(Vertex v : candidates.get(u)){
                 List<Vertex> element = new ArrayList<>();
@@ -302,17 +311,17 @@ public class SubgraphIsomorphism {
                 // neighbors u - neighbors v
                 // edges are from candidate set
 
-                // create a new graph, which will be the biparite graph
+                // create a new graph, which will be the bipartite graph
                 Graph<Vertex, DefaultEdge> B = new SimpleGraph<>(DefaultEdge.class);
                 // keep track of where the copy came from
-                Map<Vertex, Vertex> copyToOrignial = new HashMap<>();
+                Map<Vertex, Vertex> copyToOriginal = new HashMap<>();
                 int id = 0; // keep track of the current id being added
                 // keep track of u neighbors added
                 Set<Vertex> uPVertices = new HashSet<>();
                 // add copy of the neighbors of u
                 for(Vertex uP : Graphs.neighborListOf(query, u)){
                     Vertex uPCopy = copyVertex(uP, id); id++;
-                    copyToOrignial.put(uPCopy, uP);
+                    copyToOriginal.put(uPCopy, uP);
                     B.addVertex(uPCopy);
                     uPVertices.add(uPCopy);
                 }
@@ -321,7 +330,7 @@ public class SubgraphIsomorphism {
                 // add the neighbors of v
                 for(Vertex vP : Graphs.neighborListOf(target, v)){
                     Vertex vPCopy = copyVertex(vP, id); id++; // create copy so target vertices with same id can be added
-                    copyToOrignial.put(vPCopy, vP);
+                    copyToOriginal.put(vPCopy, vP);
                     B.addVertex(vPCopy);
                     vPVertices.add(vPCopy);
                 }
@@ -334,14 +343,14 @@ public class SubgraphIsomorphism {
                 for(Vertex uP: uPVertices) {
                     for(Vertex vP: vPVertices) {
                         // check if vP is a candidate of uP
-                        if(candidates.get(copyToOrignial.get(uP)).contains(copyToOrignial.get(vP))){
+                        if(candidates.get(copyToOriginal.get(uP)).contains(copyToOriginal.get(vP))){
                             // add edge between two values
                             B.addEdge(uP, vP);
 
                             // add to T''
                             List<Vertex> elementPrime = new ArrayList<>();
-                            elementPrime.add(copyToOrignial.get(uP));
-                            elementPrime.add(copyToOrignial.get(vP));
+                            elementPrime.add(copyToOriginal.get(uP));
+                            elementPrime.add(copyToOriginal.get(vP));
                             TPrimePrime.add(elementPrime);
                         }
                     }
@@ -383,24 +392,19 @@ public class SubgraphIsomorphism {
 
         // find the possible candidates given vertex label and degree
         // iterate through the query vertices
-        Iterator<Vertex> qIter = new DepthFirstIterator<>(query);
-        while(qIter.hasNext()){
-            // get the query vertex
-            Vertex u = qIter.next();
+        for(Vertex u: query.vertexSet()){
             // create a new set
             Set<Vertex> uCandidates = new HashSet<>();
 
             // iterate through the target vertices
-            Iterator<Vertex> tIter = new DepthFirstIterator<>(target);
-            while(tIter.hasNext()){
-                // get the target vertex
-                Vertex v = tIter.next();
+            for(Vertex v: target.vertexSet()){
 
                 // Label and Degree Filtering (LDF)
                 // check that the target vertex has appropriate attributes and degree
                 if(labelDegreeFiltering(query, target, u, v)){
                     uCandidates.add(v);
                 }
+                // if a pair has been pruned
                 else{
                     numLocalPruning++;
                 }
@@ -422,29 +426,24 @@ public class SubgraphIsomorphism {
                                                              Graph<Vertex, DefaultEdge> target){
         // keep track of the candidates for a given vertex
         Map<Vertex, Set<Vertex>> candidates = new HashMap<>();
+        // keep track of the number of pairs before global pruning
         int numBefore = 0;
 
         // find the possible candidates given vertex label and degree
         // iterate through the query vertices
-        Iterator<Vertex> qIter = new DepthFirstIterator<>(query);
-        while(qIter.hasNext()){
-            // get the query vertex
-            Vertex u = qIter.next();
+        for(Vertex u: query.vertexSet()){
             // create a new set
             Set<Vertex> uCandidates = new HashSet<>();
 
             // iterate through the target vertices
-            Iterator<Vertex> tIter = new DepthFirstIterator<>(target);
-            while(tIter.hasNext()){
-                // get the target vertex
-                Vertex v = tIter.next();
-
+            for(Vertex v: target.vertexSet()){
                 // Label and Degree Filtering (LDF)
                 // check that the target vertex has appropriate attributes and degree
                 if(labelDegreeFiltering(query, target, u, v) && localPruning(u, v)){
                     uCandidates.add(v);
-                    numBefore++;
+                    numBefore++; // found a new pair
                 }
+                // pruned some value
                 else{
                     numLocalPruning++;
                 }
@@ -454,32 +453,32 @@ public class SubgraphIsomorphism {
         }
         pruneGlobally(query, target, candidates);
 
-
+        // calculate the number of pairs after global pruning
         int numberAfter = 0;
         for(Vertex c: candidates.keySet()){
             numberAfter+=candidates.get(c).size();
         }
+        // the number of pairs globally pruned is the difference between the number of pairs before and after
         numGlobalPruned = numBefore-numberAfter;
 
         return candidates;
     }
 
     /**
-     * Calculate the size of the joins between current order and u.
-     * Calculation from GraphQL.
+     * Calculate the size of the joins between current order and u. Calculation from GraphQL.
      * @param query the query graph
      * @param leftSize the previous order size of joins
-     * @param candididates the possible target vertices for the query vertices
+     * @param candidates the possible target vertices for the query vertices
      * @param order the order we are checking the query vertices
      * @param u the possible query vertex we are adding
      * @param gamma the gamma value
      * @return the size of joining u to the current order
      */
     private static double calculateSize(Graph<Vertex, DefaultEdge> query, double leftSize,
-                                       Map<Vertex, Set<Vertex>> candididates, ArrayList<Vertex> order, Vertex u,
+                                       Map<Vertex, Set<Vertex>> candidates, ArrayList<Vertex> order, Vertex u,
                                        double gamma){
         // size(i) = size(i.left)*size(i.right)*gamma^connection(order, u)
-        double size = leftSize*candididates.get(u).size();
+        double size = leftSize*candidates.get(u).size();
         int power = 0;
         // get the number of nodes it is currently connected to already within the order
         for(Vertex v: order){
@@ -499,15 +498,15 @@ public class SubgraphIsomorphism {
      * Compute the processing order of how the query vertices will be checked.  Now it picks the vertex with the
      * smallest candidate set and then adds them in BFS order
      * @param query the query graph
-     * @param candididates sets of candidates for each query vertex
+     * @param candidates sets of candidates for each query vertex
      * @return a list of the vertices in the order they should be checked
      */
     private static ArrayList<Vertex> groundTruthComputeProcessingOrder(Graph<Vertex, DefaultEdge> query,
-                                                           Map<Vertex, Set<Vertex>> candididates){
+                                                           Map<Vertex, Set<Vertex>> candidates){
         ArrayList<Vertex> order = new ArrayList<>();
         // if we're looking for the ground truth then order is by BFS
-        while (order.size() < candididates.size()) {
-            Iterator<Vertex> nodeIterator = candididates.keySet().iterator();
+        while (order.size() < candidates.size()) {
+            Iterator<Vertex> nodeIterator = candidates.keySet().iterator();
             // find the node with the fewest amount of candidates
             Vertex startingNode = nodeIterator.next();
             // find the next vertex that is not in the order
@@ -515,9 +514,9 @@ public class SubgraphIsomorphism {
                 startingNode = nodeIterator.next();
             }
 
-            for (Vertex currentNode : candididates.keySet()) {
+            for (Vertex currentNode : candidates.keySet()) {
                 // update it when find a node with smaller candidate size and not yet in order
-                if (candididates.get(startingNode).size() > candididates.get(currentNode).size()
+                if (candidates.get(startingNode).size() > candidates.get(currentNode).size()
                         && !order.contains(currentNode)) {
                     startingNode = currentNode;
                 }
@@ -538,28 +537,28 @@ public class SubgraphIsomorphism {
      * Compute the processing order of how the query vertices will be checked.  Now it picks the vertex with the
      * smallest candidate set and then adds them in BFS order
      * @param query the query graph
-     * @param candididates sets of candidates for each query vertex
+     * @param candidates sets of candidates for each query vertex
      * @param gamma the gamma value
      * @return a list of the vertices in the order they should be checked
      */
     private static ArrayList<Vertex> graphQLComputeProcessingOrder(Graph<Vertex, DefaultEdge> query,
-                                                                       Map<Vertex, Set<Vertex>> candididates, double gamma){
+                                                                   Map<Vertex, Set<Vertex>> candidates, double gamma){
         ArrayList<Vertex> order = new ArrayList<>();
         Iterator<Vertex> iter = new DepthFirstIterator<>(query);
         // we do not know the next element or minimum candidate size so take first one we see
         Vertex uNext = iter.next();
-        double min = candididates.get(uNext).size();
+        double min = candidates.get(uNext).size();
 
         // keep track of the vertices we need to check, originally all the vertices in query graph
         ArrayList<Vertex> toCheck = new ArrayList<>();
         toCheck.add(uNext);
 
         while(iter.hasNext()) {
-            // get the graph vertex
+            // get the graph vertex and compare number of candidates
             Vertex u = iter.next(); toCheck.add(u);
-            if(candididates.get(u).size() < min){
+            if(candidates.get(u).size() < min){
                 uNext = u;
-                min = candididates.get(u).size();
+                min = candidates.get(u).size();
             }
         }
 
@@ -568,29 +567,30 @@ public class SubgraphIsomorphism {
         toCheck.remove(uNext);
         // keep track of cost and total
         double cost = min;
-        double total = cost;
+        totalCostGraphQL = cost;
 
         // while there are still nodes to add
         while(toCheck.size()>0){
             Iterator<Vertex> toCheckIter = toCheck.iterator();
             uNext = toCheckIter.next();
             // don't know minimum
-            min = calculateSize(query, cost, candididates, order, uNext, gamma);
+            min = calculateSize(query, cost, candidates, order, uNext, gamma);
 
             while(toCheckIter.hasNext()){
                 Vertex u = toCheckIter.next();
-                double currentSize = calculateSize(query, cost, candididates, order, u, gamma);
-                // choose the minim size
+                double currentSize = calculateSize(query, cost, candidates, order, u, gamma);
+                // choose the minimum size
                 if(currentSize<min){
                     uNext = u;
                     min = currentSize;
                 }
             }
 
+            // next smallest size, add the corresponding vertex
             order.add(uNext);
             toCheck.remove(uNext);
             cost = min;
-            total += cost;
+            totalCostGraphQL += cost;
         }
 
         return order;
@@ -607,8 +607,7 @@ public class SubgraphIsomorphism {
      * @return true if u can be matched to v
      */
     private static boolean isValid(Graph<Vertex, DefaultEdge> query, Graph<Vertex, DefaultEdge> target,
-                                  Map<Vertex, Vertex> currentFunction, Vertex u, Vertex v,
-                                  boolean isInduced){
+                                  Map<Vertex, Vertex> currentFunction, Vertex u, Vertex v, boolean isInduced){
         // iterate through neighbors of u
         for(Vertex uPrime: Graphs.neighborListOf(query, u)){
             // if u' is in the domain of current function
@@ -638,7 +637,7 @@ public class SubgraphIsomorphism {
             }
         }
 
-        // we didn't find any problems
+        // we didn't find any problems, so valid mapping
         return true;
     }
 
@@ -650,7 +649,7 @@ public class SubgraphIsomorphism {
      * @param order list of order which each vertex should be mapped
      * @param i the current vertex within the order
      * @param currentFunction the current matching between the query and target for the previous i vertices
-     * @param allFunctionsFound all the solutions that were discoverd
+     * @param allFunctionsFound all the solutions that were discovered
      * @param isInduced whether matching is induced
      */
     private static void subgraphIsomorphism(Graph<Vertex, DefaultEdge> query,
@@ -688,35 +687,31 @@ public class SubgraphIsomorphism {
      * @param isInduced whether matching is induced
      * @return the solutions to the subgraph isomorphism between the given graphs
      */
-    private static List<Map<Vertex, Vertex>> groundTruthMatching(Graph<Vertex, DefaultEdge> query,
-                                                      Graph<Vertex, DefaultEdge> target, boolean isInduced){
+    private static List<Map<Vertex, Vertex>> matching(Graph<Vertex, DefaultEdge> query,
+                                                      Graph<Vertex, DefaultEdge> target, boolean isInduced,
+                                                      double gamma){
         List<Map<Vertex, Vertex>> results = new ArrayList<>();
-        numLocalPruning = 0; numGlobalPruned = 0;
-        Map<Vertex, Set<Vertex>> candididates = groundTruthComputeCandidates(query, target);
-        ArrayList<Vertex> order = groundTruthComputeProcessingOrder(query, candididates);
+        Map<Vertex, Set<Vertex>> candidates;
+        ArrayList<Vertex> order;
+        if(algorithmName.equals("groundTruth")) {
+            numLocalPruning = 0;
+            candidates = groundTruthComputeCandidates(query, target);
+            order = groundTruthComputeProcessingOrder(query, candidates);
+        }
+        else if(algorithmName.equals("graphQL")){
+            numLocalPruning = 0; numGlobalPruned = 0;
+            candidates = graphQLComputeCandidates(query, target);
+            order = graphQLComputeProcessingOrder(query, candidates, gamma);
+        }
+        else{
+            System.out.println("Specify one of the following algorithms: ");
+            System.out.println("\t groundTruth: finds the ground truth isomorphism.  Only uses LDA in pruning and BFS for ordering.");
+            System.out.println("\t graphQL: uses the GraphQL algorithm.");
+            return null;
+        }
         // keep track of number of backtracking
         numBackTracking = 0;
-        subgraphIsomorphism(query, target, candididates, order, 0, new HashMap<>(), results, isInduced);
-        return results;
-    }
-
-    /**
-     * Computes the subgraph isomorphism and the necessary candidates and order using graphQL
-     * @param query the query graph
-     * @param target the target graph
-     * @param isInduced whether matching is induced
-     * @param gamma the gamma value
-     * @return the solutions to the subgraph isomorphism between the given graphs
-     */
-    private static List<Map<Vertex, Vertex>> graphQL(Graph<Vertex, DefaultEdge> query, Graph<Vertex, DefaultEdge> target,
-                                                     boolean isInduced, double gamma){
-        List<Map<Vertex, Vertex>> results = new ArrayList<>();
-        numLocalPruning = 0; numGlobalPruned = 0;
-        Map<Vertex, Set<Vertex>> candididates = graphQLComputeCandidates(query, target);
-        ArrayList<Vertex> order = graphQLComputeProcessingOrder(query, candididates, gamma);
-        // keep track of number of backtracking
-        numBackTracking = 0;
-        subgraphIsomorphism(query, target, candididates, order, 0, new HashMap<>(), results, isInduced);
+        subgraphIsomorphism(query, target, candidates, order, 0, new HashMap<>(), results, isInduced);
         return results;
     }
 
@@ -789,7 +784,7 @@ public class SubgraphIsomorphism {
     }
 
     /**
-     * Appy subgraph isomorphism if already know both graphs
+     * Apply subgraph isomorphism if already know both graphs
      * @param queryFileLocation the location of the file containing the query graph information
      * @param targetFileLocation the location of file containing the target graph information
      * @param outputFileName the file which we will write the output to
@@ -810,26 +805,11 @@ public class SubgraphIsomorphism {
         Graph<Vertex, DefaultEdge> targetGraph = createProteinGraph(targetFile);
 
         // find and display the isomorphisms
-        List<Map<Vertex, Vertex>> subgraphIsomorphism = new ArrayList<>();
-        if(algorithmName.equals("groundTruth")) {
-            subgraphIsomorphism = groundTruthMatching(queryGraph, targetGraph, isInduced);
-        }
-        else if(algorithmName.equals("graphQL")){
-            subgraphIsomorphism = graphQL(queryGraph, targetGraph, isInduced, gamma);
-        }
-        else{
-            System.out.println("Specify one of the following algorithms: ");
-            System.out.println("\t groundTruth: finds the ground truth isomorphism.  Only uses LDA in pruning and BFS for ordering.");
-            System.out.println("\t graphQL: uses the GraphQL algorithm.");
-
+        List<Map<Vertex, Vertex>> subgraphIsomorphism = matching(queryGraph, targetGraph, isInduced, gamma);
+        if(subgraphIsomorphism==null){
             // write to output file
             BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName));
-            writer.write("Algorithm specified is not valid.\n");
-            writer.append("Specify one of the following algorithms: \n" +
-                    "\t groundTruth: finds the ground truth isomorphism.  Only uses LDA in pruning and BFS for ordering.\n" +
-                    "\t graphQL: uses the GraphQL algorithm.\n");
-            writer.write("");
-
+            writer.write(noAlgorithmFound);
             writer.close();
             return;
         }
@@ -875,8 +855,7 @@ public class SubgraphIsomorphism {
         // get a random vertex
         Random rand = new Random();
         int randVertexID = rand.nextInt(target.vertexSet().size());
-        Vertex randVertex = target.vertexSet().stream().filter(vertex -> vertex.getId() == randVertexID).findAny()
-                .get();
+        Vertex randVertex = target.vertexSet().stream().filter(vertex -> vertex.getId() == randVertexID).findAny().get();
 
         // keep track of equivalencies, so know when see a target vertex again
         Map<Vertex, Vertex> seen = new HashMap<>();
@@ -1013,25 +992,10 @@ public class SubgraphIsomorphism {
 
 
                 // find isomorphisms and how they are displayed
-                List<Map<Vertex, Vertex>> subgraphIsomorphism = new ArrayList<>();
-                if(algorithmName.equals("groundTruth")) {
-                    subgraphIsomorphism = groundTruthMatching(query, target, isInduced);
-                }
-                else if(algorithmName.equals("graphQL")){
-                    subgraphIsomorphism = graphQL(query, target, isInduced, gamma);
-                }
-
-                else{
-                    System.out.println("Specify one of the following algorithms: ");
-                    System.out.println("\t groundTruth: finds the ground truth isomorphism.  Only uses LDA in pruning and BFS for ordering.");
-                    System.out.println("\t graphQL: uses the GraphQL algorithm.");
-
-                    writer.write("Algorithm specified is not valid.\n");
-                    writer.append("Specify one of the following algorithms: \n" +
-                            "\t groundTruth: finds the ground truth isomorphism.  Only uses LDA in pruning and BFS for ordering.\n" +
-                            "\t graphQL: uses the GraphQL algorithm.\n");
-                    br.close();
-                    writer.close();
+                List<Map<Vertex, Vertex>> subgraphIsomorphism = matching(query, target, isInduced, gamma);
+                if(subgraphIsomorphism==null){
+                    writer.write(noAlgorithmFound);
+                    br.close(); writer.close();
                     return;
                 }
 
@@ -1163,7 +1127,7 @@ public class SubgraphIsomorphism {
      * @param transactions the set of transactions within the database
      * @param items the set of possible items within the transactions
      * @param minSup the minim support for the association rules
-     * @return the large itemsets
+     * @return the large itemsets (profiles)
      */
     private static Map<List<String>, Set<Integer>>  aprioriAlgo(Map<Integer, List<String>> transactions,
                                                                Set<String> items, double minSup){
@@ -1273,25 +1237,31 @@ public class SubgraphIsomorphism {
 
         Map<List<String>, Set<Integer>>  frequentItemsets = aprioriAlgo(transactions, possibleItems, minSup);
 
-
         // print out the information about the variables
         if(minSup<=1){
             minSup = minSup*transactions.size();
         }
-        System.out.println("Graph: "+targetFile.getName());
-        System.out.println("Number of Nodes: "+transactions.size());
-        System.out.println("Minsup (integer): "+minSup);
-        System.out.println("Minsup (percentage): "+minSup/transactions.size());
-        writer.append("Graph: "+targetFile.getName() + "("+targetFileLocation+")"+"\n"+
-                "Number of Nodes: "+transactions.size()+"\n"+
-                "Minsup (integer): "+minSup+"\n"+
-                "Minsup (percentage): "+minSup/transactions.size() + "\n");
+        String graphInfo = "Graph: "+targetFile.getName()+
+                "\nNumber of Nodes: "+transactions.size()+
+                "\nMinimum Support (integer): "+minSup+
+                "\nMinimum Support (percentage): "+minSup/transactions.size();
+        System.out.println(graphInfo);
+        writer.append(graphInfo).append("\n");
 
+        if(frequentItemsets.isEmpty()){
+            System.out.println(minSupToHigh);
+            writer.write(minSupToHigh);
+            writer.close();
+            return;
+        }
+
+        // keep track of the union of all the frequent profiles
         List<String> outputValues = new ArrayList<>();
         for(List<String> itemset : frequentItemsets.keySet()){
             outputValues.add(itemset + " appears in " +frequentItemsets.get(itemset).size()+" vertex profiles:\n"
                     +frequentItemsets.get(itemset)+" \n\n");
         }
+        // sort the frequent profiles and print in order
         Collections.sort(outputValues);
         for(String output: outputValues){
             for(int i = 0; i<output.length(); i++){
@@ -1301,17 +1271,17 @@ public class SubgraphIsomorphism {
                 }
                 System.out.print(c);
             }
-            int numOccurances = 0;
+            int numOccurrences = 0;
             for(String word: output.split(" ")){
                 try{
-                    numOccurances = Integer.parseInt(word);
+                    numOccurrences = Integer.parseInt(word);
                     break;
                 }
                 catch (NumberFormatException nfe){
                     continue;
                 }
             }
-            System.out.println("]"+":"+numOccurances);
+            System.out.println("]"+":"+numOccurrences);
             writer.append(output);
         }
 
@@ -1339,11 +1309,11 @@ public class SubgraphIsomorphism {
         for(int i = 0; i<starGraphs.size(); i++){
             Graph<Vertex, DefaultEdge> graph = starGraphs.get(i);
             List<String> profile = starGraphsProfiles.get(i);
-            int numberOccurances = numberTimesRootOccurs.get(profile).size();
+            int numberOccurrences = numberTimesRootOccurs.get(profile).size();
 
-            if(mostFrequentStarGraph == null || numberOccurances>mostFrequent){
+            if(mostFrequentStarGraph == null || numberOccurrences>mostFrequent){
                 mostFrequentStarGraph = graph;
-                mostFrequent = numberOccurances;
+                mostFrequent = numberOccurrences;
                 location = i;
             }
         }
@@ -1360,10 +1330,7 @@ public class SubgraphIsomorphism {
         // the leaf nodes
         List<Vertex> leaf = new ArrayList<>();
         // iterate through vertices and only included vertices of degree 1
-        Iterator<Vertex> vertexIterator = new DepthFirstIterator<>(graph);
-        while(vertexIterator.hasNext()) {
-            // get the query vertex
-            Vertex u = vertexIterator.next();
+        for(Vertex u: graph.vertexSet()) {
             if(graph.degreeOf(u) == 1){
                 leaf.add(u);
             }
@@ -1390,7 +1357,7 @@ public class SubgraphIsomorphism {
             id++;
         }
 
-        // add origninal edges back in
+        // add original edges back in
         for(Vertex v: graph.vertexSet()){
             for(Vertex u: Graphs.neighborListOf(graph, v)) {
                 Vertex vP = oldToNew.get(v);
@@ -1442,10 +1409,8 @@ public class SubgraphIsomorphism {
             }
         }
 
-
         // keep track of the vertices to merge (possibly)
-        Map<List<Vertex>, Integer> possilbeVerticesToMerge = new HashMap<>();
-
+        Map<List<Vertex>, Integer> possibleVerticesToMerge = new HashMap<>();
 
         // iterate through the two roots
         for(Vertex root1: graph1Roots){
@@ -1475,23 +1440,23 @@ public class SubgraphIsomorphism {
                         }
 
                         // count the number of times can merge a given vertex
-                        if (!possilbeVerticesToMerge.containsKey(merge)) {
-                            possilbeVerticesToMerge.put(merge, 1);
+                        if (!possibleVerticesToMerge.containsKey(merge)) {
+                            possibleVerticesToMerge.put(merge, 1);
                         } else {
-                            possilbeVerticesToMerge.put(merge, possilbeVerticesToMerge.get(merge) + 1);
+                            possibleVerticesToMerge.put(merge, possibleVerticesToMerge.get(merge) + 1);
                         }
                     }
                 }
             }
         }
 
-        if(possilbeVerticesToMerge.size() == 0){
+        if(possibleVerticesToMerge.size() == 0){
             return null;
         }
 
         HashMap<List<Vertex>, Integer> verticesToMerge = new HashMap<>();
         // clean up vertices to merge
-        for(List<Vertex> merge: possilbeVerticesToMerge.keySet()){
+        for(List<Vertex> merge: possibleVerticesToMerge.keySet()){
             Vertex v1 = merge.get(0);
             Vertex v2 = merge.get(1);
 
@@ -1499,15 +1464,15 @@ public class SubgraphIsomorphism {
             // iterate through previous merges
             for(List<Vertex> previousMerge: verticesToMerge.keySet()){
                 if(previousMerge.contains(v1) || previousMerge.contains(v2)){
-                    if(verticesToMerge.get(previousMerge)<possilbeVerticesToMerge.get(merge)){
+                    if(verticesToMerge.get(previousMerge)<possibleVerticesToMerge.get(merge)){
                         verticesToMerge.remove(previousMerge);
-                        verticesToMerge.put(merge, possilbeVerticesToMerge.get(merge));
+                        verticesToMerge.put(merge, possibleVerticesToMerge.get(merge));
                     }
                     conflict = true;
                 }
             }
-            if(!conflict && possilbeVerticesToMerge.get(merge)>threshold){
-                verticesToMerge.put(merge, possilbeVerticesToMerge.get(merge));
+            if(!conflict && possibleVerticesToMerge.get(merge)>threshold){
+                verticesToMerge.put(merge, possibleVerticesToMerge.get(merge));
             }
         }
 
@@ -1582,7 +1547,7 @@ public class SubgraphIsomorphism {
         }
 
         // keep track of the vertices to merge (possibly)
-        Map<List<String>, Integer> possilbeEdges = new HashMap<>();
+        Map<List<String>, Integer> possibleEdges = new HashMap<>();
 
         // iterate through the two roots
         for(Vertex root1: graph1Roots) {
@@ -1612,12 +1577,12 @@ public class SubgraphIsomorphism {
                             newEdge.add(n2.getLabel());
 
                             // if a new edge
-                            if(!possilbeEdges.containsKey(newEdge)){
-                                possilbeEdges.put(newEdge, 1);
+                            if(!possibleEdges.containsKey(newEdge)){
+                                possibleEdges.put(newEdge, 1);
                             }
                             // if we have seen the edge before
                             else{
-                                possilbeEdges.put(newEdge, possilbeEdges.get(newEdge)+1);
+                                possibleEdges.put(newEdge, possibleEdges.get(newEdge)+1);
                             }
 
                         }
@@ -1627,25 +1592,25 @@ public class SubgraphIsomorphism {
         }
 
         // if there are no edges then return null
-        if(possilbeEdges.isEmpty()){
+        if(possibleEdges.isEmpty()){
             return null;
         }
 
         // only keep edges past a threshold
-        for(List<String> edge : new HashSet<>(possilbeEdges.keySet())) {
-            if (possilbeEdges.get(edge) < threshold) {
-                possilbeEdges.remove(edge);
+        for(List<String> edge : new HashSet<>(possibleEdges.keySet())) {
+            if (possibleEdges.get(edge) < threshold) {
+                possibleEdges.remove(edge);
             }
         }
 
         // if there are no edges then return null
-        if(possilbeEdges.isEmpty()){
+        if(possibleEdges.isEmpty()){
             return null;
         }
 
-        // otherwised update the graph
+        // otherwise update the graph
         List<List<String>> sortedEdges = new ArrayList<>();
-        possilbeEdges.entrySet().stream()
+        possibleEdges.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue(Comparator.reverseOrder())).forEachOrdered(x->sortedEdges.add(x.getKey()));
         for(List<String> edge: sortedEdges){
             List<Vertex> v1Choices = vertexOfLabel1.get(edge.get(0));
@@ -1666,7 +1631,7 @@ public class SubgraphIsomorphism {
 
             List<Vertex> edgeInfo = new ArrayList<>();
             edgeInfo.add(v1); edgeInfo.add(v2);
-            numCombined.put(edgeInfo, possilbeEdges.get(edge));
+            numCombined.put(edgeInfo, possibleEdges.get(edge));
         }
 
         return combinedGraph;
@@ -1681,15 +1646,16 @@ public class SubgraphIsomorphism {
      * @param isInduced if the isomorphism is induced
      * @param profileSize the size of the profile for the frequent itemset
      * @param gamma the gamma value
+     * @param connectionMethod the method we will connect the two graphs (merge/edge)
      * @throws IOException for reader
      */
     public static void fdmGraph(String fdmFileLocation, String outputFolderName, boolean isInduced, int profileSize,
-                                double gamma) throws IOException {
+                                double gamma, String connectionMethod) throws IOException {
         // get the information from the frequent dataset mining file
         Graph<Vertex, DefaultEdge> target = null; // target graph
         String graphLocation = ""; // location of target graph
         Map<List<String>, List<Integer>> frequentProfiles = new HashMap<>(); // the frequent profiles of a given size
-        Double minsup = 0.0; // the minimum support
+        double minsup = 0.0; // the minimum support
 
         BufferedReader br = new BufferedReader(new FileReader(fdmFileLocation));
         String line = br.readLine().strip();
@@ -1710,7 +1676,7 @@ public class SubgraphIsomorphism {
 
             // information on the maximum support
             else if(line.toLowerCase(Locale.ROOT).contains("minsup (integer):")) {
-                minsup = Double.valueOf(line.split(":")[1].strip());
+                minsup = Double.parseDouble(line.split(":")[1].strip());
             }
 
             // start of new itemset
@@ -1757,6 +1723,19 @@ public class SubgraphIsomorphism {
                 }
             }
             line = br.readLine();
+        }
+
+        // check if found a target
+        if(target == null){
+            System.out.println("No target graph found.  Format as follows :" +
+                    "\n Graph: <graphLocation> " +
+                    "\n Number of Nodes: <numberNodesInGraph> " +
+                    "\n Minsup (integer): <integerMinsup> " +
+                    "\n Minsup (percentage): <percentMinsup> " +
+                    "\n Attribute Label " +
+                    "\n <largeProfile> appears in <numAppearances> vertex profiles: " +
+                    "\n <listVerticesIds>");
+            return;
         }
 
         // keep track of the vertices we have seen
@@ -1822,7 +1801,7 @@ public class SubgraphIsomorphism {
         // store the graphs to union
         List<Graph<Vertex, DefaultEdge>> starGraphs = new ArrayList<>();
         List<List<String>> starGraphsProfiles = new ArrayList<>();
-        // keep track of the vertix id, want all to be different
+        // keep track of the vertex id, want all to be different
         int currentId = 0;
 
         // build query graphs from the star shaped query graphs
@@ -1859,29 +1838,18 @@ public class SubgraphIsomorphism {
             starGraphs.add(query); starGraphsProfiles.add(profile);
         }
 
-
         // keep track of two most frequent graph
         int locationStarGraph1 = findMostFrequentStructure(starGraphs, starGraphsProfiles, verticesRootOccurs);
         Graph<Vertex, DefaultEdge> starGraph1 = starGraphs.remove(locationStarGraph1);
         List<String> starGraph1Profile = starGraphsProfiles.remove(locationStarGraph1);
         List<Vertex> starGraph1Roots = verticesRootOccurs.get(starGraph1Profile);
-        int starGraph1NumOccurances = verticesRootOccurs.remove(starGraph1Profile).size();
+        int starGraph1NumOccurrences = verticesRootOccurs.remove(starGraph1Profile).size();
 
         int locationStarGraph2  = findMostFrequentStructure(starGraphs, starGraphsProfiles, verticesRootOccurs);
         Graph<Vertex, DefaultEdge> starGraph2 = starGraphs.remove(locationStarGraph2);
         List<String> starGraph2Profile = starGraphsProfiles.remove(locationStarGraph2);
         List<Vertex> starGraph2Roots = verticesRootOccurs.get(starGraph2Profile);
-        int starGraph2NumOccurances = verticesRootOccurs.remove(starGraph2Profile).size();
-
-        numCombined = new HashMap<>();
-        // union two star graphs
-        Graph<Vertex, DefaultEdge> query = unionGraphsByEdge(target, starGraph1, starGraph2, starGraph1Roots,
-                starGraph2Roots, 100);
-
-        if(query == null){
-            System.out.println("Threshold too high");
-            return;
-        }
+        int starGraph2NumOccurrences = verticesRootOccurs.remove(starGraph2Profile).size();
 
         // store important information when using query graph
         File outputGraphFolder = new File(outputFolderName + "Graphs\\");
@@ -1891,6 +1859,38 @@ public class SubgraphIsomorphism {
         }
         String graphName = "graph" + (numGraphs + 1) + ".txt";
 
+        // union two star graphs
+        Graph<Vertex, DefaultEdge> query = null; numCombined = new HashMap<>();
+        // union by merge
+        if(connectionMethod.equals("merge")){
+            query = unionGraphsByMerge(target, starGraph1, starGraph2, starGraph1Roots,
+                    starGraph2Roots, 100);
+        }
+        // union by edge
+        else if(connectionMethod.equals("edge")) {
+            query = unionGraphsByEdge(target, starGraph1, starGraph2, starGraph1Roots,
+                    starGraph2Roots, 100);
+        }
+        // not a correct merging method
+        else{
+            // write to graph file that couldn't find a connection method
+            BufferedWriter writer = new BufferedWriter(new FileWriter(outputFolderName+"Graphs\\"+graphName));
+            writer.write(noConnectionMethodFound);
+            writer.close();
+            System.out.println(noConnectionMethodFound);
+            return;
+        }
+
+        // if we couldn't connect the graphs anywhere
+        if(query == null){
+            // write to graph file that couldn't find a connection (because of threshold or not connectable)
+            BufferedWriter writer = new BufferedWriter(new FileWriter(outputFolderName+"Graphs\\"+graphName));
+            writer.write(thresholdToHigh);
+            writer.close();
+            System.out.println(thresholdToHigh);
+            return;
+        }
+
         // save the graph
         String queryFileName = writeGraph(query, outputFolderName + "Graphs\\", graphName);
 
@@ -1898,37 +1898,24 @@ public class SubgraphIsomorphism {
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFolderName+"GenerationInfo\\"+graphName));
 
         // now perform subgraph isomorphism
-        List<Map<Vertex, Vertex>> subgraphIsomorphism;
-        if(algorithmName.equals("groundTruth")) {
-            subgraphIsomorphism = groundTruthMatching(query, target, isInduced);
-        }
-        else if(algorithmName.equals("graphQL")){
-            subgraphIsomorphism = graphQL(query, target, isInduced, gamma);
-        }
-        else{
-            System.out.println("Specify one of the following algorithms: ");
-            System.out.println("\t groundTruth: finds the ground truth isomorphism.  Only uses LDA in pruning and BFS for ordering.");
-            System.out.println("\t graphQL: uses the GraphQL algorithm.");
-
+        List<Map<Vertex, Vertex>> subgraphIsomorphism = matching(query, target, isInduced, gamma);
+        if(subgraphIsomorphism == null){
             // write to output file
             writer = new BufferedWriter(new FileWriter(
                     outputFolderName + "Isomorphism\\" + graphName));
-            writer.write("Algorithm specified is not valid.\n");
-            writer.append("Specify one of the following algorithms: \n" +
-                    "\t groundTruth: finds the ground truth isomorphism.  Only uses LDA in pruning and BFS for ordering.\n" +
-                    "\t graphQL: uses the GraphQL algorithm.\n");
+            writer.write(noAlgorithmFound);
             writer.close();
 
             return;
         }
 
-        writer.write("Used "+fdmFileLocation+" frequent dataset mining \n");
-        writer.append("Combined two graphs:");
-        writer.append("Vertex with attribute "+ frequentProfileShapes.get(starGraph1Profile)
-                + " and profile "+ starGraph1Profile +" occurs "+starGraph1NumOccurances
+        writer.write("Used "+fdmFileLocation+" frequent dataset mining \n"+
+                "Combined two graphs: \n"+
+                "Vertex with attribute "+ frequentProfileShapes.get(starGraph1Profile)
+                + " and profile "+ starGraph1Profile +" occurs "+starGraph1NumOccurrences
                 + " times within the graph \n"
                 +"Vertex with attribute "+ frequentProfileShapes.get(starGraph2Profile)
-                + " and profile "+ starGraph2Profile +" occurs "+starGraph2NumOccurances
+                + " and profile "+ starGraph2Profile +" occurs "+starGraph2NumOccurrences
                 + " times within the graph \n");
 
         writer.append("\n");
@@ -1974,25 +1961,12 @@ public class SubgraphIsomorphism {
 
 
         // find and display the isomorphisms
-        List<Map<Vertex, Vertex>> subgraphIsomorphism = new ArrayList<>();
-        if(algorithmName.equals("groundTruth")){
-            subgraphIsomorphism = groundTruthMatching(queryGraph, targetGraph, isInduced);
-        }
-        else if(algorithmName.equals("graphQL")){
-            subgraphIsomorphism = graphQL(queryGraph, targetGraph, isInduced, gamma);
-        }
-        else{
-            System.out.println("Specify one of the following algorithms: ");
-            System.out.println("\t groundTruth: finds the ground truth isomorphism.  Only uses LDA in pruning and BFS for ordering.");
-            System.out.println("\t graphQL: uses the GraphQL algorithm.");
-
+        List<Map<Vertex, Vertex>> subgraphIsomorphism = matching(queryGraph, targetGraph, isInduced, gamma);
+        if(subgraphIsomorphism == null){
             // write to output file
             writer = new BufferedWriter(new FileWriter(
                     outputFolderName + "Isomorphism\\" + graphName));
-            writer.write("Algorithm specified is not valid.\n");
-            writer.append("Specify one of the following algorithms: \n" +
-                    "\t groundTruth: finds the ground truth isomorphism.  Only uses LDA in pruning and BFS for ordering.\n" +
-                    "\t graphQL: uses the GraphQL algorithm.\n");
+            writer.write(noAlgorithmFound);
             writer.close();
 
             return;
@@ -2023,11 +1997,11 @@ public class SubgraphIsomorphism {
                                               BufferedWriter writer) throws IOException {
 
         // print out graph
-        writer.write("Graph Statistics: \n");
-        writer.append("Query: ").append(queryName).append("\n");
-        writer.append("Target: ").append(targetName).append("\n");
+        writer.write("Graph Statistics: \n"+
+                "Query: "+ queryName + "\n"+
+                "Target: " + targetName + "\n");
 
-        // distribution of num subsets
+        // distribution of num subsets for each vertex
         Map<Integer, Integer> distributionTarget = new HashMap<>();
         for(Vertex v: target.vertexSet()){
             int numSubsets = v.calculateNumberProfileSubsets().size();
@@ -2046,6 +2020,7 @@ public class SubgraphIsomorphism {
             distributionQuery.put(numSubsets, distributionQuery.get(numSubsets)+1);
         }
 
+        // print out the distribution
         writer.append("Distribution: (number_profiles:frequency) \n");
         writer.append("Query Graph:\n");
         List<Integer> possibleSizes = new ArrayList<>(distributionQuery.keySet()); Collections.sort(possibleSizes);
@@ -2060,13 +2035,22 @@ public class SubgraphIsomorphism {
         }
 
 
+        // number of backtracking in isomorphism
         writer.append("Number backtracking calls: ").append(String.valueOf(numBackTracking)).append("\n");
+        // number of possible matchings
         writer.append("Total number of possible matchings: "+target.vertexSet().size()*query.vertexSet().size()+"\n");
+        // number pruned from local pruning
         writer.append("Number pruned from local pruning: ").append(String.valueOf(numLocalPruning)).append("\n");
+        // number pruned from global pruning
         if(numGlobalPruned!=-1) {
             writer.append("Number pruned from global pruning: ").append(String.valueOf(numGlobalPruned)).append("\n");
         }
+        // total cost from graphQL order
+        if(totalCostGraphQL!=-1) {
+            writer.append("Cost of order found by graphQL: ").append(String.valueOf(totalCostGraphQL)).append("\n");
+        }
 
+        // the combination information if combined two graphs
         if(numCombined!=null){
             writer.append("Star Graph Combination:\n");
             for(List<Vertex> combine: numCombined.keySet()){
@@ -2082,10 +2066,10 @@ public class SubgraphIsomorphism {
      * @throws IOException for reader and writer
      */
     public static void main(String[] args) throws IOException {
-        String method = "";
+        String mainMethod = "";
         if(args.length>0) {
             // get the info on the folder and file
-            method = args[0];
+            mainMethod = args[0];
         }
         // basic information for isomorphism
         algorithmName = "graphQL";
@@ -2094,7 +2078,7 @@ public class SubgraphIsomorphism {
         double gamma = 0.5;
 
         // if the two graphs are known
-        if(method.equals("KnownGraphs") && args.length == 5) {
+        if(mainMethod.equals("KnownGraphs") && args.length == 5) {
             final String queryLocation = args[1];
             final String targetLocation = args[2];
             final String outputFileName = args[3];
@@ -2104,7 +2088,7 @@ public class SubgraphIsomorphism {
                     gamma);
         }
 
-        else if(method.equals("FrequentDatasets") && args.length == 3){
+        else if(mainMethod.equals("FrequentDatasets") && args.length == 3){
             final String targetFolderLocation = args[1];
             final String outputFolderName = args[2];
 
@@ -2123,21 +2107,21 @@ public class SubgraphIsomorphism {
             }
         }
 
-        else if(method.equals("FDMQuery") && args.length == 3){
+        else if(mainMethod.equals("FDMQuery") && args.length == 3){
             final String fdmFile = args[1];
             final String outputFolderName = args[2];
 
             // keep track of the minimum profile size while creating graph
             int profileSize = 3; // itemsets must be this size
             // TODO - if we choose greater than, then the values that are smaller make up the greater itemset sizes
-
+            String connectionMethod = "merge";
 
             // get the information from the fdm file
-            fdmGraph(fdmFile, outputFolderName, isInduced, profileSize, gamma);
+            fdmGraph(fdmFile, outputFolderName, isInduced, profileSize, gamma, connectionMethod);
         }
 
         // create query graph from random walk
-        else if(method.equals("RandomWalk")  && args.length == 3) {
+        else if(mainMethod.equals("RandomWalk")  && args.length == 3) {
             final String targetLocation = args[1];
             final String outputFolderName = args[2];
 
@@ -2147,7 +2131,7 @@ public class SubgraphIsomorphism {
 
             // iterate through the different size of graphs
             for(int size = 5; size<25; size++) {
-                // attemt 100 times for each size
+                // attempt 100 times for each size
                 for(int i = 1; i<10; i++) {
                     File outputGraphFolder = new File(outputFolderName + "Graphs\\");
                     int numGraphs = 0;
@@ -2161,7 +2145,7 @@ public class SubgraphIsomorphism {
             }
         }
 
-        else if(method.equals("Test")  && args.length == 5){
+        else if(mainMethod.equals("Test")  && args.length == 5){
             final String groundTruthFile = args[1];
             String queryFolderName = args[2];
             if(queryFolderName.equals("_")){
