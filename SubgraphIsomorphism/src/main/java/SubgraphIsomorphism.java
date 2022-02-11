@@ -2103,7 +2103,7 @@ public class SubgraphIsomorphism {
         // basic information for isomorphism
         algorithmName = "graphQL";
         // groundTruth, graphQL
-        boolean isInduced = true;
+        final boolean isInduced = true;
         double gamma = 0.5;
 
         // if the two graphs are known
