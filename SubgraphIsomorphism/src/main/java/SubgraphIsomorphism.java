@@ -27,7 +27,8 @@ public class SubgraphIsomorphism {
     private static final String noConnectionMethodFound = "Connection type of graphs specified is not valid.\n " +
             "Specify one of the following connections methods: \n" +
             "\t merge: merge two vertices of the same label.\n" +
-            "\t edge: create an edge between two vertices.\n";
+            "\t edge: create an edge between two vertices.\n " +
+            "\t none: use star graph of largest size.\n";
     // error message if threshold is too high
     private static final String thresholdToHigh = "Threshold too large for graph or graphs not connectable";
     // error message if minimum support is too high
@@ -1866,7 +1867,8 @@ public class SubgraphIsomorphism {
 
         int locationStarGraph2  = findMostFrequentStructure(starGraphs, starGraphsProfiles, verticesRootOccurs);
         // if we couldn't find a star graph
-        if(locationStarGraph2 == -1){// write to graph file that couldn't find a connection (because of threshold or not connectable)
+        if(locationStarGraph2 == -1 && !connectionMethod.equals("none")){
+            // write to graph file that couldn't find a connection (because of threshold or not connectable)
             BufferedWriter writer = new BufferedWriter(new FileWriter(outputFolderName+"Graphs\\"+graphName));
             writer.write(thresholdToHigh);
             writer.append("Only one profile of given size.\n");
@@ -1891,6 +1893,9 @@ public class SubgraphIsomorphism {
         else if(connectionMethod.equals("edge")) {
             query = unionGraphsByEdge(target, starGraph1, starGraph2, starGraph1Roots,
                     starGraph2Roots, 100);
+        }
+        else if(connectionMethod.equals("none")){
+            query = starGraph1;
         }
         // not a correct merging method
         else{
@@ -2096,7 +2101,7 @@ public class SubgraphIsomorphism {
             mainMethod = args[0];
         }
         // basic information for isomorphism
-        algorithmName = "";
+        algorithmName = "graphQL";
         // groundTruth, graphQL
         boolean isInduced = true;
         double gamma = 0.5;
@@ -2111,7 +2116,7 @@ public class SubgraphIsomorphism {
             subgraphIsomorphismKnownGraphs(queryLocation, targetLocation, outputFileName, statisticsFileName, isInduced,
                     gamma);
         }
-
+        // find the frequent profiles
         else if(mainMethod.equals("FrequentDatasets") && args.length == 4){
             final String targetFolderLocation = args[1];
             final String outputFolderName = args[2];
@@ -2129,7 +2134,7 @@ public class SubgraphIsomorphism {
                 }
             }
         }
-
+        // create a query graph from frequent profiles
         else if(mainMethod.equals("FDMQuery") && args.length == 5){
             final String fdmFile = args[1];
             final String outputFolderName = args[2];
@@ -2140,7 +2145,6 @@ public class SubgraphIsomorphism {
             // get the information from the fdm file
             fdmGraph(fdmFile, outputFolderName, isInduced, profileSize, gamma, connectionMethod);
         }
-
         // create query graph from random walk
         else if(mainMethod.equals("RandomWalk")  && args.length == 3) {
             final String targetLocation = args[1];
@@ -2168,6 +2172,7 @@ public class SubgraphIsomorphism {
             }
         }
 
+        // test against ground truth
         else if(mainMethod.equals("Test")  && args.length == 5){
             final String groundTruthFile = args[1];
             String queryFolderName = args[2];
