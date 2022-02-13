@@ -16,13 +16,15 @@ public class SubgraphIsomorphism {
     private static int numGlobalPruned = -1; // keep track of how much pruned globally
     private static double totalCostGraphQL = -1; // keep track of the total cost when computing the order for GraphQL
     private static Map<List<Vertex>, Integer> numCombined = null; // keep track of the statistics when combine graphs
-    private static String algorithmName = ""; // algorithm in use
+    private static String algorithmNameC = ""; // algorithm in use for candidates
+    private static String algorithmNamePO = ""; // algorithm in use for processing order
 
     // error message if didn't find isomorphism algorithm
     private static final String noAlgorithmFound = "Algorithm specified is not valid.\n" +
             "Specify one of the following algorithms: \n" +
             "\t groundTruth: finds the ground truth isomorphism.  Only uses LDA in pruning and BFS for ordering.\n" +
-            "\t graphQL: uses the GraphQL algorithm.\n";
+            "\t graphQL: uses the GraphQL algorithm.\n" +
+            "\t quickSI: uses the QuickSI algorithm. (Note: only used for processing order)\n";
     // error message if didn't find connection algorithm
     private static final String noConnectionMethodFound = "Connection type of graphs specified is not valid.\n " +
             "Specify one of the following connections methods: \n" +
@@ -388,6 +390,7 @@ public class SubgraphIsomorphism {
      */
     private static Map<Vertex, Set<Vertex>> groundTruthComputeCandidates(Graph<Vertex, DefaultEdge> query,
                                                                      Graph<Vertex, DefaultEdge> target){
+        numLocalPruning = 0;
         // keep track of the candidates for a given vertex
         Map<Vertex, Set<Vertex>> candidates = new HashMap<>();
 
@@ -425,6 +428,7 @@ public class SubgraphIsomorphism {
      */
     private static Map<Vertex, Set<Vertex>> graphQLComputeCandidates(Graph<Vertex, DefaultEdge> query,
                                                              Graph<Vertex, DefaultEdge> target){
+        numLocalPruning = 0; numGlobalPruned = 0;
         // keep track of the candidates for a given vertex
         Map<Vertex, Set<Vertex>> candidates = new HashMap<>();
         // keep track of the number of pairs before global pruning
@@ -598,6 +602,57 @@ public class SubgraphIsomorphism {
     }
 
     /**
+     * Finds the weight for a given vertex
+     * @param u vertex in question
+     * @param candidates candidate set
+     * @return weight for the given vertex
+     */
+    public static int vertexWeight(Vertex u, Map<Vertex, Set<Vertex>> candidates){
+        return candidates.get(u).size();
+    }
+
+    /**
+     * Finds the weight for a given edge
+     * @param e edge in question
+     * @param target target graph
+     * @param query query graph
+     * @param candidates candidate set
+     * @return weight for the given vertex
+     */
+    public static int edgeWeight(DefaultEdge e, Graph<Vertex, DefaultEdge> target, Graph<Vertex, DefaultEdge> query,
+                                 Map<Vertex, Set<Vertex>> candidates){
+        Vertex u = query.getEdgeSource(e);
+        Vertex v = query.getEdgeSource(e);
+
+        int weight = 0;
+        for(Vertex uP : candidates.get(u)){
+            for(Vertex vP: candidates.get(v)){
+                if(target.containsEdge(uP, vP)){
+                    weight++;
+                }
+            }
+        }
+        return weight;
+    }
+
+    public static ArrayList<Vertex> quickSIComputeProcessingOrder(Graph<Vertex, DefaultEdge> target,
+                                                                  Graph<Vertex, DefaultEdge> query,
+                                                                  Map<Vertex, Set<Vertex>> candidates){
+        ArrayList<Vertex> order = new ArrayList<>();
+        // iterate through the vertices of query graph
+        for(Vertex u: query.vertexSet()){
+            // calculate the weight
+            int uWeight = vertexWeight(u, candidates);
+        }
+        // iterate through the edges of query graph
+        for(DefaultEdge e: query.edgeSet()){
+            int eWeight = edgeWeight(e, target, query, candidates);
+        }
+
+        return order;
+    }
+
+    /**
      * Checks to see if there exists a valid matching between u and v
      * @param query the query graph
      * @param target the target graph
@@ -694,22 +749,33 @@ public class SubgraphIsomorphism {
         List<Map<Vertex, Vertex>> results = new ArrayList<>();
         Map<Vertex, Set<Vertex>> candidates;
         ArrayList<Vertex> order;
-        if(algorithmName.equals("groundTruth")) {
-            numLocalPruning = 0;
+        if(algorithmNameC.equals("groundTruth")) {
             candidates = groundTruthComputeCandidates(query, target);
-            order = groundTruthComputeProcessingOrder(query, candidates);
         }
-        else if(algorithmName.equals("graphQL")){
-            numLocalPruning = 0; numGlobalPruned = 0;
+        else if(algorithmNameC.equals("graphQL")){
             candidates = graphQLComputeCandidates(query, target);
-            order = graphQLComputeProcessingOrder(query, candidates, gamma);
         }
         else{
-            System.out.println("Specify one of the following algorithms: ");
-            System.out.println("\t groundTruth: finds the ground truth isomorphism.  Only uses LDA in pruning and BFS for ordering.");
-            System.out.println("\t graphQL: uses the GraphQL algorithm.");
+            System.out.println("Candidates Algorithm:");
+            System.out.println(noAlgorithmFound);
             return null;
         }
+
+        if(algorithmNamePO.equals("groundTruth")){
+            order = groundTruthComputeProcessingOrder(query, candidates);
+        }
+        else if(algorithmNamePO.equals("graphQL")){
+            order = graphQLComputeProcessingOrder(query, candidates, gamma);
+        }
+        else if(algorithmNamePO.equals("quickSI")){
+            order = quickSIComputeProcessingOrder(target, query, candidates);
+        }
+        else{
+            System.out.println("Processing Order Algorithm:");
+            System.out.println(noAlgorithmFound);
+            return null;
+        }
+
         // keep track of number of backtracking
         numBackTracking = 0;
         subgraphIsomorphism(query, target, candidates, order, 0, new HashMap<>(), results, isInduced);
@@ -770,8 +836,10 @@ public class SubgraphIsomorphism {
                     .append(String.valueOf(subgraphIsomorphism.size())).append("\n");
         }
 
-        System.out.println("# algorithm : "+algorithmName);
-        writer.append("# algorithm : ").append(algorithmName).append("\n");
+        System.out.println("# candidates algorithm: "+algorithmNameC);
+        System.out.println("# processing order algorithm: "+algorithmNamePO);
+        writer.append("# candidates algorithm: "+ algorithmNameC+"\n" +
+                "# processing order algorithm: "+algorithmNamePO+"\n");
 
         List<String> isomorphisms = isomorphismOrdered(subgraphIsomorphism);
 
@@ -952,7 +1020,9 @@ public class SubgraphIsomorphism {
 
         // write to output file when find error
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName));
-        writer.write("There were the following incorrect subgraph isomorphisms using "+algorithmName+": \n");
+        writer.write("There were the following incorrect subgraph isomorphisms using:\n" +
+                "Candidates algorithm: "+algorithmNameC+": \n" +
+                "Processing order algorithm: "+algorithmNamePO+"\n");
 
         while(line!=null){
             // get rid of whitespace
@@ -2021,7 +2091,6 @@ public class SubgraphIsomorphism {
     public static void displayGraphStatistics(String queryName, Graph<Vertex, DefaultEdge> query,
                                               String targetName, Graph<Vertex, DefaultEdge> target,
                                               BufferedWriter writer) throws IOException {
-
         // print out graph
         writer.write("Graph Statistics: \n"+
                 "Query: "+ queryName + "\n"+
@@ -2061,7 +2130,8 @@ public class SubgraphIsomorphism {
         }
         writer.append("\n");
 
-        writer.append("Used algorithm: " +algorithmName+"\n");
+        writer.append("Used candidate algorithm: " +algorithmNameC+"\n");
+        writer.append("Used processing order algorithm: " +algorithmNamePO+"\n");
         // number of backtracking in isomorphism
         writer.append("Number backtracking calls: ").append(String.valueOf(numBackTracking)).append("\n");
         // number of possible matchings
@@ -2101,7 +2171,8 @@ public class SubgraphIsomorphism {
             mainMethod = args[0];
         }
         // basic information for isomorphism
-        algorithmName = "graphQL";
+        algorithmNameC = "graphQL";
+        algorithmNamePO = "quickSI";
         // groundTruth, graphQL
         final boolean isInduced = true;
         double gamma = 0.5;
