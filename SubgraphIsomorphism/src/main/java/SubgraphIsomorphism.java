@@ -712,11 +712,62 @@ public class SubgraphIsomorphism {
         return randomEdge;
     }
 
+    /**
+     * Find which vertex will be added to the tree first for a given edge
+     * @param e the edge
+     * @param weightedGraph the weighted graph
+     * @return the order of the vertices
+     */
+    public static List<Vertex> selectVertexOrder(DefaultWeightedEdge e,
+                                                 Graph<Vertex, DefaultWeightedEdge> weightedGraph){
+        Vertex u = weightedGraph.getEdgeSource(e);
+        Vertex v = weightedGraph.getEdgeTarget(e);
+
+        // the order of the vertices
+        List<Vertex> orderVertices = new ArrayList<>();
+        // if the first vertex has a smaller weight
+        if(u.getWeight()<v.getWeight()){
+            orderVertices.add(u); orderVertices.add(v);
+        }
+        // if the second vertex has a smaller weight
+        else if(u.getWeight()>v.getWeight()){
+            orderVertices.add(v); orderVertices.add(u);
+        }
+        // they have the same weight
+
+        // if the first vertex has larger degree
+        else if(weightedGraph.degreeOf(u)>weightedGraph.degreeOf(v)){
+            orderVertices.add(u); orderVertices.add(v);
+        }
+        // if the second vertex has larger degree
+        else if(weightedGraph.degreeOf(u)<weightedGraph.degreeOf(v)){
+            orderVertices.add(v); orderVertices.add(u);
+        }
+        // they have the same weight and degrees
+
+        // choose a random vertex to start
+        else{
+            Random random = new Random();
+            int index = random.nextInt(2);
+            if(index == 0){
+                orderVertices.add(u); orderVertices.add(v);
+            }
+            else{
+                orderVertices.add(v); orderVertices.add(u);
+            }
+        }
+
+        return orderVertices;
+    }
+
     public static QISequence buildSpanningTree(Graph<Vertex, DefaultWeightedEdge> weightedQuery){
         QISequence SEQq = new QISequence();
 
         // find the first edge in the sequence
         DefaultWeightedEdge firstEdge = selectFirstEdge(weightedQuery);
+
+        // find the first vertex
+        List<Vertex> vertexOrder = selectVertexOrder(e, weightedQuery);
 
         return SEQq;
     }
