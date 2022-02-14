@@ -8,7 +8,7 @@ import java.util.Map;
 public class QISequence {
     // tree information
     private Graph<Vertex, DefaultEdge> T; // the tree structure
-    private Map<Vertex, Vertex> parent; // the child/parent pairs
+    private Map<Vertex, Integer> parent; // the child/parent pairs
     private Map<Integer, Vertex> order; // the order the vertex are in the tree
 
     // extra topology information
@@ -34,11 +34,13 @@ public class QISequence {
      * @param uP the parent of the vertex
      * @return position of the vertex within the QI-Sequence
      */
-    public int addVertex(Vertex u, Vertex uP){
+    public int addVertex(Vertex u, Integer uP){
         // add vertex to the tree structure
         T.addVertex(u);
-        // add the edge between the parent and child
-        T.addEdge(u, uP);
+        // add the edge between the parent and child if not the root
+        if(uP!=-1) {
+            T.addEdge(u, order.get(uP));
+        }
 
         // add the parent
         parent.put(u, uP);

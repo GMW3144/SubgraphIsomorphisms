@@ -748,8 +748,8 @@ public class SubgraphIsomorphism {
         // choose a random vertex to start
         else{
             Random random = new Random();
-            int index = random.nextInt(2);
-            if(index == 0){
+            int index = random.nextInt();
+            if(index%2 == 0){
                 orderVertices.add(u); orderVertices.add(v);
             }
             else{
@@ -767,7 +767,13 @@ public class SubgraphIsomorphism {
         DefaultWeightedEdge firstEdge = selectFirstEdge(weightedQuery);
 
         // find the first vertex
-        List<Vertex> vertexOrder = selectVertexOrder(e, weightedQuery);
+        List<Vertex> vertexOrder = selectVertexOrder(firstEdge, weightedQuery);
+        Vertex v1 = copyVertex(vertexOrder.get(0), vertexOrder.get(0).getId());
+        Vertex v2 = copyVertex(vertexOrder.get(1), vertexOrder.get(1).getId());
+
+        // add the first vertex to the tree
+        SEQq.addVertex(v1, -1);
+        SEQq.addVertex(v2, 0);
 
         return SEQq;
     }

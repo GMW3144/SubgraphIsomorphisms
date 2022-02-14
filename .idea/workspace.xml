@@ -5,9 +5,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6d0b8e23-97b2-4b58-991e-87f7b486f404" name="Default Changelist" comment="used different minimum supports (part 2)">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/QISequence.java" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/QISequence.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/SubgraphIsomorphism.class" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/SubgraphIsomorphism.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/Vertex.class" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/Vertex.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,20 +86,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1642694530105</updated>
-    </task>
-    <task id="LOCAL-00007" summary="Added proteins">
-      <created>1642696191703</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1642696191704</updated>
-    </task>
-    <task id="LOCAL-00008" summary="Created ground truth for all combinations">
-      <created>1642704229571</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1642704229571</updated>
     </task>
     <task id="LOCAL-00009" summary="Moved files">
       <created>1642709215302</created>
@@ -429,7 +416,21 @@
       <option name="project" value="LOCAL" />
       <updated>1644859549287</updated>
     </task>
-    <option name="localTasksCounter" value="56" />
+    <task id="LOCAL-00056" summary="Tested and fixed select first edge">
+      <created>1644859940853</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1644859940853</updated>
+    </task>
+    <task id="LOCAL-00057" summary="First attempt at select vertex order">
+      <created>1644860456765</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1644860456767</updated>
+    </task>
+    <option name="localTasksCounter" value="58" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -481,8 +482,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Some fixes with test" />
-    <MESSAGE value="Allows ground truth to not need a folder name" />
     <MESSAGE value="Split up ground truth and graphQL, to make easier to implement other algorithms" />
     <MESSAGE value="Accounted for possible mappings for leaf of star graph" />
     <MESSAGE value="A way to keep track of common mappings between neighbors" />
@@ -506,7 +505,9 @@
     <MESSAGE value="Created weighted graph" />
     <MESSAGE value="QI-Sequence construction" />
     <MESSAGE value="Find first edge in spanning tree method created" />
-    <option name="LAST_COMMIT_MESSAGE" value="Find first edge in spanning tree method created" />
+    <MESSAGE value="Tested and fixed select first edge" />
+    <MESSAGE value="First attempt at select vertex order" />
+    <option name="LAST_COMMIT_MESSAGE" value="First attempt at select vertex order" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -533,63 +534,63 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1188</line>
+          <line>1247</line>
           <option name="timeStamp" value="56" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>2327</line>
+          <line>2386</line>
           <option name="timeStamp" value="116" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1466</line>
+          <line>1525</line>
           <option name="timeStamp" value="118" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1651</line>
+          <line>1710</line>
           <option name="timeStamp" value="249" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>2287</line>
+          <line>2346</line>
           <option name="timeStamp" value="255" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>2242</line>
+          <line>2301</line>
           <option name="timeStamp" value="260" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>2316</line>
+          <line>2375</line>
           <option name="timeStamp" value="265" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1855</line>
+          <line>1914</line>
           <option name="timeStamp" value="267" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1426</line>
+          <line>1485</line>
           <option name="timeStamp" value="268" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1006</line>
+          <line>1065</line>
           <option name="timeStamp" value="270" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>713</line>
+          <line>763</line>
           <option name="timeStamp" value="280" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>670</line>
-          <option name="timeStamp" value="281" />
+          <line>774</line>
+          <option name="timeStamp" value="282" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
