@@ -10,6 +10,7 @@ import org.jgrapht.alg.matching.HopcroftKarpMaximumCardinalityBipartiteMatching;
 
 import java.io.*;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class SubgraphIsomorphism {
     private static int numBackTracking = -1; // keep track of backtracking calls
@@ -636,6 +637,87 @@ public class SubgraphIsomorphism {
         return weight;
     }
 
+    /**
+     * Compares two edges and returns based on weight
+     * @param e1 first edge
+     * @param e2 second edge
+     * @param graph graph that contains the edges
+     * @return comparison of two edges based on weight
+     */
+    public int compareWeightedEdges(DefaultWeightedEdge e1, DefaultWeightedEdge e2,
+                                    Graph<Vertex, DefaultWeightedEdge> graph){
+        double weight1 = graph.getEdgeWeight(e1);
+        double weight2 = graph.getEdgeWeight(e2);
+
+        return Double.compare(weight1, weight2);
+    }
+
+    /**
+     * Selects the first edge for the tree
+     * @param weightedQuery the query with weighted vertices and edges
+     * @return the next edge in the minimum spanning tree
+     */
+    public static  DefaultWeightedEdge selectFirstEdge(Graph<Vertex, DefaultWeightedEdge> weightedQuery){
+        Set<DefaultWeightedEdge> possibleEdges = weightedQuery.edgeSet();
+        // find minimum weight
+        double minimumWeight = weightedQuery.getEdgeWeight(possibleEdges.iterator().next());
+        for(DefaultWeightedEdge e: possibleEdges){
+            if(weightedQuery.getEdgeWeight(e)<minimumWeight){
+                minimumWeight = weightedQuery.getEdgeWeight(e);
+            }
+        }
+
+        // get the edges of minimum weights
+        for(DefaultWeightedEdge e: possibleEdges){
+            if(weightedQuery.getEdgeWeight(e)>minimumWeight){
+                possibleEdges.remove(e);
+            }
+        }
+
+        // get the edge with minim degree
+        DefaultWeightedEdge minEdge = possibleEdges.iterator().next();
+        double minimumDegree = weightedQuery.degreeOf(weightedQuery.getEdgeSource(minEdge)) +
+                weightedQuery.degreeOf(weightedQuery.getEdgeTarget(minEdge));
+        // find minimum weight
+        for(DefaultWeightedEdge e: possibleEdges){
+            double currentDegree =  weightedQuery.degreeOf(weightedQuery.getEdgeSource(e)) +
+                    weightedQuery.degreeOf(weightedQuery.getEdgeTarget(e));
+            if(currentDegree<minimumDegree){
+                minimumDegree = currentDegree;
+            }
+        }
+
+        // get the edges of minimum degree
+        for(DefaultWeightedEdge e: possibleEdges){
+            double currentDegree =  weightedQuery.degreeOf(weightedQuery.getEdgeSource(e)) +
+                    weightedQuery.degreeOf(weightedQuery.getEdgeTarget(e));
+            if(currentDegree>minimumDegree){
+                possibleEdges.remove(e);
+            }
+        }
+
+        // get a random edge from the chosen
+        Random random = new Random();
+        // random index
+        int index = random.nextInt(possibleEdges.size());
+        // get corresponding edge
+        Iterator<DefaultWeightedEdge> edgeIter = possibleEdges.iterator();
+        DefaultWeightedEdge randomEdge = edgeIter.next();
+        for(int i = 0; i< index-1; i++){
+            randomEdge = edgeIter.next();
+        }
+
+        return randomEdge;
+    }
+
+    public static QISequence buildSpanningTree(Graph<Vertex, DefaultWeightedEdge> weightedQuery){
+        QISequence SEQq = new QISequence();
+
+
+
+        return SEQq;
+    }
+
     public static ArrayList<Vertex> quickSIComputeProcessingOrder(Graph<Vertex, DefaultEdge> target,
                                                                   Graph<Vertex, DefaultEdge> query,
                                                                   Map<Vertex, Set<Vertex>> candidates){
@@ -670,7 +752,8 @@ public class SubgraphIsomorphism {
             weightedQuery.setEdgeWeight(eNew, eWeight);
         }
 
-
+        // create a new QI-Sequence
+        QISequence SEQq = buildSpanningTree(weightedQuery);
 
         return order;
     }
