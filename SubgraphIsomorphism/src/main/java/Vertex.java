@@ -225,4 +225,12 @@ public class Vertex {
     public void setWeight(int weight){
         this.weight = weight;
     }
+
+    /**
+     * Access the weight
+     * @return weight of the vertex
+     */
+    public int getWeight(){
+        return weight;
+    }
 }

@@ -670,6 +670,8 @@ public class SubgraphIsomorphism {
             weightedQuery.setEdgeWeight(eNew, eWeight);
         }
 
+
+
         return order;
     }
 
