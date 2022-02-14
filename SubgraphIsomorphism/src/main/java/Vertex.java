@@ -1,10 +1,13 @@
 import java.util.*;
 
 public class Vertex {
-    private final int id;
-    private String label;
-    private ArrayList<String> profile;
-    private int numProfileSubsets;
+    private final int id; // the id of the vertex
+    private final String label; // the label of the vertex
+    private ArrayList<String> profile; // the profile of the vertex (neighbors label, and own label)
+    private int numProfileSubsets; // number of possible subsets given the profile
+
+    private int weight; // the weight for the weighted graph
+
 
     /**
      * Constructor for vertex.  Must keep track of key and type of chemical
@@ -213,5 +216,13 @@ public class Vertex {
 
         // all desired attributes equal
         return true;
+    }
+
+    /**
+     * Set the weight for the vertex
+     * @param weight the new weight
+     */
+    public void setWeight(int weight){
+        this.weight = weight;
     }
 }

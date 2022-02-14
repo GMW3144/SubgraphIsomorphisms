@@ -1,5 +1,6 @@
 // Graph Implementation
 import org.jgrapht.*;
+import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.alg.interfaces.MatchingAlgorithm;
 import org.jgrapht.graph.*;
 import org.jgrapht.traverse.BreadthFirstIterator;
@@ -622,7 +623,7 @@ public class SubgraphIsomorphism {
     public static int edgeWeight(DefaultEdge e, Graph<Vertex, DefaultEdge> target, Graph<Vertex, DefaultEdge> query,
                                  Map<Vertex, Set<Vertex>> candidates){
         Vertex u = query.getEdgeSource(e);
-        Vertex v = query.getEdgeSource(e);
+        Vertex v = query.getEdgeTarget(e);
 
         int weight = 0;
         for(Vertex uP : candidates.get(u)){
@@ -638,15 +639,35 @@ public class SubgraphIsomorphism {
     public static ArrayList<Vertex> quickSIComputeProcessingOrder(Graph<Vertex, DefaultEdge> target,
                                                                   Graph<Vertex, DefaultEdge> query,
                                                                   Map<Vertex, Set<Vertex>> candidates){
+        Graph<Vertex, DefaultWeightedEdge> weightedQuery = new SimpleWeightedGraph<>(DefaultWeightedEdge.class);
+        // keep track of the mappings from query vertex to weighted graph
+        Map<Vertex, Vertex> oldToNew = new HashMap<>();
+
         ArrayList<Vertex> order = new ArrayList<>();
         // iterate through the vertices of query graph
         for(Vertex u: query.vertexSet()){
             // calculate the weight
             int uWeight = vertexWeight(u, candidates);
+
+            // add the weighted vertex to the graph
+            Vertex newVertex = copyVertex(u, u.getId());
+            weightedQuery.addVertex(newVertex);
+            newVertex.setWeight(uWeight);
+
+            // keep track of old and new vertex
+            oldToNew.put(u, newVertex);
         }
         // iterate through the edges of query graph
         for(DefaultEdge e: query.edgeSet()){
             int eWeight = edgeWeight(e, target, query, candidates);
+
+            // get the vertex information
+            Vertex u = query.getEdgeSource(e); Vertex uNew = oldToNew.get(u);
+            Vertex v = query.getEdgeTarget(e); Vertex vNew = oldToNew.get(v);
+
+            // add the weighted edge to graph
+            DefaultWeightedEdge eNew = weightedQuery.addEdge(uNew, vNew);
+            weightedQuery.setEdgeWeight(eNew, eWeight);
         }
 
         return order;
