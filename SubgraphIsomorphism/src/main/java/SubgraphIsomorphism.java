@@ -667,19 +667,20 @@ public class SubgraphIsomorphism {
             }
         }
 
+        Set<DefaultWeightedEdge> edgesMinWeight = new HashSet<>();
         // get the edges of minimum weights
         for(DefaultWeightedEdge e: possibleEdges){
-            if(weightedQuery.getEdgeWeight(e)>minimumWeight){
-                possibleEdges.remove(e);
+            if(weightedQuery.getEdgeWeight(e)==minimumWeight){
+                edgesMinWeight.add(e);
             }
         }
 
         // get the edge with minim degree
-        DefaultWeightedEdge minEdge = possibleEdges.iterator().next();
+        DefaultWeightedEdge minEdge = edgesMinWeight.iterator().next();
         double minimumDegree = weightedQuery.degreeOf(weightedQuery.getEdgeSource(minEdge)) +
                 weightedQuery.degreeOf(weightedQuery.getEdgeTarget(minEdge));
         // find minimum weight
-        for(DefaultWeightedEdge e: possibleEdges){
+        for(DefaultWeightedEdge e: edgesMinWeight){
             double currentDegree =  weightedQuery.degreeOf(weightedQuery.getEdgeSource(e)) +
                     weightedQuery.degreeOf(weightedQuery.getEdgeTarget(e));
             if(currentDegree<minimumDegree){
@@ -687,21 +688,22 @@ public class SubgraphIsomorphism {
             }
         }
 
+        Set<DefaultWeightedEdge> edgesMinWeightDegree = new HashSet<>();
         // get the edges of minimum degree
-        for(DefaultWeightedEdge e: possibleEdges){
+        for(DefaultWeightedEdge e: edgesMinWeight){
             double currentDegree =  weightedQuery.degreeOf(weightedQuery.getEdgeSource(e)) +
                     weightedQuery.degreeOf(weightedQuery.getEdgeTarget(e));
-            if(currentDegree>minimumDegree){
-                possibleEdges.remove(e);
+            if(currentDegree==minimumDegree){
+                edgesMinWeightDegree.add(e);
             }
         }
 
         // get a random edge from the chosen
         Random random = new Random();
         // random index
-        int index = random.nextInt(possibleEdges.size());
+        int index = random.nextInt(edgesMinWeightDegree.size());
         // get corresponding edge
-        Iterator<DefaultWeightedEdge> edgeIter = possibleEdges.iterator();
+        Iterator<DefaultWeightedEdge> edgeIter = edgesMinWeightDegree.iterator();
         DefaultWeightedEdge randomEdge = edgeIter.next();
         for(int i = 0; i< index-1; i++){
             randomEdge = edgeIter.next();
@@ -713,7 +715,8 @@ public class SubgraphIsomorphism {
     public static QISequence buildSpanningTree(Graph<Vertex, DefaultWeightedEdge> weightedQuery){
         QISequence SEQq = new QISequence();
 
-
+        // find the first edge in the sequence
+        DefaultWeightedEdge firstEdge = selectFirstEdge(weightedQuery);
 
         return SEQq;
     }
