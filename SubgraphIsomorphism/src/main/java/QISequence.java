@@ -3,7 +3,9 @@ import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class QISequence {
     // tree information
@@ -72,5 +74,27 @@ public class QISequence {
      */
     public void extraDeg(Vertex u, int d){
         deg.put(u, d);
+    }
+
+    /**
+     * Check to see if a vertex is contained in the QI-Sequence
+     * @param u the vertex
+     * @return check if the vertex is contained within the QI-Sequence
+     */
+    public boolean containsVertex(Vertex u){
+        for(Vertex v: parent.keySet()){
+            if(u.equals(v)){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Get the current vertices within the QI-Sequence
+     * @return the vertices within the QI-Sequence
+     */
+    public Set<Vertex> currentVertices(){
+        return parent.keySet();
     }
 }

@@ -653,6 +653,25 @@ public class SubgraphIsomorphism {
     }
 
     /**
+     * Choose a random edge from the set
+     * @param edges the set of edges
+     * @return a random edge from the set
+     */
+    public static DefaultWeightedEdge randomEdge(Set<DefaultWeightedEdge> edges){
+        // get a random edge from the chosen
+        Random random = new Random();
+        // random index
+        int index = random.nextInt(edges.size());
+        // get corresponding edge
+        Iterator<DefaultWeightedEdge> edgeIter = edges.iterator();
+        DefaultWeightedEdge randomEdge = edgeIter.next();
+        for(int i = 0; i< index-1; i++){
+            randomEdge = edgeIter.next();
+        }
+        return randomEdge;
+    }
+
+    /**
      * Selects the first edge for the tree
      * @param weightedQuery the query with weighted vertices and edges
      * @return the next edge in the minimum spanning tree
@@ -698,18 +717,7 @@ public class SubgraphIsomorphism {
             }
         }
 
-        // get a random edge from the chosen
-        Random random = new Random();
-        // random index
-        int index = random.nextInt(edgesMinWeightDegree.size());
-        // get corresponding edge
-        Iterator<DefaultWeightedEdge> edgeIter = edgesMinWeightDegree.iterator();
-        DefaultWeightedEdge randomEdge = edgeIter.next();
-        for(int i = 0; i< index-1; i++){
-            randomEdge = edgeIter.next();
-        }
-
-        return randomEdge;
+        return randomEdge(edgesMinWeightDegree);
     }
 
     /**
@@ -760,6 +768,87 @@ public class SubgraphIsomorphism {
         return orderVertices;
     }
 
+    public static DefaultWeightedEdge selectSpanningEdge(Graph<Vertex, DefaultWeightedEdge> weightedQuery, QISequence SEQq){
+        Set<DefaultWeightedEdge> possibleEdges = weightedQuery.edgeSet();
+
+        // only add edge if only one vertex is within the current tree
+        Set<DefaultWeightedEdge> connectedEdges = new HashSet<>();
+        for(DefaultWeightedEdge e: possibleEdges){
+            Vertex u = weightedQuery.getEdgeSource(e);
+            Vertex v = weightedQuery.getEdgeTarget(e);
+
+            if((SEQq.containsVertex(u) && !SEQq.containsVertex(v)) ||
+                    (SEQq.containsVertex(v) && !SEQq.containsVertex(u))){
+                connectedEdges.add(e);
+            }
+        }
+
+        // get the minimum weighted edge
+        Iterator<DefaultWeightedEdge> edgeIter = connectedEdges.iterator();
+        double minimum = weightedQuery.getEdgeWeight(edgeIter.next());
+        // iterate through edges
+        while(edgeIter.hasNext()){
+            double current = weightedQuery.getEdgeWeight(edgeIter.next());
+            // update minimum
+            if(current<minimum){
+                minimum = current;
+            }
+        }
+
+        // reduce the possible edges to only be the minimum
+        Set<DefaultWeightedEdge> minimumEdges = new HashSet<>();
+        for(DefaultWeightedEdge e: connectedEdges){
+            if(weightedQuery.getEdgeWeight(e)==minimum){
+                minimumEdges.add(e);
+            }
+        }
+
+        if(minimumEdges.size()>1) {
+            // keep track of edges with each size
+            Map<Integer, Set<DefaultWeightedEdge>> edgesWithConnections = new HashMap<>();
+
+            // if there are multiple possibilities then check the how connected it is to the tree
+            int maximumConnection = -1;
+            for (DefaultWeightedEdge e : minimumEdges) {
+                // find the connection within the QI-Sequence
+                Set<Vertex> currentVertices = SEQq.currentVertices();
+
+                int currentConnection = 0;
+                // iterate through the neighbors of e
+                Vertex u = weightedQuery.getEdgeSource(e);
+                // check if the neighbors of u are in QI-Sequence
+                for (Vertex uP : Graphs.neighborListOf(weightedQuery, u)) {
+                    if (currentVertices.contains(uP)) {
+                        currentConnection++;
+                    }
+                }
+                Vertex v = weightedQuery.getEdgeTarget(e);
+                // check if the neighbors of v are in the QI-sequence
+                for (Vertex vP : Graphs.neighborListOf(weightedQuery, v)) {
+                    if (currentVertices.contains(vP)) {
+                        currentConnection++;
+                    }
+                }
+
+                if(!edgesWithConnections.containsKey(currentConnection)){
+                    edgesWithConnections.put(currentConnection, new HashSet<>());
+                }
+                edgesWithConnections.get(currentConnection).add(e);
+
+                // update the maximum
+                if (currentConnection > maximumConnection) {
+                    maximumConnection = currentConnection;
+                }
+            }
+
+            // choose the edges with maximum connection
+            minimumEdges = edgesWithConnections.get(maximumConnection);
+        }
+
+        // randomly choose from the possible edges
+        return randomEdge(minimumEdges);
+    }
+
     public static QISequence buildSpanningTree(Graph<Vertex, DefaultWeightedEdge> weightedQuery){
         QISequence SEQq = new QISequence();
 
@@ -773,7 +862,15 @@ public class SubgraphIsomorphism {
 
         // add the first vertex to the tree
         SEQq.addVertex(v1, -1);
-        SEQq.addVertex(v2, 0);
+        int lastVertexAdded = SEQq.addVertex(v2, 0);
+
+        // remove the edge from the graph
+        weightedQuery.removeEdge(v1, v2);
+
+        // keep adding vertices until seen all vertices
+        while(lastVertexAdded != weightedQuery.vertexSet().size()){
+            DefaultWeightedEdge nextEdge = selectSpanningEdge(weightedQuery, SEQq);
+        }
 
         return SEQq;
     }
