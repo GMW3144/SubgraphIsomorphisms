@@ -1,11 +1,9 @@
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.SimpleGraph;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 public class QISequence {
     // tree information
@@ -15,7 +13,7 @@ public class QISequence {
 
     // extra topology information
     private Map<Vertex, Integer> deg; // the degree information (if greater than 2)
-    private Map<Vertex, Vertex> edge; // the edge information (if j<i)
+    private Map<Vertex, Set<Vertex>> edge; // the edge information (if j<i)
 
     /**
      * Constructor for QI-Sequence.
@@ -59,11 +57,21 @@ public class QISequence {
      * @param v the second (adjacent) vertex
      */
     public void extraEdge(Vertex u, Vertex v){
+        // only add edge once
         if(u.getId()<v.getId()){
-            edge.put(u, v);
+            // first time seeing vertex
+            if(!edge.containsKey(u)){
+                edge.put(u, new HashSet<>());
+            }
+            // add the edge
+            edge.get(u).add(v);
         }
         else{
-            edge.put(v, u);
+            // first time seeing vertex
+            if(!edge.containsKey(v)){
+                edge.put(v, new HashSet<>());
+            }
+            edge.get(v).add(u);
         }
     }
 
@@ -104,5 +112,27 @@ public class QISequence {
      */
     public Map<Integer, Vertex> getOrder(){
         return order;
+    }
+
+    /**
+     * Finds and returns the tree structure
+     * @return the tree structure
+     */
+    public Graph<Vertex, DefaultEdge> getT(){
+        return T;
+    }
+
+    /**
+     * Find and return the extra edge topology given a vertex
+     * @param u the given vertex
+     * @return the extra edges
+     */
+    public Set<Vertex> getExtraEdges(Vertex u){
+        if(edge.containsKey(u)) {
+            return edge.get(u);
+        }
+        else{
+            return new HashSet<>();
+        }
     }
 }

@@ -10,7 +10,6 @@ import org.jgrapht.alg.matching.HopcroftKarpMaximumCardinalityBipartiteMatching;
 
 import java.io.*;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class SubgraphIsomorphism {
     private static int numBackTracking = -1; // keep track of backtracking calls
@@ -638,21 +637,6 @@ public class SubgraphIsomorphism {
     }
 
     /**
-     * Compares two edges and returns based on weight
-     * @param e1 first edge
-     * @param e2 second edge
-     * @param graph graph that contains the edges
-     * @return comparison of two edges based on weight
-     */
-    public int compareWeightedEdges(DefaultWeightedEdge e1, DefaultWeightedEdge e2,
-                                    Graph<Vertex, DefaultWeightedEdge> graph){
-        double weight1 = graph.getEdgeWeight(e1);
-        double weight2 = graph.getEdgeWeight(e2);
-
-        return Double.compare(weight1, weight2);
-    }
-
-    /**
      * Choose a random edge from the set
      * @param edges the set of edges
      * @return a random edge from the set
@@ -665,7 +649,7 @@ public class SubgraphIsomorphism {
         // get corresponding edge
         Iterator<DefaultWeightedEdge> edgeIter = edges.iterator();
         DefaultWeightedEdge randomEdge = edgeIter.next();
-        for(int i = 0; i< index-1; i++){
+        for(int i = 0; i< index; i++){
             randomEdge = edgeIter.next();
         }
         return randomEdge;
@@ -694,30 +678,30 @@ public class SubgraphIsomorphism {
             }
         }
 
-        // get the edge with minim degree
-        DefaultWeightedEdge minEdge = edgesMinWeight.iterator().next();
-        double minimumDegree = weightedQuery.degreeOf(weightedQuery.getEdgeSource(minEdge)) +
-                weightedQuery.degreeOf(weightedQuery.getEdgeTarget(minEdge));
+        // get the edge with minim weights
+        DefaultWeightedEdge maxEdge = edgesMinWeight.iterator().next();
+        double maxDegree = weightedQuery.degreeOf(weightedQuery.getEdgeSource(maxEdge)) +
+                weightedQuery.degreeOf(weightedQuery.getEdgeTarget(maxEdge));
         // find minimum weight
         for(DefaultWeightedEdge e: edgesMinWeight){
             double currentDegree =  weightedQuery.degreeOf(weightedQuery.getEdgeSource(e)) +
                     weightedQuery.degreeOf(weightedQuery.getEdgeTarget(e));
-            if(currentDegree<minimumDegree){
-                minimumDegree = currentDegree;
+            if(currentDegree>maxDegree){
+                maxDegree = currentDegree;
             }
         }
 
-        Set<DefaultWeightedEdge> edgesMinWeightDegree = new HashSet<>();
+        Set<DefaultWeightedEdge> edgesMinWeightMaxDegree = new HashSet<>();
         // get the edges of minimum degree
         for(DefaultWeightedEdge e: edgesMinWeight){
             double currentDegree =  weightedQuery.degreeOf(weightedQuery.getEdgeSource(e)) +
                     weightedQuery.degreeOf(weightedQuery.getEdgeTarget(e));
-            if(currentDegree==minimumDegree){
-                edgesMinWeightDegree.add(e);
+            if(currentDegree==maxDegree){
+                edgesMinWeightMaxDegree.add(e);
             }
         }
 
-        return randomEdge(edgesMinWeightDegree);
+        return randomEdge(edgesMinWeightMaxDegree);
     }
 
     /**
@@ -886,19 +870,26 @@ public class SubgraphIsomorphism {
 
             // remove the edge
             weightedQuery.removeEdge(u, uP);
+
             // get the extra edges within the query graph
-            for(DefaultWeightedEdge extraEdges: weightedQuery.edgeSet()){
+            for(DefaultWeightedEdge extraEdges: new HashSet<>(weightedQuery.edgeSet())){
                 Vertex uExtra = weightedQuery.getEdgeSource(extraEdges);
                 Vertex vExtra = weightedQuery.getEdgeTarget(extraEdges);
 
                 // if this is an extra edge
                 if(SEQq.containsVertex(uExtra) && SEQq.containsVertex(vExtra)){
-                    // update the extra degree information
-                    if(weightedQuery.degreeOf(uExtra)>2){
-                        SEQq.extraDeg(uExtra, weightedQuery.degreeOf(uExtra));
+                    // update the extra degree information, remember edges that might have been deleted before
+                    int uExtraDegree = weightedQuery.degreeOf(uExtra)
+                            +SEQq.getT().degreeOf(uExtra)
+                            +SEQq.getExtraEdges(uExtra).size();
+                    if(uExtraDegree>2){
+                        SEQq.extraDeg(uExtra, uExtraDegree);
                     }
-                    if(weightedQuery.degreeOf(vExtra)>2){
-                        SEQq.extraDeg(vExtra, weightedQuery.degreeOf(vExtra));
+                    int vExtraDegree = weightedQuery.degreeOf(vExtra)
+                            +SEQq.getT().degreeOf(vExtra)
+                            +SEQq.getExtraEdges(vExtra).size();
+                    if(vExtraDegree>2){
+                        SEQq.extraDeg(vExtra, vExtraDegree);
                     }
 
                     // update the extra edge information
@@ -918,6 +909,14 @@ public class SubgraphIsomorphism {
         return SEQq;
     }
 
+    /**
+     * Finds the processing order with QuickSI.  First build the QI-sequence then return the corresponding vertices
+     * to the vertices within the tree.
+     * @param target the target graph
+     * @param query the query graph
+     * @param candidates the candidates of the query vertices
+     * @return the order of the query vertices
+     */
     public static ArrayList<Vertex> quickSIComputeProcessingOrder(Graph<Vertex, DefaultEdge> target,
                                                                   Graph<Vertex, DefaultEdge> query,
                                                                   Map<Vertex, Set<Vertex>> candidates){
