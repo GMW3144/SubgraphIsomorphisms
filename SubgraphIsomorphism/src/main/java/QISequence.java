@@ -97,4 +97,12 @@ public class QISequence {
     public Set<Vertex> currentVertices(){
         return parent.keySet();
     }
+
+    /**
+     * Finds and returns the order
+     * @return the order of the QI-Sequence
+     */
+    public Map<Integer, Vertex> getOrder(){
+        return order;
+    }
 }

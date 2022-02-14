@@ -869,19 +869,20 @@ public class SubgraphIsomorphism {
         weightedQuery.removeEdge(v1, v2);
 
         // keep adding vertices until seen all vertices
-        while(lastVertexAdded != weightedQuery.vertexSet().size()){
+        while(lastVertexAdded != weightedQuery.vertexSet().size()-1){
             DefaultWeightedEdge nextEdge = selectSpanningEdge(weightedQuery, SEQq);
 
             // get the vertex that is not contained within the spanning tree
             Vertex u = weightedQuery.getEdgeTarget(nextEdge);
             Vertex uP = weightedQuery.getEdgeSource(nextEdge);
             // if the source is the parent vertex
-            if(SEQq.containsVertex(weightedQuery.getEdgeSource(nextEdge))){
-                uP = weightedQuery.getEdgeSource(nextEdge);
-                u = weightedQuery.getEdgeTarget(nextEdge);
+            if(SEQq.containsVertex(u)){
+                Vertex save = uP;
+                uP = u;
+                u = save;
             }
-
-            vertexToTree.put(u, SEQq.addVertex(u, vertexToTree.get(uP)));
+            lastVertexAdded = SEQq.addVertex(u, vertexToTree.get(uP));
+            vertexToTree.put(u, lastVertexAdded);
 
             // remove the edge
             weightedQuery.removeEdge(u, uP);
@@ -907,6 +908,9 @@ public class SubgraphIsomorphism {
                     else{
                         SEQq.extraEdge(vExtra, uExtra);
                     }
+
+                    // remove extra edge
+                    weightedQuery.removeEdge(uExtra, vExtra);
                 }
             }
         }
@@ -950,6 +954,12 @@ public class SubgraphIsomorphism {
 
         // create a new QI-Sequence
         QISequence SEQq = buildSpanningTree(weightedQuery);
+
+        Map<Integer, Vertex> treeorder = SEQq.getOrder();
+        // add to the order
+        for(int i: treeorder.keySet()){
+            order.add(treeorder.get(i));
+        }
 
         return order;
     }
