@@ -851,14 +851,15 @@ public class SubgraphIsomorphism {
 
     public static QISequence buildSpanningTree(Graph<Vertex, DefaultWeightedEdge> weightedQuery){
         QISequence SEQq = new QISequence();
+        Map<Vertex, Integer> vertexToTree = new HashMap<>();
 
         // find the first edge in the sequence
         DefaultWeightedEdge firstEdge = selectFirstEdge(weightedQuery);
 
         // find the first vertex
         List<Vertex> vertexOrder = selectVertexOrder(firstEdge, weightedQuery);
-        Vertex v1 = copyVertex(vertexOrder.get(0), vertexOrder.get(0).getId());
-        Vertex v2 = copyVertex(vertexOrder.get(1), vertexOrder.get(1).getId());
+        Vertex v1 = copyVertex(vertexOrder.get(0), vertexOrder.get(0).getId()); vertexToTree.put(vertexOrder.get(0), 0);
+        Vertex v2 = copyVertex(vertexOrder.get(1), vertexOrder.get(1).getId()); vertexToTree.put(vertexOrder.get(1), 1);
 
         // add the first vertex to the tree
         SEQq.addVertex(v1, -1);
@@ -870,6 +871,44 @@ public class SubgraphIsomorphism {
         // keep adding vertices until seen all vertices
         while(lastVertexAdded != weightedQuery.vertexSet().size()){
             DefaultWeightedEdge nextEdge = selectSpanningEdge(weightedQuery, SEQq);
+
+            // get the vertex that is not contained within the spanning tree
+            Vertex u = weightedQuery.getEdgeTarget(nextEdge);
+            Vertex uP = weightedQuery.getEdgeSource(nextEdge);
+            // if the source is the parent vertex
+            if(SEQq.containsVertex(weightedQuery.getEdgeSource(nextEdge))){
+                uP = weightedQuery.getEdgeSource(nextEdge);
+                u = weightedQuery.getEdgeTarget(nextEdge);
+            }
+
+            vertexToTree.put(u, SEQq.addVertex(u, vertexToTree.get(uP)));
+
+            // remove the edge
+            weightedQuery.removeEdge(u, uP);
+            // get the extra edges within the query graph
+            for(DefaultWeightedEdge extraEdges: weightedQuery.edgeSet()){
+                Vertex uExtra = weightedQuery.getEdgeSource(extraEdges);
+                Vertex vExtra = weightedQuery.getEdgeTarget(extraEdges);
+
+                // if this is an extra edge
+                if(SEQq.containsVertex(uExtra) && SEQq.containsVertex(vExtra)){
+                    // update the extra degree information
+                    if(weightedQuery.degreeOf(uExtra)>2){
+                        SEQq.extraDeg(uExtra, weightedQuery.degreeOf(uExtra));
+                    }
+                    if(weightedQuery.degreeOf(vExtra)>2){
+                        SEQq.extraDeg(vExtra, weightedQuery.degreeOf(vExtra));
+                    }
+
+                    // update the extra edge information
+                    if(vertexToTree.get(uExtra)<vertexToTree.get(vExtra)){
+                        SEQq.extraEdge(uExtra, vExtra);
+                    }
+                    else{
+                        SEQq.extraEdge(vExtra, uExtra);
+                    }
+                }
+            }
         }
 
         return SEQq;
