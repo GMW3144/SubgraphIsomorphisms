@@ -4,11 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6d0b8e23-97b2-4b58-991e-87f7b486f404" name="Default Changelist" comment="used different minimum supports (part 2)">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/SubgraphIsomorphism.class" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/SubgraphIsomorphism.class" afterDir="false" />
-    </list>
+    <list default="true" id="6d0b8e23-97b2-4b58-991e-87f7b486f404" name="Default Changelist" comment="used different minimum supports (part 2)" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -85,13 +81,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1642694530105</updated>
-    </task>
-    <task id="LOCAL-00014" summary="First attempt at GraphQL">
-      <created>1643300524581</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1643300524581</updated>
     </task>
     <task id="LOCAL-00015" summary="Added a way to check against ground truth">
       <created>1643322639283</created>
@@ -429,7 +418,14 @@
       <option name="project" value="LOCAL" />
       <updated>1644880901112</updated>
     </task>
-    <option name="localTasksCounter" value="63" />
+    <task id="LOCAL-00063" summary="Added extra step that was forgotten">
+      <created>1644940147192</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1644940147192</updated>
+    </task>
+    <option name="localTasksCounter" value="64" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -481,7 +477,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added some comments" />
     <MESSAGE value="Attempt union by edge" />
     <MESSAGE value="First attempt at combining graphs by edge" />
     <MESSAGE value="Fixed so can create multiple edges even if have the same label" />
@@ -506,7 +501,8 @@
     <MESSAGE value="First attempt constructing the QI-Sequence" />
     <MESSAGE value="Created order from QI-sequence" />
     <MESSAGE value="Fixed some mistakes with the algorithm" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed some mistakes with the algorithm" />
+    <MESSAGE value="Added extra step that was forgotten" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added extra step that was forgotten" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

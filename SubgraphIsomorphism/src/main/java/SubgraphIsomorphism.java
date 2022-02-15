@@ -1363,8 +1363,8 @@ public class SubgraphIsomorphism {
         // write to output file when find error
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName));
         writer.write("There were the following incorrect subgraph isomorphisms using:\n" +
-                "Candidates algorithm: "+algorithmNameC+": \n" +
-                "Processing order algorithm: "+algorithmNamePO+"\n");
+                "Candidates algorithm: "+algorithmNameC+" \n" +
+                "Processing order algorithm: "+algorithmNamePO+"\n\n");
 
         while(line!=null){
             // get rid of whitespace
