@@ -9,8 +9,6 @@ import org.jgrapht.traverse.RandomWalkVertexIterator;
 import org.jgrapht.alg.matching.HopcroftKarpMaximumCardinalityBipartiteMatching;
 
 import java.io.*;
-import java.lang.annotation.Target;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class SubgraphIsomorphism {
@@ -19,6 +17,8 @@ public class SubgraphIsomorphism {
     private static int numLocalPruning = -1; // keep track of how much pruned locally
     private static int numGlobalPruned = -1; // keep track of how much pruned globally
     private static double totalCostGraphQL = -1; // keep track of the total cost when computing the order for GraphQL
+    private static double falseMatchingParents = -1; // keep track of the vertices removed from parent in SEQq
+    private static double falseMatchingExtraEdge = -1; // keep track of the vertices removed from extra edge in SEQq
     private static Map<List<Vertex>, Integer> numCombined = null; // keep track of the statistics when combine graphs
     private static String algorithmNameC = ""; // algorithm in use for candidates
     private static String algorithmNamePO = ""; // algorithm in use for processing order
@@ -51,6 +51,14 @@ public class SubgraphIsomorphism {
     private static final String thresholdToHigh = "Threshold too large for graph or graphs not connectable";
     // error message if minimum support is too high
     private static final String minSupToHigh = "Minimum support too large for graph";
+    // the format for the graph files
+    private static final String graphFileFormat = "Graph: <graphLocation> " +
+            "\n Number of Nodes: <numberNodesInGraph> " +
+            "\n Minsup (integer): <integerMinsup> " +
+            "\n Minsup (percentage): <percentMinsup> " +
+            "\n Attribute Label " +
+            "\n <largeProfile> appears in <numAppearances> vertex profiles: " +
+            "\n <listVerticesIds>";
 
     // keep track of axillary structures
     private static QISequence SEQq;
@@ -881,6 +889,11 @@ public class SubgraphIsomorphism {
         return randomEdge(minimumEdges);
     }
 
+    /**
+     * Build the spanning tree based on the weighted query
+     * @param weightedQuery the query graph with weights for edges and nodes
+     * @return the spanning tree and extra topology for the query graph
+     */
     public static QISequence buildSpanningTree(Graph<Vertex, DefaultWeightedEdge> weightedQuery){
         QISequence SEQq = new QISequence();
         Map<Vertex, Integer> vertexToTree = new HashMap<>();
@@ -1024,10 +1037,11 @@ public class SubgraphIsomorphism {
     private static boolean isValid(Graph<Vertex, DefaultEdge> query, Graph<Vertex, DefaultEdge> target,
                                   Map<Vertex, Vertex> currentFunction, Vertex u, Vertex v, boolean isInduced){
         // iterate through neighbors of u
-        List<Vertex> neighborsU = Graphs.neighborListOf(query, u);
+        List<Vertex> neighborsU = Graphs.neighborListOf(query, u); int sizeNeighbors = neighborsU.size();
         // if quickSI only look at extra edges
         if(algorithmNameB.equals(QUICKSI)){
             neighborsU = SEQq.getExtraEdges(u);
+            falseMatchingExtraEdge+= (sizeNeighbors-neighborsU.size());
         }
 
         for(Vertex uPrime: neighborsU){
@@ -1103,6 +1117,9 @@ public class SubgraphIsomorphism {
                         if(!query.containsEdge(pC, uC)){
                             possibleVertices.remove(uC);
                         }
+                        else{
+                            falseMatchingParents++;
+                        }
                     }
                 }
             }
@@ -1166,6 +1183,10 @@ public class SubgraphIsomorphism {
         numBackTracking = 0;
         if(algorithmNameB.equals(GROUNDTRUTH) || algorithmNameB.equals(GRAPHQL)
                 || (algorithmNameB.equals(QUICKSI) && SEQq != null)) {
+            if(algorithmNameB.equals(QUICKSI)){
+                falseMatchingParents = 0;
+                falseMatchingExtraEdge = 0;
+            }
             subgraphIsomorphism(query, target, candidates, order, 0, new HashMap<>(), results, isInduced);
         }
         else{
@@ -2203,14 +2224,7 @@ public class SubgraphIsomorphism {
 
         // check if found a target
         if(target == null){
-            System.out.println("No target graph found.  Format as follows :" +
-                    "\n Graph: <graphLocation> " +
-                    "\n Number of Nodes: <numberNodesInGraph> " +
-                    "\n Minsup (integer): <integerMinsup> " +
-                    "\n Minsup (percentage): <percentMinsup> " +
-                    "\n Attribute Label " +
-                    "\n <largeProfile> appears in <numAppearances> vertex profiles: " +
-                    "\n <listVerticesIds>");
+            System.out.println("No target graph found.  Format as follows:\n" +graphFileFormat);
             return;
         }
 
@@ -2535,10 +2549,9 @@ public class SubgraphIsomorphism {
         writer.append("Used backtracking algorithm: " +algorithmNameB+"\n");
         // number of backtracking in isomorphism
         writer.append("Number backtracking calls: ").append(String.valueOf(numBackTracking)).append("\n");
+        writer.append("\n");
         // number of possible matchings
         writer.append("Total number of possible matchings: "+target.vertexSet().size()*query.vertexSet().size()+"\n");
-
-        writer.append("\n");
         // number pruned from local pruning
         writer.append("Number pruned from local pruning: ").append(String.valueOf(numLocalPruning)).append("\n");
         // number pruned from global pruning
@@ -2548,6 +2561,14 @@ public class SubgraphIsomorphism {
         // total cost from graphQL order
         if(totalCostGraphQL!=-1) {
             writer.append("Cost of order found by graphQL: ").append(String.valueOf(totalCostGraphQL)).append("\n");
+        }
+        if(falseMatchingParents!=-1){
+            writer.append("False matchings using parents from quickSI: ").append(String.valueOf(falseMatchingParents))
+                    .append("\n");
+        }
+        if(falseMatchingExtraEdge!=-1){
+            writer.append("False matchings using extra edges from quickSI: ").append(String.valueOf(falseMatchingExtraEdge))
+                    .append("\n");
         }
 
         // the combination information if combined two graphs
