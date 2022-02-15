@@ -1,4 +1,0 @@
-There were the following incorrect subgraph isomorphisms using:
-Candidates algorithm: graphQL 
-Processing order algorithm: quickSI
-

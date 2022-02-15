@@ -87,27 +87,6 @@
       <option name="presentableId" value="Default" />
       <updated>1642694530105</updated>
     </task>
-    <task id="LOCAL-00017" summary="Keep track of graph when writing the important info for random walk.  Ran graphQL on previously hard-to-find subgraph isomorphisms">
-      <created>1643324092919</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
-      <option name="project" value="LOCAL" />
-      <updated>1643324092919</updated>
-    </task>
-    <task id="LOCAL-00018" summary="First attempt on apriori algorithm">
-      <created>1643497239629</created>
-      <option name="number" value="00018" />
-      <option name="presentableId" value="LOCAL-00018" />
-      <option name="project" value="LOCAL" />
-      <updated>1643497239629</updated>
-    </task>
-    <task id="LOCAL-00019" summary="Added comments">
-      <created>1643497918957</created>
-      <option name="number" value="00019" />
-      <option name="presentableId" value="LOCAL-00019" />
-      <option name="project" value="LOCAL" />
-      <updated>1643497918957</updated>
-    </task>
     <task id="LOCAL-00020" summary="Perform frequent itemset mining on all target graphs">
       <created>1643498754034</created>
       <option name="number" value="00020" />
@@ -430,7 +409,28 @@
       <option name="project" value="LOCAL" />
       <updated>1644944806104</updated>
     </task>
-    <option name="localTasksCounter" value="66" />
+    <task id="LOCAL-00066" summary="Updated so easier to define algorithm, and kept track of backtracking algorithm within the output files">
+      <created>1644945960260</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1644945960260</updated>
+    </task>
+    <task id="LOCAL-00067" summary="Added statistics for quickSI, and added new error message">
+      <created>1644946974569</created>
+      <option name="number" value="00067" />
+      <option name="presentableId" value="LOCAL-00067" />
+      <option name="project" value="LOCAL" />
+      <updated>1644946974569</updated>
+    </task>
+    <task id="LOCAL-00068" summary="Added clarifying statement for noAlgorithmFound error message">
+      <created>1644947060492</created>
+      <option name="number" value="00068" />
+      <option name="presentableId" value="LOCAL-00068" />
+      <option name="project" value="LOCAL" />
+      <updated>1644947060492</updated>
+    </task>
+    <option name="localTasksCounter" value="69" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -482,9 +482,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Fixed so can create multiple edges even if have the same label" />
-    <MESSAGE value="Fixed commenting" />
-    <MESSAGE value="Fixed double counting issue" />
     <MESSAGE value="Fixed so doesn't break if removes vertex" />
     <MESSAGE value="First attempt at writing graph statistics" />
     <MESSAGE value="Tested graph statistics" />
@@ -507,7 +504,10 @@
     <MESSAGE value="Added extra step that was forgotten" />
     <MESSAGE value="Fixed output" />
     <MESSAGE value="First attempt at backtracking with QuickSI" />
-    <option name="LAST_COMMIT_MESSAGE" value="First attempt at backtracking with QuickSI" />
+    <MESSAGE value="Updated so easier to define algorithm, and kept track of backtracking algorithm within the output files" />
+    <MESSAGE value="Added statistics for quickSI, and added new error message" />
+    <MESSAGE value="Added clarifying statement for noAlgorithmFound error message" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added clarifying statement for noAlgorithmFound error message" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -534,63 +534,63 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>2619</line>
+          <line>2654</line>
           <option name="timeStamp" value="116" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1756</line>
+          <line>1790</line>
           <option name="timeStamp" value="118" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1941</line>
+          <line>1975</line>
           <option name="timeStamp" value="249" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>2608</line>
+          <line>2643</line>
           <option name="timeStamp" value="265" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>2145</line>
+          <line>2179</line>
           <option name="timeStamp" value="267" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1716</line>
+          <line>1750</line>
           <option name="timeStamp" value="268" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>970</line>
-          <option name="timeStamp" value="315" />
+          <line>2681</line>
+          <option name="timeStamp" value="322" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>818</line>
-          <option name="timeStamp" value="317" />
+          <line>1488</line>
+          <option name="timeStamp" value="324" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1002</line>
-          <option name="timeStamp" value="318" />
+          <line>1154</line>
+          <option name="timeStamp" value="325" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>787</line>
-          <option name="timeStamp" value="319" />
+          <line>1097</line>
+          <option name="timeStamp" value="326" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>806</line>
-          <option name="timeStamp" value="320" />
+          <line>1130</line>
+          <option name="timeStamp" value="327" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>862</line>
-          <option name="timeStamp" value="321" />
+          <line>1108</line>
+          <option name="timeStamp" value="328" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>

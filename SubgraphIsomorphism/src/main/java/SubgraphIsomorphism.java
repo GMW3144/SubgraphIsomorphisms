@@ -1107,22 +1107,24 @@ public class SubgraphIsomorphism {
             if(algorithmNameB.equals(QUICKSI) && i!=0){
                 // remove candidates that are not neighbors to the parent's candidate
                 Vertex p = SEQq.getParent(u);
+                Vertex pC = currentFunction.get(p);
 
-                // iterate through the parent candidates
-                for(Vertex pC: candidates.get(p)){
-                    // iterate through the vertex candidates
-                    for(Vertex uC: candidates.get(u)){
-                        // compared pair, so increase number of backtracking
-                        numBackTracking++;
-                        // only include if edge exists between two candidates
-                        if(!query.containsEdge(pC, uC)){
-                            possibleVertices.remove(uC);
-                        }
-                        else{
-                            falseMatchingParents++;
-                        }
+                Set<Vertex> newPossibleVertices = new HashSet<>();
+
+
+                // iterate through the vertex candidates
+                for(Vertex uC: candidates.get(u)){
+                    // compared pair, so increase number of backtracking
+                    numBackTracking++;
+                    // only include if edge exists between two candidates
+                    if(target.containsEdge(pC, uC)){
+                        newPossibleVertices.add(uC);
+                    }
+                    else{
+                        falseMatchingParents++;
                     }
                 }
+                possibleVertices = newPossibleVertices;
             }
 
             // look at candidates
@@ -1153,31 +1155,25 @@ public class SubgraphIsomorphism {
         List<Map<Vertex, Vertex>> results = new ArrayList<>();
         Map<Vertex, Set<Vertex>> candidates;
         ArrayList<Vertex> order;
-        if(algorithmNameC.equals(GROUNDTRUTH)) {
-            candidates = groundTruthComputeCandidates(query, target);
-        }
-        else if(algorithmNameC.equals(GRAPHQL)){
-            candidates = graphQLComputeCandidates(query, target);
-        }
-        else{
-            System.out.println("Candidates Algorithm:");
-            System.out.println(noAlgorithmFound);
-            return null;
+        switch (algorithmNameC) {
+            case GROUNDTRUTH -> candidates = groundTruthComputeCandidates(query, target);
+            case GRAPHQL -> candidates = graphQLComputeCandidates(query, target);
+            default -> {
+                System.out.println("Candidates Algorithm:");
+                System.out.println(noAlgorithmFound);
+                return null;
+            }
         }
 
-        if(algorithmNamePO.equals(GROUNDTRUTH)){
-            order = groundTruthComputeProcessingOrder(query, candidates);
-        }
-        else if(algorithmNamePO.equals(GRAPHQL)){
-            order = graphQLComputeProcessingOrder(query, candidates, gamma);
-        }
-        else if(algorithmNamePO.equals(QUICKSI)){
-            order = quickSIComputeProcessingOrder(target, query, candidates);
-        }
-        else{
-            System.out.println("Processing Order Algorithm:");
-            System.out.println(noAlgorithmFound);
-            return null;
+        switch (algorithmNamePO) {
+            case GROUNDTRUTH -> order = groundTruthComputeProcessingOrder(query, candidates);
+            case GRAPHQL -> order = graphQLComputeProcessingOrder(query, candidates, gamma);
+            case QUICKSI -> order = quickSIComputeProcessingOrder(target, query, candidates);
+            default -> {
+                System.out.println("Processing Order Algorithm:");
+                System.out.println(noAlgorithmFound);
+                return null;
+            }
         }
 
         // keep track of number of backtracking
@@ -1489,6 +1485,9 @@ public class SubgraphIsomorphism {
                 }
 
 
+                // keep track of number of isomorphisms
+                int numIsomorphisms = Integer.parseInt(line.split(":")[1].strip());
+
                 // find isomorphisms and how they are displayed
                 List<Map<Vertex, Vertex>> subgraphIsomorphism = matching(query, target, isInduced, gamma);
                 if(subgraphIsomorphism==null){
@@ -1496,39 +1495,49 @@ public class SubgraphIsomorphism {
                     br.close(); writer.close();
                     return;
                 }
+                if(numIsomorphisms!= subgraphIsomorphism.size()){
+                    writer.append("Incorrect number of Matching! \n")
+                            .append(queryGraphFile.getName()).append(" : ")
+                            .append(targetGraphFile.getName()).append("\n");
 
-                List<String> isomorphisms = isomorphismOrdered(subgraphIsomorphism);
+                    System.out.println("Problem Here! ("+outputString+") "+queryGraphFile +": "+targetGraphFile);
+                    graphProblem = true;
+                }
 
-                int i = 1; // keep track of which isomorphism was printed
-                line = br.readLine().strip();
-                for(String iso: isomorphisms){
-                    // skip comments
-                    while(line.length()>0 && line.charAt(0) == '#'){
+                if(!graphProblem) {
+                    List<String> isomorphisms = isomorphismOrdered(subgraphIsomorphism);
+
+                    int i = 1; // keep track of which isomorphism was printed
+                    line = br.readLine().strip();
+                    for (String iso : isomorphisms) {
+                        // skip comments
+                        while (line.length() > 0 && line.charAt(0) == '#') {
+                            line = br.readLine().strip();
+                        }
+                        String currentMatching = "Isomorphism " + i + ": " + iso;
+                        i++;
+
+                        // compare with ground truth
+                        if (!currentMatching.equals(line)) {
+                            writer.append("Incorrect ").append(outputString).append(" Matching! \n")
+                                    .append(queryGraphFile.getName()).append(" : ")
+                                    .append(targetGraphFile.getName()).append("\n");
+                            // state the differences
+                            writer.append("Correct : ").append(line).append("\n");
+                            writer.append("Incorrect (found) : ").append(currentMatching).append("\n\n");
+
+                            System.out.println("Problem Here! " + queryGraphFile + ": " + targetGraphFile);
+                            graphProblem = true;
+                        }
+                        if (graphProblem) {
+                            break;
+                        }
                         line = br.readLine().strip();
                     }
-                    String currentMatching = "Isomorphism "+ i + ": " +iso;
-                    i++;
-
-                    // compare with ground truth
-                    if(!currentMatching.equals(line)){
-                        writer.append("Incorrect ").append(outputString).append(" Matching! \n")
-                                .append(queryGraphFile.getName()).append(" : ")
-                                .append(targetGraphFile.getName()).append("\n");
-                        // state the differences
-                        writer.append("Correct : ").append(line).append("\n");
-                        writer.append("Incorrect (found) : ").append(currentMatching).append("\n\n");
-
-                        System.out.println("Problem Here! "+queryGraphFile +": "+targetGraphFile);
-                        graphProblem = true;
+                    if (!graphProblem) {
+                        System.out.println("Correct " + outputString + " Matching! " +
+                                queryGraphFile.getName() + ": " + targetGraphFile.getName());
                     }
-                    if(graphProblem){
-                        break;
-                    }
-                    line = br.readLine().strip();
-                }
-                if(!graphProblem) {
-                    System.out.println("Correct " + outputString + " Matching! " +
-                            queryGraphFile.getName() + ": " + targetGraphFile.getName());
                 }
             }
 
@@ -2606,10 +2615,10 @@ public class SubgraphIsomorphism {
         if(mainMethod.equals("KnownGraphs") && args.length == 5) {
             final String queryLocation = args[1];
             final String targetLocation = args[2];
-            final String outputFileName = args[3];
+            final String isomorphismsFileName = args[3];
             final String statisticsFileName = args[4];
 
-            subgraphIsomorphismKnownGraphs(queryLocation, targetLocation, outputFileName, statisticsFileName, isInduced,
+            subgraphIsomorphismKnownGraphs(queryLocation, targetLocation, isomorphismsFileName, statisticsFileName, isInduced,
                     gamma);
         }
         // find the frequent profiles
@@ -2686,9 +2695,9 @@ public class SubgraphIsomorphism {
 
         else{
             System.out.println("Unknown Command.  Please use one of the following:"+
-                    "\nKnownGraphs <queryFile> <targetFile> <outputFile> <statisticsFile>"+
+                    "\nKnownGraphs <queryFile> <targetFile> <isomorphismsFileName> <statisticsFile>"+
                     "\n\t Find the subgraph isomorphism between two know graphs."+
-                    "\n\t Prints Isomorphisms to output file and statistics to StatisticsFile."+
+                    "\n\t Writes Isomorphisms to isomorphismsFileName and statistics to statisticsFile."+
                     "\nFrequentDatasets <targetFile> <outputFile> <minSup>"+
                     "\n\t Finds the frequent profile subsets from the given graphs and minimum support."+
                     "\nFDMQuery <FDMFile> <outputFolder> <profileSize> <connectionMethod>"+
