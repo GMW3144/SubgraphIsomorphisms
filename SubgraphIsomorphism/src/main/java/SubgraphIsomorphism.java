@@ -9,6 +9,8 @@ import org.jgrapht.traverse.RandomWalkVertexIterator;
 import org.jgrapht.alg.matching.HopcroftKarpMaximumCardinalityBipartiteMatching;
 
 import java.io.*;
+import java.lang.annotation.Target;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class SubgraphIsomorphism {
@@ -19,13 +21,14 @@ public class SubgraphIsomorphism {
     private static Map<List<Vertex>, Integer> numCombined = null; // keep track of the statistics when combine graphs
     private static String algorithmNameC = ""; // algorithm in use for candidates
     private static String algorithmNamePO = ""; // algorithm in use for processing order
+    private static String algorithmNameB = ""; // algorithm in use for backtracking
 
     // error message if didn't find isomorphism algorithm
     private static final String noAlgorithmFound = "Algorithm specified is not valid.\n" +
             "Specify one of the following algorithms: \n" +
             "\t groundTruth: finds the ground truth isomorphism.  Only uses LDA in pruning and BFS for ordering.\n" +
             "\t graphQL: uses the GraphQL algorithm.\n" +
-            "\t quickSI: uses the QuickSI algorithm. (Note: only used for processing order)\n";
+            "\t quickSI: uses the QuickSI algorithm. (Note: cannot be used for candidates)\n";
     // error message if didn't find connection algorithm
     private static final String noConnectionMethodFound = "Connection type of graphs specified is not valid.\n " +
             "Specify one of the following connections methods: \n" +
@@ -37,6 +40,9 @@ public class SubgraphIsomorphism {
     // error message if minimum support is too high
     private static final String minSupToHigh = "Minimum support too large for graph";
 
+
+    // keep track of axuillary structures
+    private static QISequence SEQq;
 
     /**
      * Saves a graph in a file
@@ -983,7 +989,7 @@ public class SubgraphIsomorphism {
         }
 
         // create a new QI-Sequence
-        QISequence SEQq = buildSpanningTree(weightedQuery);
+        SEQq = buildSpanningTree(weightedQuery);
 
         Map<Integer, Vertex> treeorder = SEQq.getOrder();
         // add to the order
@@ -1007,7 +1013,13 @@ public class SubgraphIsomorphism {
     private static boolean isValid(Graph<Vertex, DefaultEdge> query, Graph<Vertex, DefaultEdge> target,
                                   Map<Vertex, Vertex> currentFunction, Vertex u, Vertex v, boolean isInduced){
         // iterate through neighbors of u
-        for(Vertex uPrime: Graphs.neighborListOf(query, u)){
+        List<Vertex> neighborsU = Graphs.neighborListOf(query, u);
+        // if quickSI only look at extra edges
+        if(algorithmNameB.equals("quickSI")){
+            neighborsU = SEQq.getExtraEdges(u);
+        }
+
+        for(Vertex uPrime: neighborsU){
             // if u' is in the domain of current function
             if(currentFunction.containsKey(uPrime)){
                 // see if there exists an edge with v and v'
@@ -1063,8 +1075,29 @@ public class SubgraphIsomorphism {
         else{
             // look at next node
             Vertex u = order.get(i);
+            Set<Vertex> possibleVertices = new HashSet<>(candidates.get(u));
+
+            // if quickSI recompute candidates
+            if(algorithmNameB.equals("quickSI") && i!=0){
+                // remove candidates that are not neighbors to the parent's candidate
+                Vertex p = SEQq.getParent(u);
+
+                // iterate through the parent candidates
+                for(Vertex pC: candidates.get(p)){
+                    // iterate through the vertex candidates
+                    for(Vertex uC: candidates.get(u)){
+                        // compared pair, so increase number of backtracking
+                        numBackTracking++;
+                        // only include if edge exists between two candidates
+                        if(!query.containsEdge(pC, uC)){
+                            possibleVertices.remove(uC);
+                        }
+                    }
+                }
+            }
+
             // look at candidates
-            for(Vertex v : candidates.get(u)){
+            for(Vertex v : possibleVertices){
                 // looking at new element
                 numBackTracking+=1;
                 // check not in another mapping
@@ -1120,7 +1153,18 @@ public class SubgraphIsomorphism {
 
         // keep track of number of backtracking
         numBackTracking = 0;
-        subgraphIsomorphism(query, target, candidates, order, 0, new HashMap<>(), results, isInduced);
+        if(algorithmNameB.equals("groundTruth") || algorithmNameB.equals("graphQL")
+                || (algorithmNameB.equals("quickSI") && SEQq != null)) {
+            subgraphIsomorphism(query, target, candidates, order, 0, new HashMap<>(), results, isInduced);
+        }
+        else{
+            System.out.println("Backtracking Algorithm:");
+            if(algorithmNameB.equals("quickSI")){
+                System.out.println("Must use quickSI for processing order if used for backtracking");
+            }
+            System.out.println(noAlgorithmFound);
+            return null;
+        }
         return results;
     }
 
@@ -2515,6 +2559,7 @@ public class SubgraphIsomorphism {
         // basic information for isomorphism
         algorithmNameC = "graphQL";
         algorithmNamePO = "quickSI";
+        algorithmNameB = "quickSI";
         // groundTruth, graphQL
         final boolean isInduced = true;
         double gamma = 0.5;

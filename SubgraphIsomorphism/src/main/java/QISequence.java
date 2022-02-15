@@ -13,7 +13,7 @@ public class QISequence {
 
     // extra topology information
     private Map<Vertex, Integer> deg; // the degree information (if greater than 2)
-    private Map<Vertex, Set<Vertex>> edge; // the edge information (if j<i)
+    private Map<Vertex, List<Vertex>> edge; // the edge information (if j<i)
 
     /**
      * Constructor for QI-Sequence.
@@ -61,7 +61,7 @@ public class QISequence {
         if(u.getId()<v.getId()){
             // first time seeing vertex
             if(!edge.containsKey(u)){
-                edge.put(u, new HashSet<>());
+                edge.put(u, new ArrayList<>());
             }
             // add the edge
             edge.get(u).add(v);
@@ -69,7 +69,7 @@ public class QISequence {
         else{
             // first time seeing vertex
             if(!edge.containsKey(v)){
-                edge.put(v, new HashSet<>());
+                edge.put(v, new ArrayList<>());
             }
             edge.get(v).add(u);
         }
@@ -127,12 +127,21 @@ public class QISequence {
      * @param u the given vertex
      * @return the extra edges
      */
-    public Set<Vertex> getExtraEdges(Vertex u){
+    public List<Vertex> getExtraEdges(Vertex u){
         if(edge.containsKey(u)) {
             return edge.get(u);
         }
         else{
-            return new HashSet<>();
+            return new ArrayList<>();
         }
+    }
+
+    /**
+     * Finds the parent of the given vertex
+     * @param u the vertex
+     * @return parent vertex of u
+     */
+    public Vertex getParent(Vertex u){
+        return order.get(parent.get(u));
     }
 }
