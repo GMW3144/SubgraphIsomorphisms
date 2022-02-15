@@ -40,7 +40,8 @@ public class SubgraphIsomorphism {
             "Specify one of the following algorithms: \n" +
             "\t "+GROUNDTRUTH+": finds the ground truth isomorphism.  Only uses LDA in pruning and BFS for ordering.\n" +
             "\t "+GRAPHQL+": uses the GraphQL algorithm.\n" +
-            "\t "+QUICKSI+": uses the QuickSI algorithm. (Note: cannot be used for candidates)\n";
+            "\t "+QUICKSI+": uses the QuickSI algorithm. (Note: cannot be used for candidates and must be used for " +
+            "processing order if used for backtracking)\n";
     // error message if didn't find connection algorithm
     private static final String noConnectionMethodFound = "Connection type of graphs specified is not valid.\n " +
             "Specify one of the following connections methods: \n" +
