@@ -2568,16 +2568,17 @@ public class SubgraphIsomorphism {
         if(numGlobalPruned!=-1) {
             writer.append("Number pruned from global pruning: ").append(String.valueOf(numGlobalPruned)).append("\n");
         }
+        writer.append("\n");
         // total cost from graphQL order
         if(totalCostGraphQL!=-1) {
             writer.append("Cost of order found by graphQL: ").append(String.valueOf(totalCostGraphQL)).append("\n");
         }
         if(falseMatchingParents!=-1){
-            writer.append("False matchings using parents from quickSI: ").append(String.valueOf(falseMatchingParents))
+            writer.append("False matchings removed using parents from quickSI: ").append(String.valueOf(falseMatchingParents))
                     .append("\n");
         }
         if(falseMatchingExtraEdge!=-1){
-            writer.append("False matchings using extra edges from quickSI: ").append(String.valueOf(falseMatchingExtraEdge))
+            writer.append("False matchings removed using extra edges from quickSI: ").append(String.valueOf(falseMatchingExtraEdge))
                     .append("\n");
         }
 
