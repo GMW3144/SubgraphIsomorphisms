@@ -798,18 +798,14 @@ public class SubgraphIsomorphism {
                 Set<Vertex> currentVertices = SEQq.currentVertices();
 
                 int currentConnection = 0;
-                // iterate through the neighbors of e
+                // get the vertex that is not already in the tree
                 Vertex u = weightedQuery.getEdgeSource(e);
+                if(currentVertices.contains(u)){
+                    u = weightedQuery.getEdgeTarget(e);
+                }
                 // check if the neighbors of u are in QI-Sequence
                 for (Vertex uP : Graphs.neighborListOf(weightedQuery, u)) {
                     if (currentVertices.contains(uP)) {
-                        currentConnection++;
-                    }
-                }
-                Vertex v = weightedQuery.getEdgeTarget(e);
-                // check if the neighbors of v are in the QI-sequence
-                for (Vertex vP : Graphs.neighborListOf(weightedQuery, v)) {
-                    if (currentVertices.contains(vP)) {
                         currentConnection++;
                     }
                 }
@@ -828,6 +824,41 @@ public class SubgraphIsomorphism {
             // choose the edges with maximum connection
             minimumEdges = edgesWithConnections.get(maximumConnection);
         }
+        // get the vertex with largest degree
+        if(minimumEdges.size()>1){
+            // keep track of edges with each size
+            Map<Integer, Set<DefaultWeightedEdge>> edgesWithDegree = new HashMap<>();
+
+            // if there are multiple possibilities then check the how connected it is to the tree
+            int maximumDegree = -1;
+            for (DefaultWeightedEdge e : minimumEdges) {
+                // find the connection within the QI-Sequence
+                Set<Vertex> currentVertices = SEQq.currentVertices();
+
+                // get the vertex that is not already in the tree
+                Vertex u = weightedQuery.getEdgeSource(e);
+                if (currentVertices.contains(u)) {
+                    u = weightedQuery.getEdgeTarget(e);
+                }
+
+                // vertex is not in tree so only will contain edges in weighted query, also extra edges will not contain
+                // this vertex because both vertices must be within the tree for this, but kept for sanity
+                int currentDegree = weightedQuery.degreeOf(u)
+                        + SEQq.getExtraEdges(u).size();
+
+                if (!edgesWithDegree.containsKey(currentDegree)) {
+                    edgesWithDegree.put(currentDegree, new HashSet<>());
+                }
+                edgesWithDegree.get(currentDegree).add(e);
+
+                // update the maximum
+                if (currentDegree > maximumDegree) {
+                    maximumDegree = currentDegree;
+                }
+            }
+            minimumEdges = edgesWithDegree.get(maximumDegree);
+        }
+
 
         // randomly choose from the possible edges
         return randomEdge(minimumEdges);
