@@ -14,6 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class SubgraphIsomorphism {
+    // the statistics
     private static int numBackTracking = -1; // keep track of backtracking calls
     private static int numLocalPruning = -1; // keep track of how much pruned locally
     private static int numGlobalPruned = -1; // keep track of how much pruned globally
@@ -23,25 +24,35 @@ public class SubgraphIsomorphism {
     private static String algorithmNamePO = ""; // algorithm in use for processing order
     private static String algorithmNameB = ""; // algorithm in use for backtracking
 
+    // algorithms
+    // isomorphisms
+    private static final String GROUNDTRUTH = "groundTruth";
+    private static final String GRAPHQL = "graphQL";
+    private static final String QUICKSI = "quickSI";
+    // creating graphs
+    private static final String MERGE = "merge";
+    private static final String EDGE = "edge";
+    private static final String NONE = "none";
+
+    // error messages
     // error message if didn't find isomorphism algorithm
     private static final String noAlgorithmFound = "Algorithm specified is not valid.\n" +
             "Specify one of the following algorithms: \n" +
-            "\t groundTruth: finds the ground truth isomorphism.  Only uses LDA in pruning and BFS for ordering.\n" +
-            "\t graphQL: uses the GraphQL algorithm.\n" +
-            "\t quickSI: uses the QuickSI algorithm. (Note: cannot be used for candidates)\n";
+            "\t "+GROUNDTRUTH+": finds the ground truth isomorphism.  Only uses LDA in pruning and BFS for ordering.\n" +
+            "\t "+GRAPHQL+": uses the GraphQL algorithm.\n" +
+            "\t "+QUICKSI+": uses the QuickSI algorithm. (Note: cannot be used for candidates)\n";
     // error message if didn't find connection algorithm
     private static final String noConnectionMethodFound = "Connection type of graphs specified is not valid.\n " +
             "Specify one of the following connections methods: \n" +
-            "\t merge: merge two vertices of the same label.\n" +
-            "\t edge: create an edge between two vertices.\n " +
-            "\t none: use star graph of largest size.\n";
+            "\t "+MERGE+": merge two vertices of the same label.\n" +
+            "\t "+EDGE+": create an edge between two vertices.\n " +
+            "\t "+NONE+": use star graph of largest size.\n";
     // error message if threshold is too high
     private static final String thresholdToHigh = "Threshold too large for graph or graphs not connectable";
     // error message if minimum support is too high
     private static final String minSupToHigh = "Minimum support too large for graph";
 
-
-    // keep track of axuillary structures
+    // keep track of axillary structures
     private static QISequence SEQq;
 
     /**
@@ -1015,7 +1026,7 @@ public class SubgraphIsomorphism {
         // iterate through neighbors of u
         List<Vertex> neighborsU = Graphs.neighborListOf(query, u);
         // if quickSI only look at extra edges
-        if(algorithmNameB.equals("quickSI")){
+        if(algorithmNameB.equals(QUICKSI)){
             neighborsU = SEQq.getExtraEdges(u);
         }
 
@@ -1078,7 +1089,7 @@ public class SubgraphIsomorphism {
             Set<Vertex> possibleVertices = new HashSet<>(candidates.get(u));
 
             // if quickSI recompute candidates
-            if(algorithmNameB.equals("quickSI") && i!=0){
+            if(algorithmNameB.equals(QUICKSI) && i!=0){
                 // remove candidates that are not neighbors to the parent's candidate
                 Vertex p = SEQq.getParent(u);
 
@@ -1124,10 +1135,10 @@ public class SubgraphIsomorphism {
         List<Map<Vertex, Vertex>> results = new ArrayList<>();
         Map<Vertex, Set<Vertex>> candidates;
         ArrayList<Vertex> order;
-        if(algorithmNameC.equals("groundTruth")) {
+        if(algorithmNameC.equals(GROUNDTRUTH)) {
             candidates = groundTruthComputeCandidates(query, target);
         }
-        else if(algorithmNameC.equals("graphQL")){
+        else if(algorithmNameC.equals(GRAPHQL)){
             candidates = graphQLComputeCandidates(query, target);
         }
         else{
@@ -1136,13 +1147,13 @@ public class SubgraphIsomorphism {
             return null;
         }
 
-        if(algorithmNamePO.equals("groundTruth")){
+        if(algorithmNamePO.equals(GROUNDTRUTH)){
             order = groundTruthComputeProcessingOrder(query, candidates);
         }
-        else if(algorithmNamePO.equals("graphQL")){
+        else if(algorithmNamePO.equals(GRAPHQL)){
             order = graphQLComputeProcessingOrder(query, candidates, gamma);
         }
-        else if(algorithmNamePO.equals("quickSI")){
+        else if(algorithmNamePO.equals(QUICKSI)){
             order = quickSIComputeProcessingOrder(target, query, candidates);
         }
         else{
@@ -1153,14 +1164,14 @@ public class SubgraphIsomorphism {
 
         // keep track of number of backtracking
         numBackTracking = 0;
-        if(algorithmNameB.equals("groundTruth") || algorithmNameB.equals("graphQL")
-                || (algorithmNameB.equals("quickSI") && SEQq != null)) {
+        if(algorithmNameB.equals(GROUNDTRUTH) || algorithmNameB.equals(GRAPHQL)
+                || (algorithmNameB.equals(QUICKSI) && SEQq != null)) {
             subgraphIsomorphism(query, target, candidates, order, 0, new HashMap<>(), results, isInduced);
         }
         else{
             System.out.println("Backtracking Algorithm:");
-            if(algorithmNameB.equals("quickSI")){
-                System.out.println("Must use quickSI for processing order if used for backtracking");
+            if(algorithmNameB.equals(QUICKSI)){
+                System.out.println("Must use "+QUICKSI+" for processing order if used for backtracking");
             }
             System.out.println(noAlgorithmFound);
             return null;
@@ -1224,8 +1235,10 @@ public class SubgraphIsomorphism {
 
         System.out.println("# candidates algorithm: "+algorithmNameC);
         System.out.println("# processing order algorithm: "+algorithmNamePO);
+        System.out.println("# backtracking algorithm: "+algorithmNameB);
         writer.append("# candidates algorithm: "+ algorithmNameC+"\n" +
-                "# processing order algorithm: "+algorithmNamePO+"\n");
+                "# processing order algorithm: "+algorithmNamePO+"\n" +
+                "# backtracking algorithm: "+algorithmNameB+"\n");
 
         List<String> isomorphisms = isomorphismOrdered(subgraphIsomorphism);
 
@@ -1408,7 +1421,8 @@ public class SubgraphIsomorphism {
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName));
         writer.write("There were the following incorrect subgraph isomorphisms using:\n" +
                 "Candidates algorithm: "+algorithmNameC+" \n" +
-                "Processing order algorithm: "+algorithmNamePO+"\n\n");
+                "Processing order algorithm: "+algorithmNamePO+"\n" +
+                "Backtracking algorithm: "+algorithmNameB+"\n\n");
 
         while(line!=null){
             // get rid of whitespace
@@ -2341,16 +2355,16 @@ public class SubgraphIsomorphism {
         // union two star graphs
         Graph<Vertex, DefaultEdge> query = null; numCombined = new HashMap<>();
         // union by merge
-        if(connectionMethod.equals("merge")){
+        if(connectionMethod.equals(MERGE)){
             query = unionGraphsByMerge(target, starGraph1, starGraph2, starGraph1Roots,
                     starGraph2Roots, 100);
         }
         // union by edge
-        else if(connectionMethod.equals("edge")) {
+        else if(connectionMethod.equals(EDGE)) {
             query = unionGraphsByEdge(target, starGraph1, starGraph2, starGraph1Roots,
                     starGraph2Roots, 100);
         }
-        else if(connectionMethod.equals("none")){
+        else if(connectionMethod.equals(NONE)){
             query = starGraph1;
         }
         // not a correct merging method
@@ -2518,6 +2532,7 @@ public class SubgraphIsomorphism {
 
         writer.append("Used candidate algorithm: " +algorithmNameC+"\n");
         writer.append("Used processing order algorithm: " +algorithmNamePO+"\n");
+        writer.append("Used backtracking algorithm: " +algorithmNameB+"\n");
         // number of backtracking in isomorphism
         writer.append("Number backtracking calls: ").append(String.valueOf(numBackTracking)).append("\n");
         // number of possible matchings
@@ -2557,9 +2572,10 @@ public class SubgraphIsomorphism {
             mainMethod = args[0];
         }
         // basic information for isomorphism
-        algorithmNameC = "graphQL";
-        algorithmNamePO = "quickSI";
-        algorithmNameB = "quickSI";
+        algorithmNameC = GRAPHQL;
+        algorithmNamePO = QUICKSI;
+        algorithmNameB = QUICKSI;
+
         // groundTruth, graphQL
         final boolean isInduced = true;
         double gamma = 0.5;
@@ -2593,12 +2609,12 @@ public class SubgraphIsomorphism {
             }
         }
         // create a query graph from frequent profiles
-        else if(mainMethod.equals("FDMQuery") && args.length == 5){
+        else if(mainMethod.equals("FDMQuery") && args.length == 4){
             final String fdmFile = args[1];
             final String outputFolderName = args[2];
             // keep track of the minimum profile size while creating graph
             int profileSize = Integer.parseInt(args[3]);// itemsets must be this size
-            final String connectionMethod = args[4];
+            final String connectionMethod = MERGE;
 
             // get the information from the fdm file
             fdmGraph(fdmFile, outputFolderName, isInduced, profileSize, gamma, connectionMethod);
