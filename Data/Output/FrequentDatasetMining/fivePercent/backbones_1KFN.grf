@@ -2,7 +2,6 @@ Graph: backbones_1KFN.grf(C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\D
 Number of Nodes: 755
 Minsup (integer): 37.75
 Minsup (percentage): 0.05
-Attribute Label
 [C, C, C, H, H] appears in 44 vertex profiles:
 [192, 389, 517, 518, 519, 583, 584, 648, 265, 649, 266, 458, 75, 267, 717, 539, 28, 93, 222, 480, 672, 353, 481, 163, 423, 551, 424, 105, 617, 106, 303, 367, 241, 691, 52, 53, 54, 631, 632, 122, 315, 316, 191, 703] 
 

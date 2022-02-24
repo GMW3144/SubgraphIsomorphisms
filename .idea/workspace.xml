@@ -6,8 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="6d0b8e23-97b2-4b58-991e-87f7b486f404" name="Default Changelist" comment="used different minimum supports (part 2)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/SubgraphIsomorphism.class" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/SubgraphIsomorphism.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -24,7 +22,7 @@
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
       <map>
-        <entry key="$PROJECT_DIR$" value="master" />
+        <entry key="$PROJECT_DIR$" value="main" />
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -70,7 +68,7 @@
     <configuration name="SubgraphIsomorphism " type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="SubgraphIsomorphism" />
       <module name="SubgraphIsomorphism" />
-      <option name="PROGRAM_PARAMETERS" value="FDMQuery C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\FrequentDatasetMining\fifty\backbones_1AF7.grf C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\FrequentDatasetMining\Query\" />
+      <option name="PROGRAM_PARAMETERS" value="KnownGraphs C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\query\human_2GW6.8.sub.grf C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\human_2EQF.grf C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\Test\isomorphisms.txt C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\Test\stats.txt" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../../ISProject" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -85,146 +83,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1642694530105</updated>
-    </task>
-    <task id="LOCAL-00001" summary="First draft project">
-      <created>1642694597624</created>
-      <option name="number" value="00001" />
-      <option name="presentableId" value="LOCAL-00001" />
-      <option name="project" value="LOCAL" />
-      <updated>1642694597624</updated>
-    </task>
-    <task id="LOCAL-00002" summary="test">
-      <created>1642695118601</created>
-      <option name="number" value="00002" />
-      <option name="presentableId" value="LOCAL-00002" />
-      <option name="project" value="LOCAL" />
-      <updated>1642695118601</updated>
-    </task>
-    <task id="LOCAL-00003" summary="test2">
-      <created>1642695255348</created>
-      <option name="number" value="00003" />
-      <option name="presentableId" value="LOCAL-00003" />
-      <option name="project" value="LOCAL" />
-      <updated>1642695255348</updated>
-    </task>
-    <task id="LOCAL-00004" summary="test2">
-      <created>1642695305995</created>
-      <option name="number" value="00004" />
-      <option name="presentableId" value="LOCAL-00004" />
-      <option name="project" value="LOCAL" />
-      <updated>1642695305995</updated>
-    </task>
-    <task id="LOCAL-00005" summary="Removed proteins">
-      <created>1642695458483</created>
-      <option name="number" value="00005" />
-      <option name="presentableId" value="LOCAL-00005" />
-      <option name="project" value="LOCAL" />
-      <updated>1642695458483</updated>
-    </task>
-    <task id="LOCAL-00006" summary="Added proteins">
-      <created>1642695487546</created>
-      <option name="number" value="00006" />
-      <option name="presentableId" value="LOCAL-00006" />
-      <option name="project" value="LOCAL" />
-      <updated>1642695487546</updated>
-    </task>
-    <task id="LOCAL-00007" summary="Added proteins">
-      <created>1642696191703</created>
-      <option name="number" value="00007" />
-      <option name="presentableId" value="LOCAL-00007" />
-      <option name="project" value="LOCAL" />
-      <updated>1642696191704</updated>
-    </task>
-    <task id="LOCAL-00008" summary="Created ground truth for all combinations">
-      <created>1642704229571</created>
-      <option name="number" value="00008" />
-      <option name="presentableId" value="LOCAL-00008" />
-      <option name="project" value="LOCAL" />
-      <updated>1642704229571</updated>
-    </task>
-    <task id="LOCAL-00009" summary="Moved files">
-      <created>1642709215302</created>
-      <option name="number" value="00009" />
-      <option name="presentableId" value="LOCAL-00009" />
-      <option name="project" value="LOCAL" />
-      <updated>1642709215302</updated>
-    </task>
-    <task id="LOCAL-00010" summary="Adding ground truth">
-      <created>1642709293247</created>
-      <option name="number" value="00010" />
-      <option name="presentableId" value="LOCAL-00010" />
-      <option name="project" value="LOCAL" />
-      <updated>1642709293247</updated>
-    </task>
-    <task id="LOCAL-00011" summary="Created statistic for graphs and randomly created walks and performed subgraph isomorphism">
-      <created>1642880835220</created>
-      <option name="number" value="00011" />
-      <option name="presentableId" value="LOCAL-00011" />
-      <option name="project" value="LOCAL" />
-      <updated>1642880835220</updated>
-    </task>
-    <task id="LOCAL-00012" summary="Graph information and isomorphisms">
-      <created>1642880874886</created>
-      <option name="number" value="00012" />
-      <option name="presentableId" value="LOCAL-00012" />
-      <option name="project" value="LOCAL" />
-      <updated>1642880874886</updated>
-    </task>
-    <task id="LOCAL-00013" summary="Moved Isomorphism and vertex to one place">
-      <created>1642881136814</created>
-      <option name="number" value="00013" />
-      <option name="presentableId" value="LOCAL-00013" />
-      <option name="project" value="LOCAL" />
-      <updated>1642881136814</updated>
-    </task>
-    <task id="LOCAL-00014" summary="First attempt at GraphQL">
-      <created>1643300524581</created>
-      <option name="number" value="00014" />
-      <option name="presentableId" value="LOCAL-00014" />
-      <option name="project" value="LOCAL" />
-      <updated>1643300524581</updated>
-    </task>
-    <task id="LOCAL-00015" summary="Added a way to check against ground truth">
-      <created>1643322639283</created>
-      <option name="number" value="00015" />
-      <option name="presentableId" value="LOCAL-00015" />
-      <option name="project" value="LOCAL" />
-      <updated>1643322639283</updated>
-    </task>
-    <task id="LOCAL-00016" summary="Added comments">
-      <created>1643322787231</created>
-      <option name="number" value="00016" />
-      <option name="presentableId" value="LOCAL-00016" />
-      <option name="project" value="LOCAL" />
-      <updated>1643322787231</updated>
-    </task>
-    <task id="LOCAL-00017" summary="Keep track of graph when writing the important info for random walk.  Ran graphQL on previously hard-to-find subgraph isomorphisms">
-      <created>1643324092919</created>
-      <option name="number" value="00017" />
-      <option name="presentableId" value="LOCAL-00017" />
-      <option name="project" value="LOCAL" />
-      <updated>1643324092919</updated>
-    </task>
-    <task id="LOCAL-00018" summary="First attempt on apriori algorithm">
-      <created>1643497239629</created>
-      <option name="number" value="00018" />
-      <option name="presentableId" value="LOCAL-00018" />
-      <option name="project" value="LOCAL" />
-      <updated>1643497239629</updated>
-    </task>
-    <task id="LOCAL-00019" summary="Added comments">
-      <created>1643497918957</created>
-      <option name="number" value="00019" />
-      <option name="presentableId" value="LOCAL-00019" />
-      <option name="project" value="LOCAL" />
-      <updated>1643497918957</updated>
-    </task>
-    <task id="LOCAL-00020" summary="Perform frequent itemset mining on all target graphs">
-      <created>1643498754034</created>
-      <option name="number" value="00020" />
-      <option name="presentableId" value="LOCAL-00020" />
-      <option name="project" value="LOCAL" />
-      <updated>1643498754034</updated>
     </task>
     <task id="LOCAL-00021" summary="used different minimum supports">
       <created>1643499055124</created>
@@ -275,7 +133,301 @@
       <option name="project" value="LOCAL" />
       <updated>1643571491572</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="Added some comments, and attempted other profile size values for FDMGraph">
+      <created>1643645996705</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1643645996705</updated>
+    </task>
+    <task id="LOCAL-00029" summary="Converted the labeling to be string instead of attribute-value map">
+      <created>1643652033085</created>
+      <option name="number" value="00029" />
+      <option name="presentableId" value="LOCAL-00029" />
+      <option name="project" value="LOCAL" />
+      <updated>1643652033085</updated>
+    </task>
+    <task id="LOCAL-00030" summary="Split up random graph">
+      <created>1643652903027</created>
+      <option name="number" value="00030" />
+      <option name="presentableId" value="LOCAL-00030" />
+      <option name="project" value="LOCAL" />
+      <updated>1643652903027</updated>
+    </task>
+    <task id="LOCAL-00031" summary="Some fixes with test">
+      <created>1643653798206</created>
+      <option name="number" value="00031" />
+      <option name="presentableId" value="LOCAL-00031" />
+      <option name="project" value="LOCAL" />
+      <updated>1643653798206</updated>
+    </task>
+    <task id="LOCAL-00032" summary="Allows ground truth to not need a folder name">
+      <created>1643653923975</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1643653923975</updated>
+    </task>
+    <task id="LOCAL-00033" summary="Split up ground truth and graphQL, to make easier to implement other algorithms">
+      <created>1643737853637</created>
+      <option name="number" value="00033" />
+      <option name="presentableId" value="LOCAL-00033" />
+      <option name="project" value="LOCAL" />
+      <updated>1643737853637</updated>
+    </task>
+    <task id="LOCAL-00034" summary="Accounted for possible mappings for leaf of star graph">
+      <created>1643908437565</created>
+      <option name="number" value="00034" />
+      <option name="presentableId" value="LOCAL-00034" />
+      <option name="project" value="LOCAL" />
+      <updated>1643908437565</updated>
+    </task>
+    <task id="LOCAL-00035" summary="A way to keep track of common mappings between neighbors">
+      <created>1643911601377</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1643911601377</updated>
+    </task>
+    <task id="LOCAL-00036" summary="Combined graph by merging two nodes">
+      <created>1643913066305</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1643913066305</updated>
+    </task>
+    <task id="LOCAL-00037" summary="Perform subgraph isomorphism on the merged graphs">
+      <created>1643920195465</created>
+      <option name="number" value="00037" />
+      <option name="presentableId" value="LOCAL-00037" />
+      <option name="project" value="LOCAL" />
+      <updated>1643920195465</updated>
+    </task>
+    <task id="LOCAL-00038" summary="Added some comments">
+      <created>1643996794958</created>
+      <option name="number" value="00038" />
+      <option name="presentableId" value="LOCAL-00038" />
+      <option name="project" value="LOCAL" />
+      <updated>1643996794958</updated>
+    </task>
+    <task id="LOCAL-00039" summary="Attempt union by edge">
+      <created>1643999160428</created>
+      <option name="number" value="00039" />
+      <option name="presentableId" value="LOCAL-00039" />
+      <option name="project" value="LOCAL" />
+      <updated>1643999160428</updated>
+    </task>
+    <task id="LOCAL-00040" summary="First attempt at combining graphs by edge">
+      <created>1644505244669</created>
+      <option name="number" value="00040" />
+      <option name="presentableId" value="LOCAL-00040" />
+      <option name="project" value="LOCAL" />
+      <updated>1644505244669</updated>
+    </task>
+    <task id="LOCAL-00041" summary="Fixed so can create multiple edges even if have the same label">
+      <created>1644509690757</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1644509690757</updated>
+    </task>
+    <task id="LOCAL-00042" summary="Fixed commenting">
+      <created>1644509836779</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1644509836779</updated>
+    </task>
+    <task id="LOCAL-00043" summary="Fixed double counting issue">
+      <created>1644510738732</created>
+      <option name="number" value="00043" />
+      <option name="presentableId" value="LOCAL-00043" />
+      <option name="project" value="LOCAL" />
+      <updated>1644510738733</updated>
+    </task>
+    <task id="LOCAL-00044" summary="Fixed so doesn't break if removes vertex">
+      <created>1644513204060</created>
+      <option name="number" value="00044" />
+      <option name="presentableId" value="LOCAL-00044" />
+      <option name="project" value="LOCAL" />
+      <updated>1644513204060</updated>
+    </task>
+    <task id="LOCAL-00045" summary="First attempt at writing graph statistics">
+      <created>1644595213232</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1644595213232</updated>
+    </task>
+    <task id="LOCAL-00046" summary="Tested graph statistics">
+      <created>1644604138905</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1644604138905</updated>
+    </task>
+    <task id="LOCAL-00047" summary="Fixed comments, grammer/spelling, and combined duplicate code">
+      <created>1644608428881</created>
+      <option name="number" value="00047" />
+      <option name="presentableId" value="LOCAL-00047" />
+      <option name="project" value="LOCAL" />
+      <updated>1644608428881</updated>
+    </task>
+    <task id="LOCAL-00048" summary="Tested changes, and made slight adjustments">
+      <created>1644612409361</created>
+      <option name="number" value="00048" />
+      <option name="presentableId" value="LOCAL-00048" />
+      <option name="project" value="LOCAL" />
+      <updated>1644612409361</updated>
+    </task>
+    <task id="LOCAL-00049" summary="Don't have to merge star graphs">
+      <created>1644612697660</created>
+      <option name="number" value="00049" />
+      <option name="presentableId" value="LOCAL-00049" />
+      <option name="project" value="LOCAL" />
+      <updated>1644612697660</updated>
+    </task>
+    <task id="LOCAL-00050" summary="Now take note of method of combination">
+      <created>1644613053267</created>
+      <option name="number" value="00050" />
+      <option name="presentableId" value="LOCAL-00050" />
+      <option name="project" value="LOCAL" />
+      <updated>1644613053268</updated>
+    </task>
+    <task id="LOCAL-00051" summary="Made isInduced final, since will not change">
+      <created>1644613112999</created>
+      <option name="number" value="00051" />
+      <option name="presentableId" value="LOCAL-00051" />
+      <option name="project" value="LOCAL" />
+      <updated>1644613112999</updated>
+    </task>
+    <task id="LOCAL-00052" summary="Calculated weights for weighted graph">
+      <created>1644776277222</created>
+      <option name="number" value="00052" />
+      <option name="presentableId" value="LOCAL-00052" />
+      <option name="project" value="LOCAL" />
+      <updated>1644776277222</updated>
+    </task>
+    <task id="LOCAL-00053" summary="Created weighted graph">
+      <created>1644854836010</created>
+      <option name="number" value="00053" />
+      <option name="presentableId" value="LOCAL-00053" />
+      <option name="project" value="LOCAL" />
+      <updated>1644854836010</updated>
+    </task>
+    <task id="LOCAL-00054" summary="QI-Sequence construction">
+      <created>1644856261409</created>
+      <option name="number" value="00054" />
+      <option name="presentableId" value="LOCAL-00054" />
+      <option name="project" value="LOCAL" />
+      <updated>1644856261409</updated>
+    </task>
+    <task id="LOCAL-00055" summary="Find first edge in spanning tree method created">
+      <created>1644859549287</created>
+      <option name="number" value="00055" />
+      <option name="presentableId" value="LOCAL-00055" />
+      <option name="project" value="LOCAL" />
+      <updated>1644859549287</updated>
+    </task>
+    <task id="LOCAL-00056" summary="Tested and fixed select first edge">
+      <created>1644859940853</created>
+      <option name="number" value="00056" />
+      <option name="presentableId" value="LOCAL-00056" />
+      <option name="project" value="LOCAL" />
+      <updated>1644859940853</updated>
+    </task>
+    <task id="LOCAL-00057" summary="First attempt at select vertex order">
+      <created>1644860456765</created>
+      <option name="number" value="00057" />
+      <option name="presentableId" value="LOCAL-00057" />
+      <option name="project" value="LOCAL" />
+      <updated>1644860456767</updated>
+    </task>
+    <task id="LOCAL-00058" summary="Tested and added vertices to trees">
+      <created>1644861245400</created>
+      <option name="number" value="00058" />
+      <option name="presentableId" value="LOCAL-00058" />
+      <option name="project" value="LOCAL" />
+      <updated>1644861245400</updated>
+    </task>
+    <task id="LOCAL-00059" summary="First attempt at select spanning edge">
+      <created>1644864200659</created>
+      <option name="number" value="00059" />
+      <option name="presentableId" value="LOCAL-00059" />
+      <option name="project" value="LOCAL" />
+      <updated>1644864200659</updated>
+    </task>
+    <task id="LOCAL-00060" summary="First attempt constructing the QI-Sequence">
+      <created>1644865104352</created>
+      <option name="number" value="00060" />
+      <option name="presentableId" value="LOCAL-00060" />
+      <option name="project" value="LOCAL" />
+      <updated>1644865104352</updated>
+    </task>
+    <task id="LOCAL-00061" summary="Created order from QI-sequence">
+      <created>1644875428333</created>
+      <option name="number" value="00061" />
+      <option name="presentableId" value="LOCAL-00061" />
+      <option name="project" value="LOCAL" />
+      <updated>1644875428333</updated>
+    </task>
+    <task id="LOCAL-00062" summary="Fixed some mistakes with the algorithm">
+      <created>1644880901112</created>
+      <option name="number" value="00062" />
+      <option name="presentableId" value="LOCAL-00062" />
+      <option name="project" value="LOCAL" />
+      <updated>1644880901112</updated>
+    </task>
+    <task id="LOCAL-00063" summary="Added extra step that was forgotten">
+      <created>1644940147192</created>
+      <option name="number" value="00063" />
+      <option name="presentableId" value="LOCAL-00063" />
+      <option name="project" value="LOCAL" />
+      <updated>1644940147192</updated>
+    </task>
+    <task id="LOCAL-00064" summary="Fixed output">
+      <created>1644940337775</created>
+      <option name="number" value="00064" />
+      <option name="presentableId" value="LOCAL-00064" />
+      <option name="project" value="LOCAL" />
+      <updated>1644940337775</updated>
+    </task>
+    <task id="LOCAL-00065" summary="First attempt at backtracking with QuickSI">
+      <created>1644944806104</created>
+      <option name="number" value="00065" />
+      <option name="presentableId" value="LOCAL-00065" />
+      <option name="project" value="LOCAL" />
+      <updated>1644944806104</updated>
+    </task>
+    <task id="LOCAL-00066" summary="Updated so easier to define algorithm, and kept track of backtracking algorithm within the output files">
+      <created>1644945960260</created>
+      <option name="number" value="00066" />
+      <option name="presentableId" value="LOCAL-00066" />
+      <option name="project" value="LOCAL" />
+      <updated>1644945960260</updated>
+    </task>
+    <task id="LOCAL-00067" summary="Added statistics for quickSI, and added new error message">
+      <created>1644946974569</created>
+      <option name="number" value="00067" />
+      <option name="presentableId" value="LOCAL-00067" />
+      <option name="project" value="LOCAL" />
+      <updated>1644946974569</updated>
+    </task>
+    <task id="LOCAL-00068" summary="Added clarifying statement for noAlgorithmFound error message">
+      <created>1644947060492</created>
+      <option name="number" value="00068" />
+      <option name="presentableId" value="LOCAL-00068" />
+      <option name="project" value="LOCAL" />
+      <updated>1644947060492</updated>
+    </task>
+    <task id="LOCAL-00069" summary="Fixed testing function and quickSI">
+      <created>1644948828581</created>
+      <option name="number" value="00069" />
+      <option name="presentableId" value="LOCAL-00069" />
+      <option name="project" value="LOCAL" />
+      <updated>1644948828581</updated>
+    </task>
+    <option name="localTasksCounter" value="70" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -327,30 +479,32 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="First draft project" />
-    <MESSAGE value="test" />
-    <MESSAGE value="test2" />
-    <MESSAGE value="Removed proteins" />
-    <MESSAGE value="Added proteins" />
-    <MESSAGE value="Created ground truth for all combinations" />
-    <MESSAGE value="Moved files" />
-    <MESSAGE value="Adding ground truth" />
-    <MESSAGE value="Created statistic for graphs and randomly created walks and performed subgraph isomorphism" />
-    <MESSAGE value="Graph information and isomorphisms" />
-    <MESSAGE value="Moved Isomorphism and vertex to one place" />
-    <MESSAGE value="First attempt at GraphQL" />
-    <MESSAGE value="Added a way to check against ground truth" />
-    <MESSAGE value="Keep track of graph when writing the important info for random walk.  Ran graphQL on previously hard-to-find subgraph isomorphisms" />
-    <MESSAGE value="First attempt on apriori algorithm" />
-    <MESSAGE value="Added comments" />
-    <MESSAGE value="Perform frequent itemset mining on all target graphs" />
-    <MESSAGE value="used different minimum supports" />
-    <MESSAGE value="Differnet minsup (part2)" />
-    <MESSAGE value="Differnet minsup (part3)" />
-    <MESSAGE value="Differnet minsup (part4)" />
-    <MESSAGE value="Fixed minor issue with ordering" />
-    <MESSAGE value="Fixed issues with isomorphism, and built query graph based off of the frequent dataset mining" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed issues with isomorphism, and built query graph based off of the frequent dataset mining" />
+    <MESSAGE value="First attempt at writing graph statistics" />
+    <MESSAGE value="Tested graph statistics" />
+    <MESSAGE value="Fixed comments, grammer/spelling, and combined duplicate code" />
+    <MESSAGE value="Tested changes, and made slight adjustments" />
+    <MESSAGE value="Don't have to merge star graphs" />
+    <MESSAGE value="Now take note of method of combination" />
+    <MESSAGE value="Made isInduced final, since will not change" />
+    <MESSAGE value="Calculated weights for weighted graph" />
+    <MESSAGE value="Created weighted graph" />
+    <MESSAGE value="QI-Sequence construction" />
+    <MESSAGE value="Find first edge in spanning tree method created" />
+    <MESSAGE value="Tested and fixed select first edge" />
+    <MESSAGE value="First attempt at select vertex order" />
+    <MESSAGE value="Tested and added vertices to trees" />
+    <MESSAGE value="First attempt at select spanning edge" />
+    <MESSAGE value="First attempt constructing the QI-Sequence" />
+    <MESSAGE value="Created order from QI-sequence" />
+    <MESSAGE value="Fixed some mistakes with the algorithm" />
+    <MESSAGE value="Added extra step that was forgotten" />
+    <MESSAGE value="Fixed output" />
+    <MESSAGE value="First attempt at backtracking with QuickSI" />
+    <MESSAGE value="Updated so easier to define algorithm, and kept track of backtracking algorithm within the output files" />
+    <MESSAGE value="Added statistics for quickSI, and added new error message" />
+    <MESSAGE value="Added clarifying statement for noAlgorithmFound error message" />
+    <MESSAGE value="Fixed testing function and quickSI" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed testing function and quickSI" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -377,63 +531,58 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1530</line>
-          <option name="timeStamp" value="26" />
+          <line>2654</line>
+          <option name="timeStamp" value="116" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>918</line>
-          <option name="timeStamp" value="56" />
+          <line>1790</line>
+          <option name="timeStamp" value="118" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1197</line>
-          <option name="timeStamp" value="92" />
+          <line>1975</line>
+          <option name="timeStamp" value="249" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1358</line>
-          <option name="timeStamp" value="96" />
+          <line>2643</line>
+          <option name="timeStamp" value="265" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1395</line>
-          <option name="timeStamp" value="98" />
+          <line>2179</line>
+          <option name="timeStamp" value="267" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1363</line>
-          <option name="timeStamp" value="105" />
+          <line>1750</line>
+          <option name="timeStamp" value="268" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1417</line>
-          <option name="timeStamp" value="106" />
+          <line>2681</line>
+          <option name="timeStamp" value="322" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>647</line>
-          <option name="timeStamp" value="107" />
+          <line>1488</line>
+          <option name="timeStamp" value="324" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>268</line>
-          <option name="timeStamp" value="109" />
+          <line>1154</line>
+          <option name="timeStamp" value="325" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>408</line>
-          <option name="timeStamp" value="110" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/Vertex.java</url>
-          <line>232</line>
-          <option name="timeStamp" value="112" />
+          <line>1097</line>
+          <option name="timeStamp" value="329" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1302</line>
-          <option name="timeStamp" value="113" />
+          <line>1134</line>
+          <option name="timeStamp" value="330" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
@@ -442,15 +591,6 @@
         <PinnedItemInfo parentTag="Vertex" memberName="attributes" />
       </pinned-members>
     </pin-to-top-manager>
-    <watches-manager>
-      <configuration name="Application">
-        <watch expression="possibleItems" />
-        <watch expression="Ck.get(9)" />
-        <watch expression="frequentProfileShapes" />
-        <watch expression="frequentProfileShapes" language="JAVA" />
-        <watch expression="((HashMap)frequentProfiles).entrySet().toArray()[4]" custom="java.util.HashMap" />
-      </configuration>
-    </watches-manager>
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/GitHubProject$SubgraphIsomorphism_.ic" NAME="SubgraphIsomorphism  Coverage Results" MODIFIED="1642870587296" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" />

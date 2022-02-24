@@ -1,2 +1,0 @@
-Used C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\FrequentDatasetMining\fifty\backbones_1AF7.grf frequent dataset mining 
-Vertex with attribute C and profile [C, C, H] occurs 991 times within the graph 

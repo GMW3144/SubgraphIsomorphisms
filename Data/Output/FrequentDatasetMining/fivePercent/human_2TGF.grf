@@ -2,7 +2,6 @@ Graph: human_2TGF.grf(C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\
 Number of Nodes: 737
 Minsup (integer): 36.85
 Minsup (percentage): 0.05
-Attribute Label
 [C, C, C, H, H] appears in 37 vertex profiles:
 [192, 193, 513, 67, 259, 387, 388, 453, 454, 711, 137, 332, 652, 209, 404, 405, 87, 603, 604, 160, 352, 419, 101, 549, 680, 239, 431, 432, 49, 433, 308, 692, 309, 123, 124, 637, 638] 
 

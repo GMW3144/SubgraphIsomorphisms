@@ -2,7 +2,6 @@ Graph: backbones_1RH4.grf(C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\D
 Number of Nodes: 535
 Minsup (integer): 26.75
 Minsup (percentage): 0.05
-Attribute Label
 [C, C, C, H, H] appears in 40 vertex profiles:
 [131, 323, 132, 196, 452, 453, 454, 399, 400, 401, 147, 275, 276, 277, 341, 87, 215, 88, 89, 474, 475, 32, 421, 422, 423, 491, 492, 109, 110, 111, 175, 307, 244, 308, 245, 246, 507, 380, 61, 62] 
 

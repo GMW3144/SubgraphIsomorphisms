@@ -2,7 +2,6 @@ Graph: human_2DJ8.grf(C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\
 Number of Nodes: 831
 Minsup (integer): 41.550000000000004
 Minsup (percentage): 0.05
-Attribute Label
 [C, C, C, H, H] appears in 44 vertex profiles:
 [576, 707, 454, 455, 72, 138, 139, 652, 653, 528, 594, 595, 596, 725, 791, 280, 792, 153, 281, 90, 347, 667, 348, 668, 669, 478, 224, 416, 104, 616, 744, 105, 559, 304, 560, 305, 689, 306, 628, 248, 121, 122, 187, 188] 
 
