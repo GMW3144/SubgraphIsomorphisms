@@ -1,0 +1,3 @@
+Used C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\FrequentDatasetMining\tenPercent\human_2KUL.grf frequent dataset mining 
+Combined two graphs:Vertex with attribute C and profile [C, C, H] occurs 1305 times within the graph 
+Vertex with attribute C and profile [C, C, C] occurs 1045 times within the graph 

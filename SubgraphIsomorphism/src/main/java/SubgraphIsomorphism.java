@@ -1111,16 +1111,15 @@ public class SubgraphIsomorphism {
 
                 Set<Vertex> newPossibleVertices = new HashSet<>();
 
-
                 // iterate through the vertex candidates
                 for(Vertex uC: candidates.get(u)){
-                    // compared pair, so increase number of backtracking
-                    numBackTracking++;
                     // only include if edge exists between two candidates
                     if(target.containsEdge(pC, uC)){
                         newPossibleVertices.add(uC);
                     }
                     else{
+                        // compared pair, so increase number of backtracking
+                        numBackTracking++;
                         falseMatchingParents++;
                     }
                 }
