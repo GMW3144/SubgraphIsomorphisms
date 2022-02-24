@@ -40,8 +40,7 @@ public class SubgraphIsomorphism {
             "Specify one of the following algorithms: \n" +
             "\t "+GROUNDTRUTH+": finds the ground truth isomorphism.  Only uses LDA in pruning and BFS for ordering.\n" +
             "\t "+GRAPHQL+": uses the GraphQL algorithm.\n" +
-            "\t "+QUICKSI+": uses the QuickSI algorithm. (Note: cannot be used for candidates and must be used for " +
-            "processing order if used for backtracking)\n";
+            "\t "+QUICKSI+": uses the QuickSI algorithm. (Note: cannot be used for processing candidates)\n";
     // error message if didn't find connection algorithm
     private static final String noConnectionMethodFound = "Connection type of graphs specified is not valid.\n " +
             "Specify one of the following connections methods: \n" +
@@ -890,6 +889,42 @@ public class SubgraphIsomorphism {
         return randomEdge(minimumEdges);
     }
 
+    public static QISequence buildSpanningTreeWithOrder(Graph<Vertex, DefaultEdge> query, ArrayList<Vertex> Order){
+        QISequence SEQq = new QISequence();
+
+        // add the first vertex to the tree
+        Vertex u0 = Order.get(0);
+        SEQq.addVertex(u0, -1);
+
+        // iterate through remaining verticies
+        for(int i = 1; i < Order.size(); i++){
+            Vertex ui = Order.get(i);
+            // keep track if we already assigned the parent
+            Boolean foundParent = false;
+
+            // iterate through previous vertices
+            for(int j = i-1; j >= 0; j--){
+                Vertex uj = Order.get(j);
+                // check if they are adjacent
+                if(query.containsEdge(ui, uj)){
+                    // if we haven't found a parent yet then set
+                    if(!foundParent){
+                        SEQq.addVertex(ui, j);
+                        foundParent = true;
+                    }
+                    else{
+                        SEQq.extraEdge(uj, ui);
+                    }
+                }
+            }
+            if(query.degreeOf(ui)>3){
+                SEQq.extraDeg(ui, query.degreeOf(ui));
+            }
+        }
+
+        return SEQq;
+    }
+
     /**
      * Build the spanning tree based on the weighted query
      * @param weightedQuery the query graph with weights for edges and nodes
@@ -1177,22 +1212,23 @@ public class SubgraphIsomorphism {
 
         // keep track of number of backtracking
         numBackTracking = 0;
-        if(algorithmNameB.equals(GROUNDTRUTH) || algorithmNameB.equals(GRAPHQL)
-                || (algorithmNameB.equals(QUICKSI) && SEQq != null)) {
+        if(algorithmNameB.equals(GROUNDTRUTH) || algorithmNameB.equals(GRAPHQL) || algorithmNameB.equals(QUICKSI)) {
             if(algorithmNameB.equals(QUICKSI)){
                 falseMatchingParents = 0;
                 falseMatchingExtraEdge = 0;
+            }
+            if(algorithmNameB.equals(QUICKSI) && SEQq == null){
+                SEQq = buildSpanningTreeWithOrder(query, order);
             }
             subgraphIsomorphism(query, target, candidates, order, 0, new HashMap<>(), results, isInduced);
         }
         else{
             System.out.println("Backtracking Algorithm:");
-            if(algorithmNameB.equals(QUICKSI)){
-                System.out.println("Must use "+QUICKSI+" for processing order if used for backtracking");
-            }
             System.out.println(noAlgorithmFound);
             return null;
         }
+        // reset the QI-SEquence
+        SEQq = null;
         return results;
     }
 
@@ -1497,7 +1533,7 @@ public class SubgraphIsomorphism {
                 if(numIsomorphisms!= subgraphIsomorphism.size()){
                     writer.append("Incorrect number of Matching! \n")
                             .append(queryGraphFile.getName()).append(" : ")
-                            .append(targetGraphFile.getName()).append("\n");
+                            .append(targetGraphFile.getName()).append(" - "+outputString+"\n");
 
                     System.out.println("Problem Here! ("+outputString+") "+queryGraphFile +": "+targetGraphFile);
                     graphProblem = true;
@@ -2604,7 +2640,7 @@ public class SubgraphIsomorphism {
         }
         // basic information for isomorphism
         algorithmNameC = GRAPHQL;
-        algorithmNamePO = QUICKSI;
+        algorithmNamePO = GRAPHQL;
         algorithmNameB = QUICKSI;
 
         // groundTruth, graphQL
