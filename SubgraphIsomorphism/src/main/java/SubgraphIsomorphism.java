@@ -2689,6 +2689,15 @@ public class SubgraphIsomorphism {
         return randomVertex;
     }
 
+    /**
+     * Finds the probability of a given walk
+     * @param order the processing order for the query graph
+     * @param candidates the candidates of the query vertices
+     * @param SEQq the QI-Sequence, tree and extra edge information
+     * @param i the current vertex in the walk that we are adding
+     * @param walk the current random walk
+     * @return the probability of a random walk (0 if invalid walk)
+     */
     public static double randomWalkWJ(ArrayList<Vertex> order, Map<Vertex, Set<Vertex>> candidates , QISequence SEQq,
                                       int i, List<Vertex> walk){
         // we have reached the end of the walk
@@ -2729,8 +2738,53 @@ public class SubgraphIsomorphism {
         return randomWalkWJ(order, candidates, SEQq, i+1, walk)*1/possibleVertices.size();
     }
 
+    /**
+     * Finds the average of the given values
+     * @param values double values
+     * @return average of values
+     */
+    public static double calculateAverage(List<Double> values){
+        // average the cost values
+        double avg = 0;
+        for(double cost : values){
+            avg += cost;
+        }
+        avg = avg/values.size();
+        return avg;
+    }
+
+    /**
+     * Finds the squared difference between the points and the average
+     * @param values double values
+     * @return the MSE of the values
+     */
+    public static double calculateMeanSquareDifference(List<Double> values){
+        // calculate average
+        double average = calculateAverage(values);
+        // calculate MSE
+        double mse = 0;
+        for(double val: values){
+            // square difference
+            mse += Math.pow(val-average,2);
+        }
+        return 1/(values.size()-1)*mse;
+    }
+
+    /**
+     * Finds the confidence interval for a given set of values
+     * @param costValues the cost values
+     * @param zAlpha the alpha+1/2 quantile of the normal distribution with mean 0 and variance 1
+     * @return the confidence interval
+     */
+    public static double computeConfidenceInterval(List<Double> costValues, double zAlpha){
+        // the average
+        double tn = calculateMeanSquareDifference(costValues);
+
+        return zAlpha * tn / Math.sqrt(costValues.size());
+    }
+
     public static int wanderJoins(Graph<Vertex, DefaultEdge> query, Graph<Vertex, DefaultEdge> target, double gamma,
-                                  double tau, int maxEpoch){
+                                  double tau, int maxEpoch, double zAlpha){
         // compute candidates
         Map<Vertex, Set<Vertex>> candidates = computeCandidates(query, target);
         if(candidates == null){
@@ -2755,15 +2809,43 @@ public class SubgraphIsomorphism {
         while (conf>tau && costValues.size()<maxEpoch){
             // the walk is originally empty
             List<Vertex> walk = new ArrayList<>();
+            // get the probability of the walk
+            double prob = randomWalkWJ(order, candidates, SEQq, 0, walk);
+            // the cost of the walk
+            double cost;
+            // if it is an invalid walk
+            if(prob==0){
+                cost = 0;
+            }
+            else{
+                cost = 1/prob;
 
+                // if it is not an invalid walk, need to check extra edges
+                Map<Vertex, List<Vertex>> extraEdges = SEQq.getEdge();
+
+                for(Vertex u1: extraEdges.keySet()){
+                    for(Vertex u2: extraEdges.get(u1)){
+                        // get the location of the vertices in the edge within the order and walk
+                        int i1 = order.indexOf(u1); int i2 = order.indexOf(u2);
+                        // get the corresponding vertices within the walk
+                        Vertex v1 = walk.get(i1); Vertex v2 = walk.get(i2);
+
+                        // if there is not a corresponding edge
+                        if(!target.containsEdge(v1, v2)){
+                            cost = 0;
+                            break;
+                        }
+                    }
+                }
+            }
+
+            // add the cost to the cost values
+            costValues.add(cost);
+            conf = computeConfidenceInterval(costValues, zAlpha);
         }
 
         // average the cost values
-        double avgCost = 0;
-        for(double cost : costValues){
-            avgCost += cost;
-        }
-        avgCost = avgCost/costValues.size();
+        double avgCost = calculateAverage(costValues);
 
         // round to nearest integer
         return (int) Math.round(avgCost);

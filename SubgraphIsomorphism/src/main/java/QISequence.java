@@ -137,6 +137,12 @@ public class QISequence {
     }
 
     /**
+     * Get the extra edge information for the QI-sequence
+     * @return the extra edge information
+     */
+    public Map<Vertex, List<Vertex>> getEdge(){ return edge; }
+
+    /**
      * Finds the parent of the given vertex
      * @param u the vertex
      * @return parent vertex of u
