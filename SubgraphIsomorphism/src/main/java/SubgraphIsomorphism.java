@@ -2773,7 +2773,8 @@ public class SubgraphIsomorphism {
             // square difference
             mse += Math.pow(val-average,2);
         }
-        return 1/(values.size())*mse;
+
+        return mse/(values.size()-1);
     }
 
     /**
@@ -2840,12 +2841,14 @@ public class SubgraphIsomorphism {
 
             // add the cost to the cost values
             costValues.add(cost);
-            conf = computeConfidenceInterval(costValues, zAlpha);
 
             // every 20 check the confidence value
-            //if(conf%20 == 0 && conf<tau){
-            //    break;
-            //}
+            if(costValues.size()%20 == 0){
+                conf = computeConfidenceInterval(costValues, zAlpha);
+                if(conf<tau) {
+                    break;
+                }
+            }
         }
 
         // average the cost values
@@ -2890,11 +2893,16 @@ public class SubgraphIsomorphism {
     }
 
     public static void testEstimations(String isomorphismFile, String outputFile, double gamma, double tau,
-                                       int maxEpoch, double zAlpha) throws IOException {
+                                       int maxEpoch, double zAlpha, String queryFolder, String targetFolder) throws IOException {
         File dir = new File(isomorphismFile);
         // write to output file
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
-        writer.write("");
+        String estimationParameters = "\n# Estimate Parameters (tau): "+tau+
+                "\n# Estimate Parameters (maxEpoch): "+maxEpoch+
+                "\n# Estimate Parameters (zAlpha): "+zAlpha;
+
+        writer.write(estimationParameters);
+
 
         for(File isomorphism: dir.listFiles()){
             // reset query and target graph
@@ -2917,8 +2925,8 @@ public class SubgraphIsomorphism {
                 // get the query and target graph
                 if(line.toLowerCase(Locale.ROOT).contains("query graph")){
                     String[] info = line.split(",");
-                    queryName = info[0].split(":")[1].strip();
-                    targetName = info[1].split(":")[1].strip();
+                    queryName = queryFolder+info[0].strip().split(" ")[2].strip();
+                    targetName = targetFolder+info[1].strip().split(" ")[2].strip();
                 }
 
                 // get the number of isomorphisms
@@ -2932,18 +2940,30 @@ public class SubgraphIsomorphism {
                 }
                 line = br.readLine();
             }
+            if(actualNumber == 0){
+                System.out.println("HERE");
+            }
 
             Graph<Vertex, DefaultEdge> query = createProteinGraph(new File(queryName));
             Graph<Vertex, DefaultEdge> target = createProteinGraph(new File(targetName));
 
             int estimatedNumber = wanderJoins(query, target, gamma, tau, maxEpoch, zAlpha);
 
+            double error = Math.abs(actualNumber-estimatedNumber);
+            if(actualNumber != 0){
+                error = error/actualNumber;
+            }
+            // if the actual value equals zero and the estimated is not, then we bound the error at 1
+            else if(error!=0){
+                error = 1;
+            }
+
             String output = "Query Graph: "+queryName+", Target Graph: "+targetName +
                     "\n# candidates algorithm: "+algorithmNameC+
                     "\n# processing order algorithm: "+algorithmNamePO+
                     "\n\tActual Number Matchings: "+actualNumber+
                     "\n\tEstimated Number Matchings: "+estimatedNumber+
-                    "\n\tError: "+((actualNumber-estimatedNumber)/actualNumber)+"\n";
+                    "\n\tError: "+error+"\n";
 
             writer.append(output);
             writer.append("\n===========================\n\n");
@@ -2970,9 +2990,14 @@ public class SubgraphIsomorphism {
         algorithmNamePO = GRAPHQL;
         algorithmNameB = QUICKSI;
 
-        // groundTruth, graphQL
+        // isomorphism
         final boolean isInduced = true;
         double gamma = 0.5;
+
+        // estimation
+        double tau = 500;
+        int maxEpoch = 10000;
+        double zAlpha = 1.96; // z score of normal distribution (mean 0, sd 1)
 
         // if the two graphs are known
         if(mainMethod.equals("KnownGraphs") && args.length == 5) {
@@ -2990,24 +3015,22 @@ public class SubgraphIsomorphism {
             final String targetLocation = args[2];
             final String outputFileName = args[3];
 
-            // set parameters
-            double tau = 0.2;
-            int maxEpoch = 10000;
-            double zAlpha = 1.96; // z score of normal distribution (mean 0, sd 1)
-
             estimateCardinality(queryLocation, targetLocation, gamma, tau, maxEpoch, zAlpha, outputFileName);
         }
         // check the estimations
-        else if(mainMethod.equals("TestEstimations") && args.length == 3){
+        else if(mainMethod.equals("TestEstimations") && args.length == 5){
             final String isomorphismFile = args[1];
             final String outputFile = args[2];
+            String queryFolder = args[3];
+            String targetFolder = args[4];
+            if(queryFolder.equals("_")){
+                queryFolder = "";
+            }
+            if(targetFolder.equals("_")){
+                targetFolder = "";
+            }
 
-            // set parameters
-            double tau = 0.2;
-            int maxEpoch = 10000;
-            double zAlpha = 1.96; // z score of normal distribution (mean 0, sd 1)
-
-            testEstimations(isomorphismFile, outputFile, gamma, tau, maxEpoch, zAlpha);
+            testEstimations(isomorphismFile, outputFile, gamma, tau, maxEpoch, zAlpha, queryFolder, targetFolder);
         }
         // find the frequent profiles
         else if(mainMethod.equals("FrequentDatasets") && args.length == 4){
@@ -3092,6 +3115,8 @@ public class SubgraphIsomorphism {
                     "\nTestEstimations <isomorphismFolder> <outputFile>" +
                     "\n\t Find the estimate of the number of matchings for all of the isomorphisms within the folder and compare with the actual" +
                     "\n\t Writes information to outputFile"+
+                    "\n\t Must provide the location of the query and target folders.  If path is contained within " +
+                    "isomorphism files, then give argument '_'."+
                     "\nFrequentDatasets <targetFile> <outputFile> <minSup>"+
                     "\n\t Finds the frequent profile subsets from the given graphs and minimum support."+
                     "\nFDMQuery <FDMFile> <outputFolder> <profileSize> <connectionMethod>"+

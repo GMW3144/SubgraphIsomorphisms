@@ -1,6 +1,0 @@
-The estimation for the following is 1961:
-query graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\HardToFind\Graphs\graph19.txt
-target graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_1DLO.grf
-induced isomoprhims with 
-candidates algorithm: graphQL
-processing order algorithm: graphQL

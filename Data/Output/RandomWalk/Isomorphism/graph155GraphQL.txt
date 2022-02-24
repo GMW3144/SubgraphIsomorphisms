@@ -1,4 +1,4 @@
-Query Graph: graph155.txt, Target Graph: backbones_2QRK.grf
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph155.txt, Target Graph: backbones_2QRK.grf
 Number Backtracking: 1697800
 Induced isomorphisms. Total number subgraph isomorphisms: 5904
 Isomorphism 1: 0->1963;1->1960;2->1966;3->1959;4->1958;5->1962;6->1972;7->1961;8->1964;9->1967;10->1970;11->1969;12->1955;13->1965;14->1954;15->1936;16->1935;17->1934;18->1938;19->1945;20->1939;21->1940;

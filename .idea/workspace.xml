@@ -6,7 +6,18 @@
   <component name="ChangeListManager">
     <list default="true" id="6d0b8e23-97b2-4b58-991e-87f7b486f404" name="Default Changelist" comment="used different minimum supports (part 2)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph137GraphQL.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph137GraphQL.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph147GraphQL.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph147GraphQL.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph150GraphQL.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph150GraphQL.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph155GraphQL.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph155GraphQL.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph46GraphQL.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph46GraphQL.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph71GraphQL.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph71GraphQL.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph72GraphQL.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph72GraphQL.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph72GroundTruth.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph72GroundTruth.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph94GraphQL.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph94GraphQL.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/Test/test.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Data/Output/Test/test.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/SubgraphIsomorphism.class" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/SubgraphIsomorphism.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,7 +80,7 @@
     <configuration name="SubgraphIsomorphism " type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="SubgraphIsomorphism" />
       <module name="SubgraphIsomorphism" />
-      <option name="PROGRAM_PARAMETERS" value="Estimate C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\HardToFind\Graphs\graph19.txt C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_1DLO.grf C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\Test\test.txt" />
+      <option name="PROGRAM_PARAMETERS" value="TestEstimations C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Isomorphism\ C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\Test\test.txt _ C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../../ISProject" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -84,13 +95,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1642694530105</updated>
-    </task>
-    <task id="LOCAL-00028" summary="Added some comments, and attempted other profile size values for FDMGraph">
-      <created>1643645996705</created>
-      <option name="number" value="00028" />
-      <option name="presentableId" value="LOCAL-00028" />
-      <option name="project" value="LOCAL" />
-      <updated>1643645996705</updated>
     </task>
     <task id="LOCAL-00029" summary="Converted the labeling to be string instead of attribute-value map">
       <created>1643652033085</created>
@@ -428,7 +432,14 @@
       <option name="project" value="LOCAL" />
       <updated>1645738172319</updated>
     </task>
-    <option name="localTasksCounter" value="77" />
+    <task id="LOCAL-00077" summary="First attempt at testing the estimation against the actual value">
+      <created>1645740137894</created>
+      <option name="number" value="00077" />
+      <option name="presentableId" value="LOCAL-00077" />
+      <option name="project" value="LOCAL" />
+      <updated>1645740137894</updated>
+    </task>
+    <option name="localTasksCounter" value="78" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -480,7 +491,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Calculated weights for weighted graph" />
     <MESSAGE value="Created weighted graph" />
     <MESSAGE value="QI-Sequence construction" />
     <MESSAGE value="Find first edge in spanning tree method created" />
@@ -505,7 +515,8 @@
     <MESSAGE value="First attempt at computeConfidenceInterval and completed wander joins" />
     <MESSAGE value="Completed initial attempt on cardinality estimation" />
     <MESSAGE value="Tested some isomorphisms and got rid of confidence interval for now" />
-    <option name="LAST_COMMIT_MESSAGE" value="Tested some isomorphisms and got rid of confidence interval for now" />
+    <MESSAGE value="First attempt at testing the estimation against the actual value" />
+    <option name="LAST_COMMIT_MESSAGE" value="First attempt at testing the estimation against the actual value" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -532,7 +543,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>3029</line>
+          <line>3062</line>
           <option name="timeStamp" value="116" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -547,11 +558,6 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>3018</line>
-          <option name="timeStamp" value="265" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
           <line>2256</line>
           <option name="timeStamp" value="267" />
         </line-breakpoint>
@@ -562,7 +568,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>3056</line>
+          <line>3089</line>
           <option name="timeStamp" value="322" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -577,23 +583,23 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>2987</line>
-          <option name="timeStamp" value="340" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>2860</line>
+          <line>2863</line>
           <option name="timeStamp" value="341" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>2851</line>
-          <option name="timeStamp" value="348" />
+          <line>2896</line>
+          <option name="timeStamp" value="350" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>2794</line>
-          <option name="timeStamp" value="349" />
+          <line>2946</line>
+          <option name="timeStamp" value="357" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
+          <line>2846</line>
+          <option name="timeStamp" value="364" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
