@@ -1177,6 +1177,57 @@ public class SubgraphIsomorphism {
     }
 
     /**
+     * Compute the candidates for given query graph and target graph
+     * @param query the query graph
+     * @param target the target graph
+     * @return the candidates
+     */
+    private static Map<Vertex, Set<Vertex>> computeCandidates(Graph<Vertex, DefaultEdge> query,
+                                                              Graph<Vertex, DefaultEdge> target){
+        Map<Vertex, Set<Vertex>> candidates;
+        // compute the candidates
+        switch (algorithmNameC) {
+            // using ground truth
+            case GROUNDTRUTH -> candidates = groundTruthComputeCandidates(query, target);
+            // using GraphQL
+            case GRAPHQL -> candidates = graphQLComputeCandidates(query, target);
+            // did not find a valid algorithm
+            default -> {
+                System.out.println("Candidates Algorithm:");
+                System.out.println(noAlgorithmFound);
+                return null;
+            }
+        }
+        return candidates;
+    }
+
+    /**
+     * Computes the processing order given a query graph and target graph
+     * @param query the query graph
+     * @param target the target graph
+     * @param candidates the candidates of the query vertices
+     * @param gamma the gamma value for GraphQL
+     * @return the processing order
+     */
+    public static ArrayList<Vertex> computeProcessingOrder(Graph<Vertex, DefaultEdge> query,
+                                                           Graph<Vertex, DefaultEdge> target,
+                                                           Map<Vertex, Set<Vertex>> candidates,
+                                                           double gamma){
+        ArrayList<Vertex> order;
+        switch (algorithmNamePO) {
+            case GROUNDTRUTH -> order = groundTruthComputeProcessingOrder(query, candidates);
+            case GRAPHQL -> order = graphQLComputeProcessingOrder(query, candidates, gamma);
+            case QUICKSI -> order = quickSIComputeProcessingOrder(target, query, candidates);
+            default -> {
+                System.out.println("Processing Order Algorithm:");
+                System.out.println(noAlgorithmFound);
+                return null;
+            }
+        }
+        return order;
+    }
+
+    /**
      * Computes the subgraph isomorphism and the necessary candidates and order using ground truth algorithm
      * @param query the query graph
      * @param target the target graph
@@ -1187,27 +1238,16 @@ public class SubgraphIsomorphism {
                                                       Graph<Vertex, DefaultEdge> target, boolean isInduced,
                                                       double gamma){
         List<Map<Vertex, Vertex>> results = new ArrayList<>();
-        Map<Vertex, Set<Vertex>> candidates;
-        ArrayList<Vertex> order;
-        switch (algorithmNameC) {
-            case GROUNDTRUTH -> candidates = groundTruthComputeCandidates(query, target);
-            case GRAPHQL -> candidates = graphQLComputeCandidates(query, target);
-            default -> {
-                System.out.println("Candidates Algorithm:");
-                System.out.println(noAlgorithmFound);
-                return null;
-            }
+        // compute the candidates
+        Map<Vertex, Set<Vertex>> candidates = computeCandidates(query, target);
+        if (candidates == null) {
+            return null;
         }
 
-        switch (algorithmNamePO) {
-            case GROUNDTRUTH -> order = groundTruthComputeProcessingOrder(query, candidates);
-            case GRAPHQL -> order = graphQLComputeProcessingOrder(query, candidates, gamma);
-            case QUICKSI -> order = quickSIComputeProcessingOrder(target, query, candidates);
-            default -> {
-                System.out.println("Processing Order Algorithm:");
-                System.out.println(noAlgorithmFound);
-                return null;
-            }
+        // compute the order
+        ArrayList<Vertex> order = computeProcessingOrder(query, target, candidates, gamma);
+        if(order == null){
+            return null;
         }
 
         // keep track of number of backtracking
@@ -2627,6 +2667,41 @@ public class SubgraphIsomorphism {
         }
     }
 
+    public static int wanderJoins(Graph<Vertex, DefaultEdge> query, Graph<Vertex, DefaultEdge> target, double gamma,
+                                  double tau, int maxEpoch){
+        // compute candidates
+        Map<Vertex, Set<Vertex>> candidates = computeCandidates(query, target);
+        if(candidates == null){
+            // something went wrong
+            return -1;
+        }
+        // compute processing order
+        ArrayList<Vertex> order = computeProcessingOrder(query, target, candidates, gamma);
+        if(order == null){
+            // something went wrong
+            return -1;
+        }
+
+        // compute the spanning tree
+
+    }
+
+    public static int estimateCardinality(String queryFileLocation, String targetFileLocation, double gamma, double tau,
+                                          int maxEpoch) throws IOException {
+        // read the info from the file
+        File queryFile = new File(queryFileLocation);
+        File targetFile = new File(targetFileLocation);
+
+        // create the graphs
+        Graph<Vertex, DefaultEdge> queryGraph = createProteinGraph(queryFile);
+        Graph<Vertex, DefaultEdge> targetGraph = createProteinGraph(targetFile);
+
+        // find the order using wander joins
+        int estimation = wanderJoins(queryGraph, targetGraph, gamma, tau, maxEpoch);
+
+        return estimation;
+    }
+
     /**
      * Main function where the graphs are constructed and we find the subgraph isomorphisms
      * @param args the command line arguments
@@ -2656,6 +2731,13 @@ public class SubgraphIsomorphism {
 
             subgraphIsomorphismKnownGraphs(queryLocation, targetLocation, isomorphismsFileName, statisticsFileName, isInduced,
                     gamma);
+        }
+        // if finding estimate for cardinality estimation
+        if(mainMethod.equals("Estimate") && args.length == 5) {
+            final String queryLocation = args[1];
+            final String targetLocation = args[2];
+            final String outputFileName = args[3];
+
         }
         // find the frequent profiles
         else if(mainMethod.equals("FrequentDatasets") && args.length == 4){
@@ -2734,6 +2816,9 @@ public class SubgraphIsomorphism {
                     "\nKnownGraphs <queryFile> <targetFile> <isomorphismsFileName> <statisticsFile>"+
                     "\n\t Find the subgraph isomorphism between two know graphs."+
                     "\n\t Writes Isomorphisms to isomorphismsFileName and statistics to statisticsFile."+
+                    "\nEstimate <queryFile> <targetFile> <outputFile>" +
+                    "\n\t Find the estimate of the number of matcihngs between two graphs" +
+                    "\n\t Writes estimation to outputFile"+
                     "\nFrequentDatasets <targetFile> <outputFile> <minSup>"+
                     "\n\t Finds the frequent profile subsets from the given graphs and minimum support."+
                     "\nFDMQuery <FDMFile> <outputFolder> <profileSize> <connectionMethod>"+
