@@ -8,6 +8,8 @@ import org.jgrapht.traverse.DepthFirstIterator;
 import org.jgrapht.traverse.RandomWalkVertexIterator;
 import org.jgrapht.alg.matching.HopcroftKarpMaximumCardinalityBipartiteMatching;
 
+
+
 import java.io.*;
 import java.util.*;
 
@@ -2852,7 +2854,7 @@ public class SubgraphIsomorphism {
     }
 
     public static int estimateCardinality(String queryFileLocation, String targetFileLocation, double gamma, double tau,
-                                          int maxEpoch) throws IOException {
+                                          int maxEpoch, double zAlpha, String outputFileName) throws IOException {
         // read the info from the file
         File queryFile = new File(queryFileLocation);
         File targetFile = new File(targetFileLocation);
@@ -2861,10 +2863,21 @@ public class SubgraphIsomorphism {
         Graph<Vertex, DefaultEdge> queryGraph = createProteinGraph(queryFile);
         Graph<Vertex, DefaultEdge> targetGraph = createProteinGraph(targetFile);
 
-        // find the order using wander joins
-        int estimation = wanderJoins(queryGraph, targetGraph, gamma, tau, maxEpoch);
+        // write to output file
+        BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName));
+        String output = "The estimation for " +
+                "\nquery graph: "+queryFile +
+                "\ntarget graph: "+targetGraph+
+                "\ninduced isomoprhims with " +
+                "\ncandidates algorithm: "+algorithmNameC+
+                "\nprocessing order algorithm: "+algorithmNamePO;
+        writer.write(output);
+        writer.close();
+        // print output as well
+        System.out.println(output);
 
-        return estimation;
+        // find the estimated cardinality using wander joins
+        return wanderJoins(queryGraph, targetGraph, gamma, tau, maxEpoch, zAlpha);
     }
 
     /**
@@ -2903,6 +2916,12 @@ public class SubgraphIsomorphism {
             final String targetLocation = args[2];
             final String outputFileName = args[3];
 
+            // set parameters
+            double tau = 0.2;
+            int maxEpoch = 10000;
+            double zAlpha = 	1.96; // z score of normal distribution (mean 0, sd 1)
+
+            estimateCardinality(queryLocation, targetLocation, gamma, tau, maxEpoch, zAlpha, outputFileName);
         }
         // find the frequent profiles
         else if(mainMethod.equals("FrequentDatasets") && args.length == 4){
