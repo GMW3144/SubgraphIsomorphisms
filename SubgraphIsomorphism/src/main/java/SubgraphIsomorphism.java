@@ -2873,9 +2873,13 @@ public class SubgraphIsomorphism {
         String output = "The estimation for the following is " + estiation +":"+
                 "\nquery graph: "+queryFile +
                 "\ntarget graph: "+targetFile+
-                "\ninduced isomoprhims with " +
-                "\ncandidates algorithm: "+algorithmNameC+
-                "\nprocessing order algorithm: "+algorithmNamePO;
+                "\n# induced isomorphisms with " +
+                "\n# candidates algorithm: "+algorithmNameC+
+                "\n# processing order algorithm: "+algorithmNamePO+
+                "\n\nEstimate Parameters:" +
+                "\n tau: " +tau+
+                "\n maxEpoch: " +maxEpoch+
+                "\n zAlpha: "+zAlpha;
         writer.write(output);
         writer.close();
         // print output as well
@@ -2883,6 +2887,71 @@ public class SubgraphIsomorphism {
 
         // find the estimated cardinality using wander joins
         return estiation;
+    }
+
+    public static void testEstimations(String isomorphismFile, String outputFile, double gamma, double tau,
+                                       int maxEpoch, double zAlpha) throws IOException {
+        File dir = new File(isomorphismFile);
+        // write to output file
+        BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
+        writer.write("");
+
+        for(File isomorphism: dir.listFiles()){
+            // reset query and target graph
+            String queryName = null;
+            String targetName = null;
+
+            // reset the number of isomorphism
+            int actualNumber = -1;
+
+            // read from ground truth
+            BufferedReader br = new BufferedReader(new FileReader(isomorphism));
+            String line = br.readLine();
+            while (line != null){
+                // check if comment
+                if(line.length()>0 && line.charAt(0) == '#'){
+                    line = br.readLine();
+                    continue;
+                }
+
+                // get the query and target graph
+                if(line.toLowerCase(Locale.ROOT).contains("query graph")){
+                    String[] info = line.split(",");
+                    queryName = info[0].split(":")[1].strip();
+                    targetName = info[1].split(":")[1].strip();
+                }
+
+                // get the number of isomorphisms
+                if(line.toLowerCase(Locale.ROOT).contains("subgraph isomorphisms")){
+                    actualNumber = Integer.parseInt(line.split(":")[1].strip());
+                }
+
+                // we found all of the information
+                if(queryName!= null && targetName!=null && actualNumber!=-1){
+                    break;
+                }
+                line = br.readLine();
+            }
+
+            Graph<Vertex, DefaultEdge> query = createProteinGraph(new File(queryName));
+            Graph<Vertex, DefaultEdge> target = createProteinGraph(new File(targetName));
+
+            int estimatedNumber = wanderJoins(query, target, gamma, tau, maxEpoch, zAlpha);
+
+            String output = "Query Graph: "+queryName+", Target Graph: "+targetName +
+                    "\n# candidates algorithm: "+algorithmNameC+
+                    "\n# processing order algorithm: "+algorithmNamePO+
+                    "\n\tActual Number Matchings: "+actualNumber+
+                    "\n\tEstimated Number Matchings: "+estimatedNumber+
+                    "\n\tError: "+((actualNumber-estimatedNumber)/actualNumber)+"\n";
+
+            writer.append(output);
+            writer.append("\n===========================\n\n");
+
+            System.out.println(output+"\n===========================\n");
+        }
+
+        writer.close();
     }
 
     /**
@@ -2916,7 +2985,7 @@ public class SubgraphIsomorphism {
                     gamma);
         }
         // if finding estimate for cardinality estimation
-        if(mainMethod.equals("Estimate") && args.length == 4) {
+        else if(mainMethod.equals("Estimate") && args.length == 4) {
             final String queryLocation = args[1];
             final String targetLocation = args[2];
             final String outputFileName = args[3];
@@ -2927,6 +2996,18 @@ public class SubgraphIsomorphism {
             double zAlpha = 1.96; // z score of normal distribution (mean 0, sd 1)
 
             estimateCardinality(queryLocation, targetLocation, gamma, tau, maxEpoch, zAlpha, outputFileName);
+        }
+        // check the estimations
+        else if(mainMethod.equals("TestEstimations") && args.length == 3){
+            final String isomorphismFile = args[1];
+            final String outputFile = args[2];
+
+            // set parameters
+            double tau = 0.2;
+            int maxEpoch = 10000;
+            double zAlpha = 1.96; // z score of normal distribution (mean 0, sd 1)
+
+            testEstimations(isomorphismFile, outputFile, gamma, tau, maxEpoch, zAlpha);
         }
         // find the frequent profiles
         else if(mainMethod.equals("FrequentDatasets") && args.length == 4){
@@ -2985,7 +3066,7 @@ public class SubgraphIsomorphism {
         }
 
         // test against ground truth
-        else if(mainMethod.equals("Test")  && args.length == 5){
+        else if(mainMethod.equals("TestIsomorphism")  && args.length == 5){
             final String groundTruthFile = args[1];
             String queryFolderName = args[2];
             if(queryFolderName.equals("_")){
@@ -3006,8 +3087,11 @@ public class SubgraphIsomorphism {
                     "\n\t Find the subgraph isomorphism between two know graphs."+
                     "\n\t Writes Isomorphisms to isomorphismsFileName and statistics to statisticsFile."+
                     "\nEstimate <queryFile> <targetFile> <outputFile>" +
-                    "\n\t Find the estimate of the number of matcihngs between two graphs" +
+                    "\n\t Find the estimate of the number of matchings between two graphs" +
                     "\n\t Writes estimation to outputFile"+
+                    "\nTestEstimations <isomorphismFolder> <outputFile>" +
+                    "\n\t Find the estimate of the number of matchings for all of the isomorphisms within the folder and compare with the actual" +
+                    "\n\t Writes information to outputFile"+
                     "\nFrequentDatasets <targetFile> <outputFile> <minSup>"+
                     "\n\t Finds the frequent profile subsets from the given graphs and minimum support."+
                     "\nFDMQuery <FDMFile> <outputFolder> <profileSize> <connectionMethod>"+
@@ -3019,7 +3103,7 @@ public class SubgraphIsomorphism {
                     "\n\t Creates a query graph from the target graph using a random walk." +
                     "\n\t Find the subgraph isomorphism between given target graph and random query graph"+
                     "\n\t Output folder must contain folders: \"GenerationInfo\", \"Graphs\", \"Isomorphism\""+
-                    "\nTest <groundTruthFile> <queryFolder> <targetFolder> <outputFile>"+
+                    "\nTestIsomorphism <groundTruthFile> <queryFolder> <targetFolder> <outputFile>"+
                     "\n\t Test the subgraph isomorphisms within the ground truth file."+
                     "\n\t Must provide the location of the query and target folders.  If path is contained within " +
                     "ground truth folder, then give argument '_'."+
