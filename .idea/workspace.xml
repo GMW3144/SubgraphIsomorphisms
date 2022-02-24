@@ -85,13 +85,6 @@
       <option name="presentableId" value="Default" />
       <updated>1642694530105</updated>
     </task>
-    <task id="LOCAL-00023" summary="Differnet minsup (part3)">
-      <created>1643499180410</created>
-      <option name="number" value="00023" />
-      <option name="presentableId" value="LOCAL-00023" />
-      <option name="project" value="LOCAL" />
-      <updated>1643499180410</updated>
-    </task>
     <task id="LOCAL-00024" summary="Differnet minsup (part3)">
       <created>1643499187147</created>
       <option name="number" value="00024" />
@@ -428,7 +421,14 @@
       <option name="project" value="LOCAL" />
       <updated>1645719127771</updated>
     </task>
-    <option name="localTasksCounter" value="72" />
+    <task id="LOCAL-00072" summary="Created a new function to compute the candidates">
+      <created>1645720160409</created>
+      <option name="number" value="00072" />
+      <option name="presentableId" value="LOCAL-00072" />
+      <option name="project" value="LOCAL" />
+      <updated>1645720160409</updated>
+    </task>
+    <option name="localTasksCounter" value="73" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -480,7 +480,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Fixed comments, grammer/spelling, and combined duplicate code" />
     <MESSAGE value="Tested changes, and made slight adjustments" />
     <MESSAGE value="Don't have to merge star graphs" />
     <MESSAGE value="Now take note of method of combination" />
@@ -505,7 +504,8 @@
     <MESSAGE value="Fixed testing function and quickSI" />
     <MESSAGE value="Fixed formating of statistics" />
     <MESSAGE value="Added QI-Sequence with graphQL ordering, must reset the QI-sequence each time find isomorphism" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added QI-Sequence with graphQL ordering, must reset the QI-sequence each time find isomorphism" />
+    <MESSAGE value="Created a new function to compute the candidates" />
+    <option name="LAST_COMMIT_MESSAGE" value="Created a new function to compute the candidates" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -532,7 +532,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>2772</line>
+          <line>2844</line>
           <option name="timeStamp" value="116" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -547,7 +547,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>2761</line>
+          <line>2833</line>
           <option name="timeStamp" value="265" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -562,7 +562,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>2799</line>
+          <line>2871</line>
           <option name="timeStamp" value="322" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">

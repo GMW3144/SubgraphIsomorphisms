@@ -1,4 +1,5 @@
 import org.jgrapht.Graph;
+import org.jgrapht.Graphs;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.SimpleGraph;
 
@@ -142,5 +143,15 @@ public class QISequence {
      */
     public Vertex getParent(Vertex u){
         return order.get(parent.get(u));
+    }
+
+    /**
+     * Gets the neighbors for a particular vertex
+     * @param u the vertex we would like to get the neighbors
+     * @return the neighbor of u
+     */
+    public List<Vertex> getNeighbors(Vertex u){
+        List<Vertex> neighbors = Graphs.neighborListOf(T, u);
+        return neighbors;
     }
 }

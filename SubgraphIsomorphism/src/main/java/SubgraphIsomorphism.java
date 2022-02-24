@@ -889,22 +889,22 @@ public class SubgraphIsomorphism {
         return randomEdge(minimumEdges);
     }
 
-    public static QISequence buildSpanningTreeWithOrder(Graph<Vertex, DefaultEdge> query, ArrayList<Vertex> Order){
+    public static QISequence buildSpanningTreeWithOrder(Graph<Vertex, DefaultEdge> query, ArrayList<Vertex> order){
         QISequence SEQq = new QISequence();
 
         // add the first vertex to the tree
-        Vertex u0 = Order.get(0);
+        Vertex u0 = order.get(0);
         SEQq.addVertex(u0, -1);
 
         // iterate through remaining verticies
-        for(int i = 1; i < Order.size(); i++){
-            Vertex ui = Order.get(i);
+        for(int i = 1; i < order.size(); i++){
+            Vertex ui = order.get(i);
             // keep track if we already assigned the parent
             Boolean foundParent = false;
 
             // iterate through previous vertices
             for(int j = i-1; j >= 0; j--){
-                Vertex uj = Order.get(j);
+                Vertex uj = order.get(j);
                 // check if they are adjacent
                 if(query.containsEdge(ui, uj)){
                     // if we haven't found a parent yet then set
@@ -2667,6 +2667,68 @@ public class SubgraphIsomorphism {
         }
     }
 
+    /**
+     * Pick a random vertex from the set of vertices
+     * @param vertices the set of vertices
+     * @return a random vertex within the set
+     */
+    public static Vertex randomVertex(Set<Vertex> vertices){
+        // get a random index within the vertices
+        Random random = new Random();
+        int randIndex = random.nextInt(vertices.size());
+        // iterate through the vertices
+        Iterator<Vertex> it = vertices.iterator();
+        Vertex randomVertex = it.next();
+
+        // keep picking elements until we have reached the index
+        for(int i = 1; i<=randIndex; i++){
+            randomVertex = it.next();
+        }
+
+        // return the random vertex
+        return randomVertex;
+    }
+
+    public static double randomWalkWJ(ArrayList<Vertex> order, Map<Vertex, Set<Vertex>> candidates , QISequence SEQq,
+                                      int i, List<Vertex> walk){
+        // we have reached the end of the walk
+        if(i>=order.size()){
+            // multiply by identity
+            return 1;
+        }
+        // get the next vertex in the order
+        Vertex u = order.get(i);
+        // if we are at the start of the walk
+        if(i == 0){
+            Set<Vertex> possibleVertices = candidates.get(u);
+            // if there are no possible vertices for the first vertex
+            if(possibleVertices.size() == 0){
+                return 0;
+            }
+            // pick a random vertex add to walk
+            Vertex vNext = randomVertex(candidates.get(u));
+            walk.add(vNext);
+            // the cost is currently the number of vertices we could have chosen from
+            return 1/(possibleVertices.size()) * randomWalkWJ( order, candidates, SEQq, i+1, walk);
+        }
+
+        // get the parent of the current vertex
+        Vertex up = SEQq.getParent(u);
+        Set<Vertex> possibleVertices = candidates.get(u);
+        // get the children of the parent
+        possibleVertices.retainAll(SEQq.getNeighbors(up));
+
+        // if we could not find any vertices to go to next
+        if(possibleVertices.size() == 0){
+            return 0;
+        }
+
+        // pick the next random vertex
+        Vertex vNext = randomVertex(possibleVertices);
+        walk.add(vNext);
+        return randomWalkWJ(order, candidates, SEQq, i+1, walk)*1/possibleVertices.size();
+    }
+
     public static int wanderJoins(Graph<Vertex, DefaultEdge> query, Graph<Vertex, DefaultEdge> target, double gamma,
                                   double tau, int maxEpoch){
         // compute candidates
@@ -2683,7 +2745,28 @@ public class SubgraphIsomorphism {
         }
 
         // compute the spanning tree
+        QISequence SEQq = buildSpanningTreeWithOrder(query, order);
 
+        // keep track of the confidence interval
+        double conf = tau +1;
+        // keep track of the costs we have seen
+        List<Double> costValues = new ArrayList<>();
+
+        while (conf>tau && costValues.size()<maxEpoch){
+            // the walk is originally empty
+            List<Vertex> walk = new ArrayList<>();
+
+        }
+
+        // average the cost values
+        double avgCost = 0;
+        for(double cost : costValues){
+            avgCost += cost;
+        }
+        avgCost = avgCost/costValues.size();
+
+        // round to nearest integer
+        return (int) Math.round(avgCost);
     }
 
     public static int estimateCardinality(String queryFileLocation, String targetFileLocation, double gamma, double tau,
