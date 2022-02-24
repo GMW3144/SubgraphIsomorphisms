@@ -1,0 +1,35 @@
+Used C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\Test\FDM\backbones_1APM.grf frequent dataset mining 
+Combined two graphs with method none: 
+Vertex with attribute C and profile [C, C, H] occurs 1290 times within the graph 
+Vertex with attribute C and profile [C, C, N] occurs 800 times within the graph 
+
+Graph Statistics: 
+Query: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\Test\Graphs\graph2.txt
+Target: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_1APM.grf
+
+Distribution: (number_profiles:frequency) 
+Query Graph:
+	3:1
+	4:1
+	6:1
+Target Graph:
+	3:1
+	4:3261
+	5:51
+	6:10
+	8:312
+	9:46
+	10:76
+	12:1376
+	16:371
+	18:103
+	24:1
+
+Used algorithm: graphQL
+Number backtracking calls: 7288626
+Total number of possible matchings: 16824
+
+Number pruned from local pruning: 11580
+Number pruned from global pruning: 70
+Cost of order found by graphQL: 1.20525603E9
+Star Graph Combination:

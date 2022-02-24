@@ -1,0 +1,3 @@
+Used C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\FrequentDatasetMining\tenPercent\mus_musculus_1EPI.grf frequent dataset mining 
+Combined two graphs:Vertex with attribute C and profile [C, C, H] occurs 171 times within the graph 
+Vertex with attribute C and profile [C, C, C] occurs 142 times within the graph 

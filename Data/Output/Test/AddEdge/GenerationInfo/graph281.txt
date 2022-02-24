@@ -1,0 +1,3 @@
+Used C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\FrequentDatasetMining\tenPercent\saccharomyces_cerevisiae_4ASW.grf frequent dataset mining 
+Combined two graphs:Vertex with attribute C and profile [C, C, H] occurs 298 times within the graph 
+Vertex with attribute C and profile [C, C, C] occurs 220 times within the graph 

@@ -1,0 +1,6 @@
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\FrequentDatasetMining\Query\Graphs\graph69.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_1AF7.grf
+Number Backtracking: 0
+Induced isomorphisms. Total number subgraph isomorphisms: 0
+# algorithm : graphQL
+
+============================
