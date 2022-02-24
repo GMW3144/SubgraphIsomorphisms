@@ -2698,10 +2698,11 @@ public class SubgraphIsomorphism {
      * @param SEQq the QI-Sequence, tree and extra edge information
      * @param i the current vertex in the walk that we are adding
      * @param walk the current random walk
+     * @param target the tareget graph
      * @return the probability of a random walk (0 if invalid walk)
      */
     public static double randomWalkWJ(ArrayList<Vertex> order, Map<Vertex, Set<Vertex>> candidates , QISequence SEQq,
-                                      int i, List<Vertex> walk){
+                                      int i, List<Vertex> walk, Graph<Vertex, DefaultEdge> target){
         // we have reached the end of the walk
         if(i>=order.size()){
             // multiply by identity
@@ -2711,23 +2712,26 @@ public class SubgraphIsomorphism {
         Vertex u = order.get(i);
         // if we are at the start of the walk
         if(i == 0){
-            Set<Vertex> possibleVertices = candidates.get(u);
+            Set<Vertex> possibleVertices = new HashSet<>(candidates.get(u));
             // if there are no possible vertices for the first vertex
             if(possibleVertices.size() == 0){
                 return 0;
             }
             // pick a random vertex add to walk
-            Vertex vNext = randomVertex(candidates.get(u));
+            Vertex vNext = randomVertex(possibleVertices);
             walk.add(vNext);
             // the cost is currently the number of vertices we could have chosen from
-            return 1/(possibleVertices.size()) * randomWalkWJ( order, candidates, SEQq, i+1, walk);
+            return (possibleVertices.size()) * randomWalkWJ( order, candidates, SEQq, i+1, walk, target);
         }
 
         // get the parent of the current vertex
-        Vertex up = SEQq.getParent(u);
-        Set<Vertex> possibleVertices = candidates.get(u);
-        // get the children of the parent
-        possibleVertices.retainAll(SEQq.getNeighbors(up));
+        Vertex up = SEQq.getParent(u); int p = order.indexOf(up);
+        // get the parent of the vertex within the graph
+        Vertex vp = walk.get(p);
+        Set<Vertex> possibleVertices = new HashSet<>(candidates.get(u));
+        // get the children of the parent and see if they are within the current candidate set
+        possibleVertices.retainAll(Graphs.neighborListOf(target, vp));
+        possibleVertices.removeAll(walk);
 
         // if we could not find any vertices to go to next
         if(possibleVertices.size() == 0){
@@ -2737,7 +2741,7 @@ public class SubgraphIsomorphism {
         // pick the next random vertex
         Vertex vNext = randomVertex(possibleVertices);
         walk.add(vNext);
-        return randomWalkWJ(order, candidates, SEQq, i+1, walk)*1/possibleVertices.size();
+        return randomWalkWJ(order, candidates, SEQq, i+1, walk, target)*possibleVertices.size();
     }
 
     /**
@@ -2769,7 +2773,7 @@ public class SubgraphIsomorphism {
             // square difference
             mse += Math.pow(val-average,2);
         }
-        return 1/(values.size()-1)*mse;
+        return 1/(values.size())*mse;
     }
 
     /**
@@ -2808,20 +2812,13 @@ public class SubgraphIsomorphism {
         // keep track of the costs we have seen
         List<Double> costValues = new ArrayList<>();
 
-        while (conf>tau && costValues.size()<maxEpoch){
+        while (costValues.size()<maxEpoch){
             // the walk is originally empty
             List<Vertex> walk = new ArrayList<>();
-            // get the probability of the walk
-            double prob = randomWalkWJ(order, candidates, SEQq, 0, walk);
-            // the cost of the walk
-            double cost;
-            // if it is an invalid walk
-            if(prob==0){
-                cost = 0;
-            }
-            else{
-                cost = 1/prob;
+            // get the cost of the walk
+            double cost = randomWalkWJ(order, candidates, SEQq, 0, walk, target);
 
+            if(cost!=0){
                 // if it is not an invalid walk, need to check extra edges
                 Map<Vertex, List<Vertex>> extraEdges = SEQq.getEdge();
 
@@ -2844,6 +2841,11 @@ public class SubgraphIsomorphism {
             // add the cost to the cost values
             costValues.add(cost);
             conf = computeConfidenceInterval(costValues, zAlpha);
+
+            // every 20 check the confidence value
+            //if(conf%20 == 0 && conf<tau){
+            //    break;
+            //}
         }
 
         // average the cost values
@@ -2863,11 +2865,14 @@ public class SubgraphIsomorphism {
         Graph<Vertex, DefaultEdge> queryGraph = createProteinGraph(queryFile);
         Graph<Vertex, DefaultEdge> targetGraph = createProteinGraph(targetFile);
 
+        // compute the estimation
+        int estiation =  wanderJoins(queryGraph, targetGraph, gamma, tau, maxEpoch, zAlpha);
+
         // write to output file
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName));
-        String output = "The estimation for " +
+        String output = "The estimation for the following is " + estiation +":"+
                 "\nquery graph: "+queryFile +
-                "\ntarget graph: "+targetGraph+
+                "\ntarget graph: "+targetFile+
                 "\ninduced isomoprhims with " +
                 "\ncandidates algorithm: "+algorithmNameC+
                 "\nprocessing order algorithm: "+algorithmNamePO;
@@ -2877,7 +2882,7 @@ public class SubgraphIsomorphism {
         System.out.println(output);
 
         // find the estimated cardinality using wander joins
-        return wanderJoins(queryGraph, targetGraph, gamma, tau, maxEpoch, zAlpha);
+        return estiation;
     }
 
     /**
@@ -2911,7 +2916,7 @@ public class SubgraphIsomorphism {
                     gamma);
         }
         // if finding estimate for cardinality estimation
-        if(mainMethod.equals("Estimate") && args.length == 5) {
+        if(mainMethod.equals("Estimate") && args.length == 4) {
             final String queryLocation = args[1];
             final String targetLocation = args[2];
             final String outputFileName = args[3];
@@ -2919,7 +2924,7 @@ public class SubgraphIsomorphism {
             // set parameters
             double tau = 0.2;
             int maxEpoch = 10000;
-            double zAlpha = 	1.96; // z score of normal distribution (mean 0, sd 1)
+            double zAlpha = 1.96; // z score of normal distribution (mean 0, sd 1)
 
             estimateCardinality(queryLocation, targetLocation, gamma, tau, maxEpoch, zAlpha, outputFileName);
         }
