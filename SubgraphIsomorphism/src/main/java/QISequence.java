@@ -14,6 +14,7 @@ public class QISequence {
     // extra topology information
     private Map<Vertex, Integer> deg; // the degree information (if greater than 2)
     private Map<Vertex, List<Vertex>> edge; // the edge information (if j<i)
+    private Map<Vertex, List<Vertex>> noEdge; // the values where there is no edges (j<i)
 
     /**
      * Constructor for QI-Sequence.
@@ -26,6 +27,7 @@ public class QISequence {
 
         deg = new HashMap<>();
         edge = new HashMap<>();
+        noEdge = new HashMap<>();
     }
 
     /**
@@ -52,27 +54,37 @@ public class QISequence {
     }
 
     /**
-     * Add the extra edge information to the QI-Sequence
+     * Add the extra edge information to the QI-Sequence.  Note u will contain v, so u should come first in the order.
      * @param u the first vertex
      * @param v the second (adjacent) vertex
      */
     public void extraEdge(Vertex u, Vertex v){
         // only add edge once
-        if(u.getId()<v.getId()){
-            // first time seeing vertex
-            if(!edge.containsKey(u)){
-                edge.put(u, new ArrayList<>());
-            }
-            // add the edge
-            edge.get(u).add(v);
+        // first time seeing vertex
+        if(!edge.containsKey(u)){
+            edge.put(u, new ArrayList<>());
         }
-        else{
-            // first time seeing vertex
-            if(!edge.containsKey(v)){
-                edge.put(v, new ArrayList<>());
-            }
-            edge.get(v).add(u);
+        // add the edge
+        edge.get(u).add(v);
+    }
+
+    /**
+     * Add the no extra edge information to the QI-Sequence. Note u will contain v, so u should come first in the order.
+     * @param u the first vertex
+     * @param v the second (adjacent) vertex
+     */
+    public void noExtraEdge(Vertex u, Vertex v){
+        // first check if it is contained within the tree
+        if(T.containsEdge(u, v)){
+            return;
         }
+        // only add edge once
+        // first time seeing vertex
+        if(!noEdge.containsKey(u)){
+            noEdge.put(u, new ArrayList<>());
+        }
+        // add the edge
+        noEdge.get(u).add(v);
     }
 
     /**

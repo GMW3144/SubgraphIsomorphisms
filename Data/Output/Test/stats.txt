@@ -1,33 +1,36 @@
 Graph Statistics: 
-Query: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\query\backbones_2X3T.16.sub.grf
-Target: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\human_2EQF.grf
+Query: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph132.txt
+Target: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
 
 Distribution: (number_profiles:frequency) 
 Query Graph:
-	3:3
-	4:5
-	6:4
-	8:2
-	12:2
+	3:1
+	4:9
+	6:3
+	8:1
+	9:1
+	12:3
+	16:1
 Target Graph:
-	4:358
-	5:5
-	6:1
-	8:45
-	9:3
-	12:150
-	16:43
-	18:29
+	4:3381
+	5:36
+	6:3
+	8:267
+	9:41
+	10:83
+	12:1452
+	16:398
+	18:116
 
 Used candidate algorithm: graphQL
 Used processing order algorithm: graphQL
 Used backtracking algorithm: quickSI
-Number backtracking calls: 2760
+Number backtracking calls: 246
 
-Total number of possible matchings: 10144
-Number pruned from local pruning: 8672
-Number pruned from global pruning: 1231
+Total number of possible matchings: 109763
+Number pruned from local pruning: 82685
+Number pruned from global pruning: 26988
 
-Cost of order found by graphQL: 1.02244337034852E14
-False matchings removed using parents from quickSI: 2519.0
-False matchings removed using extra edges from quickSI: 361.0
+Cost of order found by graphQL: 674588.0
+False matchings removed using parents from quickSI: 136.0
+False matchings removed using extra edges from quickSI: 118.0

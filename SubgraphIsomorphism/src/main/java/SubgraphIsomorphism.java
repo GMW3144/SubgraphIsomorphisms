@@ -897,6 +897,9 @@ public class SubgraphIsomorphism {
         // add the first vertex to the tree
         Vertex u0 = order.get(0);
         SEQq.addVertex(u0, -1);
+        if(query.degreeOf(u0)>=3){
+            SEQq.extraDeg(u0, query.degreeOf(u0));
+        }
 
         // iterate through remaining verticies
         for(int i = 1; i < order.size(); i++){
@@ -919,7 +922,7 @@ public class SubgraphIsomorphism {
                     }
                 }
             }
-            if(query.degreeOf(ui)>3){
+            if(query.degreeOf(ui)>=3){
                 SEQq.extraDeg(ui, query.degreeOf(ui));
             }
         }
@@ -934,6 +937,7 @@ public class SubgraphIsomorphism {
      */
     public static QISequence buildSpanningTree(Graph<Vertex, DefaultWeightedEdge> weightedQuery){
         QISequence SEQq = new QISequence();
+        // keep track of the order we add the vertices in
         Map<Vertex, Integer> vertexToTree = new HashMap<>();
 
         // find the first edge in the sequence
@@ -2704,7 +2708,7 @@ public class SubgraphIsomorphism {
     public static double randomWalkWJ(ArrayList<Vertex> order, Map<Vertex, Set<Vertex>> candidates , QISequence SEQq,
                                       int i, List<Vertex> walk, Graph<Vertex, DefaultEdge> target){
         // we have reached the end of the walk
-        if(i>=order.size()){
+        if(walk.size() == order.size()){
             // multiply by identity
             return 1;
         }
@@ -2987,7 +2991,7 @@ public class SubgraphIsomorphism {
         }
         // basic information for isomorphism
         algorithmNameC = GRAPHQL;
-        algorithmNamePO = GRAPHQL;
+        algorithmNamePO = QUICKSI;
         algorithmNameB = QUICKSI;
 
         // isomorphism
