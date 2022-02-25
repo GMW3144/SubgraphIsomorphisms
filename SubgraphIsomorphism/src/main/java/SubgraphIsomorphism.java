@@ -2826,7 +2826,7 @@ public class SubgraphIsomorphism {
     }
 
     public static int wanderJoins(Graph<Vertex, DefaultEdge> query, Graph<Vertex, DefaultEdge> target, double gamma,
-                                  double tau, int maxEpoch, double zAlpha){
+                                  double tau, int maxEpoch, double zAlpha, boolean isInduced){
         // compute candidates
         Map<Vertex, Set<Vertex>> candidates = computeCandidates(query, target);
         if(candidates == null){
@@ -2872,6 +2872,27 @@ public class SubgraphIsomorphism {
                         }
                     }
                 }
+
+                // also check for induced
+                if(isInduced) {
+                    Map<Vertex, List<Vertex>> noEdge = SEQq.getNoEdge();
+                    for (Vertex u1 : noEdge.keySet()) {
+                        for (Vertex u2 : noEdge.get(u1)) {
+                            // get the location of the vertices in the edge within the order and walk
+                            int i1 = order.indexOf(u1);
+                            int i2 = order.indexOf(u2);
+                            // get the corresponding vertices within the walk
+                            Vertex v1 = walk.get(i1);
+                            Vertex v2 = walk.get(i2);
+
+                            // if there is not a corresponding edge
+                            if (target.containsEdge(v1, v2)) {
+                                cost = 0;
+                                break;
+                            }
+                        }
+                    }
+                }
             }
 
             // add the cost to the cost values
@@ -2894,7 +2915,7 @@ public class SubgraphIsomorphism {
     }
 
     public static int estimateCardinality(String queryFileLocation, String targetFileLocation, double gamma, double tau,
-                                          int maxEpoch, double zAlpha, String outputFileName) throws IOException {
+                                          int maxEpoch, double zAlpha, String outputFileName, boolean isInduced) throws IOException {
         // read the info from the file
         File queryFile = new File(queryFileLocation);
         File targetFile = new File(targetFileLocation);
@@ -2904,7 +2925,7 @@ public class SubgraphIsomorphism {
         Graph<Vertex, DefaultEdge> targetGraph = createProteinGraph(targetFile);
 
         // compute the estimation
-        int estiation =  wanderJoins(queryGraph, targetGraph, gamma, tau, maxEpoch, zAlpha);
+        int estiation =  wanderJoins(queryGraph, targetGraph, gamma, tau, maxEpoch, zAlpha, isInduced);
 
         // write to output file
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName));
@@ -2927,9 +2948,9 @@ public class SubgraphIsomorphism {
         return estiation;
     }
 
-    public static void testEstimations(String isomorphismFile, String outputFile, double gamma, double tau,
+    public static void testEstimations(String isomorphismFolder, String outputFile, double gamma, double tau,
                                        int maxEpoch, double zAlpha, String queryFolder, String targetFolder) throws IOException {
-        File dir = new File(isomorphismFile);
+        File dir = new File(isomorphismFolder);
         // write to output file
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
         String estimationParameters = "\n# Estimate Parameters (tau): "+tau+
@@ -2946,6 +2967,8 @@ public class SubgraphIsomorphism {
 
             // reset the number of isomorphism
             int actualNumber = -1;
+
+            String induceString = null;
 
             // read from ground truth
             BufferedReader br = new BufferedReader(new FileReader(isomorphism));
@@ -2967,10 +2990,11 @@ public class SubgraphIsomorphism {
                 // get the number of isomorphisms
                 if(line.toLowerCase(Locale.ROOT).contains("subgraph isomorphisms")){
                     actualNumber = Integer.parseInt(line.split(":")[1].strip());
+                    induceString = line.split(" ")[0].strip().toLowerCase(Locale.ROOT);
                 }
 
                 // we found all of the information
-                if(queryName!= null && targetName!=null && actualNumber!=-1){
+                if(queryName!= null && targetName!=null && actualNumber!=-1 && induceString!= null){
                     break;
                 }
                 line = br.readLine();
@@ -2978,7 +3002,15 @@ public class SubgraphIsomorphism {
             Graph<Vertex, DefaultEdge> query = createProteinGraph(new File(queryName));
             Graph<Vertex, DefaultEdge> target = createProteinGraph(new File(targetName));
 
-            int estimatedNumber = wanderJoins(query, target, gamma, tau, maxEpoch, zAlpha);
+            boolean isInduced;
+            if(induceString.equals("induced")){
+                isInduced = true;
+            }
+            else{
+                isInduced = false;
+            }
+
+            int estimatedNumber = wanderJoins(query, target, gamma, tau, maxEpoch, zAlpha, isInduced);
 
             double error = Math.abs(actualNumber-estimatedNumber);
             if(actualNumber != 0){
@@ -3046,22 +3078,22 @@ public class SubgraphIsomorphism {
             final String targetLocation = args[2];
             final String outputFileName = args[3];
 
-            estimateCardinality(queryLocation, targetLocation, gamma, tau, maxEpoch, zAlpha, outputFileName);
+            estimateCardinality(queryLocation, targetLocation, gamma, tau, maxEpoch, zAlpha, outputFileName, isInduced);
         }
         // check the estimations
         else if(mainMethod.equals("TestEstimations") && args.length == 5){
-            final String isomorphismFile = args[1];
-            final String outputFile = args[2];
-            String queryFolder = args[3];
-            String targetFolder = args[4];
+            final String isomorphismFolder = args[1];
+            String queryFolder = args[2];
+            String targetFolder = args[3];
             if(queryFolder.equals("_")){
                 queryFolder = "";
             }
             if(targetFolder.equals("_")){
                 targetFolder = "";
             }
+            final String outputFile = args[4];
 
-            testEstimations(isomorphismFile, outputFile, gamma, tau, maxEpoch, zAlpha, queryFolder, targetFolder);
+            testEstimations(isomorphismFolder, outputFile, gamma, tau, maxEpoch, zAlpha, queryFolder, targetFolder);
         }
         // find the frequent profiles
         else if(mainMethod.equals("FrequentDatasets") && args.length == 4){
@@ -3143,7 +3175,7 @@ public class SubgraphIsomorphism {
                     "\nEstimate <queryFile> <targetFile> <outputFile>" +
                     "\n\t Find the estimate of the number of matchings between two graphs" +
                     "\n\t Writes estimation to outputFile"+
-                    "\nTestEstimations <isomorphismFolder> <outputFile>" +
+                    "\nTestEstimations <isomorphismFolder> <queryFolder> <targetFolder> <outputFile>" +
                     "\n\t Find the estimate of the number of matchings for all of the isomorphisms within the folder and compare with the actual" +
                     "\n\t Writes information to outputFile"+
                     "\n\t Must provide the location of the query and target folders.  If path is contained within " +

@@ -172,6 +172,12 @@ public class QISequence {
     public Map<Vertex, List<Vertex>> getEdge(){ return edge; }
 
     /**
+     * Get the non-edge information for the QI-sequence
+     * @return the edge that don't exists
+     */
+    public Map<Vertex, List<Vertex>> getNoEdge(){ return noEdge; }
+
+    /**
      * Finds the parent of the given vertex
      * @param u the vertex
      * @return parent vertex of u
