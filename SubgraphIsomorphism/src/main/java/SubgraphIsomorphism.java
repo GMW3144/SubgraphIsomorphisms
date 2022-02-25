@@ -905,7 +905,7 @@ public class SubgraphIsomorphism {
         for(int i = 1; i < order.size(); i++){
             Vertex ui = order.get(i);
             // keep track if we already assigned the parent
-            Boolean foundParent = false;
+            boolean foundParent = false;
 
             // iterate through previous vertices
             for(int j = i-1; j >= 0; j--){
@@ -917,9 +917,14 @@ public class SubgraphIsomorphism {
                         SEQq.addVertex(ui, j);
                         foundParent = true;
                     }
+                    // we want ui to contain uj because j<i
                     else{
-                        SEQq.extraEdge(uj, ui);
+                        SEQq.extraEdge(ui, uj);
                     }
+                }
+                // if there does not exists an edge then add to no extra edge information
+                else{
+                    SEQq.noExtraEdge(ui, uj);
                 }
             }
             if(query.degreeOf(ui)>=3){
@@ -996,7 +1001,7 @@ public class SubgraphIsomorphism {
                     }
 
                     // update the extra edge information
-                    if(vertexToTree.get(uExtra)<vertexToTree.get(vExtra)){
+                    if(vertexToTree.get(uExtra)>vertexToTree.get(vExtra)){
                         SEQq.extraEdge(uExtra, vExtra);
                     }
                     else{
@@ -1005,6 +1010,26 @@ public class SubgraphIsomorphism {
 
                     // remove extra edge
                     weightedQuery.removeEdge(uExtra, vExtra);
+                }
+            }
+        }
+
+        List<Vertex> vertices = new ArrayList<>(weightedQuery.vertexSet());
+        // add the no edge extra information
+        for(int i = 0; i<vertices.size(); i++){
+            for(int j = i+1; j<vertices.size(); j++){
+                Vertex u = vertices.get(i);
+                Vertex v = vertices.get(j);
+                // we do not want to create an edge with itself
+                if(v.equals(u)){
+                    continue;
+                }
+                // add if u appears after v in order
+                if(vertexToTree.get(u)>vertexToTree.get(v)) {
+                    SEQq.noExtraEdge(u, v);
+                }
+                else{
+                    SEQq.noExtraEdge(v, u);
                 }
             }
         }
@@ -1100,7 +1125,13 @@ public class SubgraphIsomorphism {
         }
 
         if(isInduced){
-            for(Vertex uPrime: currentFunction.keySet()){
+            Set<Vertex> toCheck = currentFunction.keySet();
+            // if quickSI already have information
+            if(algorithmNameB.equals(QUICKSI)){
+                toCheck = new HashSet<>(SEQq.getNoExtraEdges(u));
+            }
+
+            for(Vertex uPrime: toCheck){
                 // if u and u' are not neighbors
                 if(!query.containsEdge(u, uPrime)){
                     // see if there is an edge between v and v'
@@ -2944,10 +2975,6 @@ public class SubgraphIsomorphism {
                 }
                 line = br.readLine();
             }
-            if(actualNumber == 0){
-                System.out.println("HERE");
-            }
-
             Graph<Vertex, DefaultEdge> query = createProteinGraph(new File(queryName));
             Graph<Vertex, DefaultEdge> target = createProteinGraph(new File(targetName));
 
@@ -2991,7 +3018,7 @@ public class SubgraphIsomorphism {
         }
         // basic information for isomorphism
         algorithmNameC = GRAPHQL;
-        algorithmNamePO = QUICKSI;
+        algorithmNamePO = GRAPHQL;
         algorithmNameB = QUICKSI;
 
         // isomorphism

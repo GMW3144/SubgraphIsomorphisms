@@ -54,7 +54,7 @@ public class QISequence {
     }
 
     /**
-     * Add the extra edge information to the QI-Sequence.  Note u will contain v, so u should come first in the order.
+     * Add the extra edge information to the QI-Sequence.  Note u will contain v, so v should come first in the order.
      * @param u the first vertex
      * @param v the second (adjacent) vertex
      */
@@ -69,7 +69,7 @@ public class QISequence {
     }
 
     /**
-     * Add the no extra edge information to the QI-Sequence. Note u will contain v, so u should come first in the order.
+     * Add the no extra edge information to the QI-Sequence. Note u will contain v, so v should come first in the order.
      * @param u the first vertex
      * @param v the second (adjacent) vertex
      */
@@ -78,6 +78,11 @@ public class QISequence {
         if(T.containsEdge(u, v)){
             return;
         }
+        // check if it is contained within the extra edge information
+        if((edge.containsKey(u) && edge.get(u).contains(v))){
+            return;
+        }
+
         // only add edge once
         // first time seeing vertex
         if(!noEdge.containsKey(u)){
@@ -146,6 +151,18 @@ public class QISequence {
         else{
             return new ArrayList<>();
         }
+    }
+
+    /**
+     * Find and return the no extra edge topology given a vertex
+     * @param u the given vertex
+     * @return the edges that do not exists
+     */
+    public List<Vertex> getNoExtraEdges(Vertex u){
+        if(noEdge.containsKey(u)){
+            return noEdge.get(u);
+        }
+        return new ArrayList<>();
     }
 
     /**
