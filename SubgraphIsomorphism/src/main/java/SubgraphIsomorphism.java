@@ -8,8 +8,6 @@ import org.jgrapht.traverse.DepthFirstIterator;
 import org.jgrapht.traverse.RandomWalkVertexIterator;
 import org.jgrapht.alg.matching.HopcroftKarpMaximumCardinalityBipartiteMatching;
 
-
-
 import java.io.*;
 import java.util.*;
 
@@ -779,6 +777,12 @@ public class SubgraphIsomorphism {
         return orderVertices;
     }
 
+    /**
+     * Finds the next edge within the spanning tree
+     * @param weightedQuery a weighted graph of the query
+     * @param SEQq the QI-Sequence
+     * @return the next edge to add to spanning tree
+     */
     public static DefaultWeightedEdge selectSpanningEdge(Graph<Vertex, DefaultWeightedEdge> weightedQuery, QISequence SEQq){
         Set<DefaultWeightedEdge> possibleEdges = weightedQuery.edgeSet();
 
@@ -891,6 +895,12 @@ public class SubgraphIsomorphism {
         return randomEdge(minimumEdges);
     }
 
+    /**
+     * Build the QI-Sequence (spanning tree) with a given order
+     * @param query the query graph
+     * @param order the processing order
+     * @return the QI-Sequence
+     */
     public static QISequence buildSpanningTreeWithOrder(Graph<Vertex, DefaultEdge> query, ArrayList<Vertex> order){
         QISequence SEQq = new QISequence();
 
@@ -2815,18 +2825,19 @@ public class SubgraphIsomorphism {
     /**
      * Finds the confidence interval for a given set of values
      * @param costValues the cost values
-     * @param zAlpha the alpha+1/2 quantile of the normal distribution with mean 0 and variance 1
+     * @param zScore the alpha+1/2 quantile of the normal distribution with mean 0 and variance 1
      * @return the confidence interval
      */
-    public static double computeConfidenceInterval(List<Double> costValues, double zAlpha){
+    public static double computeConfidenceInterval(List<Double> costValues, double zScore){
         // the average
         double tn = calculateMeanSquareDifference(costValues);
 
-        return zAlpha * tn / Math.sqrt(costValues.size());
+
+        return zScore * tn / Math.sqrt(costValues.size());
     }
 
     public static int wanderJoins(Graph<Vertex, DefaultEdge> query, Graph<Vertex, DefaultEdge> target, double gamma,
-                                  double tau, int maxEpoch, double zAlpha, boolean isInduced){
+                                  double tau, int maxEpoch, double zScore, boolean isInduced){
         // compute candidates
         Map<Vertex, Set<Vertex>> candidates = computeCandidates(query, target);
         if(candidates == null){
@@ -2899,8 +2910,8 @@ public class SubgraphIsomorphism {
             costValues.add(cost);
 
             // every 20 check the confidence value
-            if(costValues.size()%20 == 0){
-                conf = computeConfidenceInterval(costValues, zAlpha);
+            if(costValues.size()%25 == 0){
+                conf = computeConfidenceInterval(costValues, zScore);
                 if(conf<tau) {
                     break;
                 }
@@ -2948,14 +2959,26 @@ public class SubgraphIsomorphism {
         return estiation;
     }
 
+    /**
+     * Compare the estimation of the isomorphisms to the actual number of matchings
+     * @param isomorphismFolder folder that contains the isomorphisms
+     * @param outputFile the file that we will output the information to
+     * @param gamma the gamma value for GraphQL
+     * @param tau the value we want our estimate within
+     * @param maxEpoch the maximum number of random walk we will do in target graph
+     * @param zScore the z score of a alpha value
+     * @param queryFolder the folder containing the queries
+     * @param targetFolder the folder containing the targets
+     * @throws IOException error with reading/writing files
+     */
     public static void testEstimations(String isomorphismFolder, String outputFile, double gamma, double tau,
-                                       int maxEpoch, double zAlpha, String queryFolder, String targetFolder) throws IOException {
+                                       int maxEpoch, double zScore, String queryFolder, String targetFolder) throws IOException {
         File dir = new File(isomorphismFolder);
         // write to output file
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
         String estimationParameters = "\n# Estimate Parameters (tau): "+tau+
                 "\n# Estimate Parameters (maxEpoch): "+maxEpoch+
-                "\n# Estimate Parameters (zAlpha): "+zAlpha;
+                "\n# Estimate Parameters (zScore): "+zScore;
 
         writer.write(estimationParameters);
 
@@ -3010,7 +3033,7 @@ public class SubgraphIsomorphism {
                 isInduced = false;
             }
 
-            int estimatedNumber = wanderJoins(query, target, gamma, tau, maxEpoch, zAlpha, isInduced);
+            int estimatedNumber = wanderJoins(query, target, gamma, tau, maxEpoch, zScore, isInduced);
 
             double error = Math.abs(actualNumber-estimatedNumber);
             if(actualNumber != 0){
@@ -3058,9 +3081,9 @@ public class SubgraphIsomorphism {
         double gamma = 0.5;
 
         // estimation
-        double tau = 500;
+        double tau = 100;
         int maxEpoch = 10000;
-        double zAlpha = 1.96; // z score of normal distribution (mean 0, sd 1)
+        double zScore = 1.96; // z-score for 95% confidence
 
         // if the two graphs are known
         if(mainMethod.equals("KnownGraphs") && args.length == 5) {
@@ -3078,7 +3101,7 @@ public class SubgraphIsomorphism {
             final String targetLocation = args[2];
             final String outputFileName = args[3];
 
-            estimateCardinality(queryLocation, targetLocation, gamma, tau, maxEpoch, zAlpha, outputFileName, isInduced);
+            estimateCardinality(queryLocation, targetLocation, gamma, tau, maxEpoch, zScore, outputFileName, isInduced);
         }
         // check the estimations
         else if(mainMethod.equals("TestEstimations") && args.length == 5){
@@ -3093,7 +3116,7 @@ public class SubgraphIsomorphism {
             }
             final String outputFile = args[4];
 
-            testEstimations(isomorphismFolder, outputFile, gamma, tau, maxEpoch, zAlpha, queryFolder, targetFolder);
+            testEstimations(isomorphismFolder, outputFile, gamma, tau, maxEpoch, zScore, queryFolder, targetFolder);
         }
         // find the frequent profiles
         else if(mainMethod.equals("FrequentDatasets") && args.length == 4){
