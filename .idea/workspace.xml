@@ -5,9 +5,31 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6d0b8e23-97b2-4b58-991e-87f7b486f404" name="Default Changelist" comment="used different minimum supports (part 2)">
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/org_jgrapht_jgrapht_io_1_5_1.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/org_apache_commons_math3.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/SubgraphIsomorphism.iml" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/SubgraphIsomorphism.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/HardToFind/Isomorphism/graph103QuickSI.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/HardToFind/Isomorphism/graph104QuickSI.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/HardToFind/Isomorphism/graph163QuickSI.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/HardToFind/Isomorphism/graph19BacktrackingQuickSI.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/HardToFind/Isomorphism/graph19QuickSI.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/HardToFind/Isomorphism/graph21BacktrackingQuickSI.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/HardToFind/Isomorphism/graph21QuickSI.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/HardToFind/Isomorphism/graph231QuickSI.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/HardToFind/Isomorphism/graph232QuickSI.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/HardToFind/Isomorphism/graph233QuickSI.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/HardToFind/Isomorphism/graph59QuickSI.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/HardToFind/Isomorphism/graph65QuickSI.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/HardToFind/Isomorphism/graph66QuickSI.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/HardToFind/Isomorphism/graph67QuickSI.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/HardToFind/Isomorphism/graph88QuickSI.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph137GraphQL.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph147GraphQL.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph150GraphQL.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph155GraphQL.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph46GraphQL.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph71GraphQL.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph72GraphQL.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph72GroundTruth.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph94GraphQL.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/SubgraphIsomorphism.class" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/SubgraphIsomorphism.class" afterDir="false" />
     </list>
@@ -73,7 +95,7 @@
     <configuration name="SubgraphIsomorphism " type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="SubgraphIsomorphism" />
       <module name="SubgraphIsomorphism" />
-      <option name="PROGRAM_PARAMETERS" value="TestEstimations C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\HardToFind\Isomorphism _ _ C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\Test\test.txt" />
+      <option name="PROGRAM_PARAMETERS" value="TestEstimations C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\HardToFind\Isomorphism\ _ _ C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\HardToFind\estimations10000.txt" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../../ISProject" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -88,13 +110,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1642694530105</updated>
-    </task>
-    <task id="LOCAL-00033" summary="Split up ground truth and graphQL, to make easier to implement other algorithms">
-      <created>1643737853637</created>
-      <option name="number" value="00033" />
-      <option name="presentableId" value="LOCAL-00033" />
-      <option name="project" value="LOCAL" />
-      <updated>1643737853637</updated>
     </task>
     <task id="LOCAL-00034" summary="Accounted for possible mappings for leaf of star graph">
       <created>1643908437565</created>
@@ -432,7 +447,14 @@
       <option name="project" value="LOCAL" />
       <updated>1645825717617</updated>
     </task>
-    <option name="localTasksCounter" value="82" />
+    <task id="LOCAL-00082" summary="Added commenst and hard code zScore">
+      <created>1645893206578</created>
+      <option name="number" value="00082" />
+      <option name="presentableId" value="LOCAL-00082" />
+      <option name="project" value="LOCAL" />
+      <updated>1645893206578</updated>
+    </task>
+    <option name="localTasksCounter" value="83" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -484,7 +506,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="First attempt at select vertex order" />
     <MESSAGE value="Tested and added vertices to trees" />
     <MESSAGE value="First attempt at select spanning edge" />
     <MESSAGE value="First attempt constructing the QI-Sequence" />
@@ -509,7 +530,8 @@
     <MESSAGE value="Fixed extra edge and added a new parameter for no edge" />
     <MESSAGE value="Fixed ordering of extra edge (exists and doesn't exists)" />
     <MESSAGE value="Accounted if the isomorphism is induced" />
-    <option name="LAST_COMMIT_MESSAGE" value="Accounted if the isomorphism is induced" />
+    <MESSAGE value="Added commenst and hard code zScore" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added commenst and hard code zScore" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -536,52 +558,52 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>3127</line>
+          <line>3153</line>
           <option name="timeStamp" value="116" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1900</line>
+          <line>1912</line>
           <option name="timeStamp" value="118" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>2085</line>
+          <line>2097</line>
           <option name="timeStamp" value="249" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>2289</line>
+          <line>2301</line>
           <option name="timeStamp" value="267" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1860</line>
+          <line>1872</line>
           <option name="timeStamp" value="268" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>2918</line>
+          <line>2930</line>
           <option name="timeStamp" value="341" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>2912</line>
+          <line>2924</line>
           <option name="timeStamp" value="373" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>3065</line>
+          <line>3091</line>
           <option name="timeStamp" value="374" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1403</line>
+          <line>1415</line>
           <option name="timeStamp" value="375" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>2902</line>
+          <line>2914</line>
           <option name="timeStamp" value="391" />
         </line-breakpoint>
       </breakpoints>

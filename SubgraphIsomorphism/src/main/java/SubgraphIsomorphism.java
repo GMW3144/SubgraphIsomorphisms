@@ -2949,7 +2949,8 @@ public class SubgraphIsomorphism {
                 "\n\nEstimate Parameters:" +
                 "\n tau: " +tau+
                 "\n maxEpoch: " +maxEpoch+
-                "\n zAlpha: "+zAlpha;
+                "\n zAlpha: "+zAlpha+
+                "\n\n";
         writer.write(output);
         writer.close();
         // print output as well
@@ -2976,9 +2977,10 @@ public class SubgraphIsomorphism {
         File dir = new File(isomorphismFolder);
         // write to output file
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
-        String estimationParameters = "\n# Estimate Parameters (tau): "+tau+
+        String estimationParameters = "# Estimate Parameters (tau): "+tau+
                 "\n# Estimate Parameters (maxEpoch): "+maxEpoch+
-                "\n# Estimate Parameters (zScore): "+zScore;
+                "\n# Estimate Parameters (zScore): "+zScore+
+                "\n\n";
 
         writer.write(estimationParameters);
 
