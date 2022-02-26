@@ -2832,17 +2832,32 @@ public class SubgraphIsomorphism {
         return zScore * tn / Math.sqrt(costValues.size());
     }
 
+    /**
+     * Performs Wander Join to estimate the matchings or backtrackings for a given isomorphism
+     * @param query the query graph
+     * @param target the target graph
+     * @param gamma the gamma value for GraphQL
+     * @param tau the confidence interval threshold
+     * @param maxEpoch the maximum number of random walks
+     * @param zScore the z score for confidence interval
+     * @param isInduced if the isomorphism is induced
+     * @return the overall estimation for the subgraph isomorphism
+     */
     public static int wanderJoins(Graph<Vertex, DefaultEdge> query, Graph<Vertex, DefaultEdge> target, double gamma,
                                   double tau, int maxEpoch, double zScore, boolean isInduced){
         // compute candidates
         Map<Vertex, Set<Vertex>> candidates = computeCandidates(query, target);
         if(candidates == null){
+            System.out.println("Invalid Candidates.  Might be invalid algorithm:");
+            System.out.println(noAlgorithmFound);
             // something went wrong
             return -1;
         }
         // compute processing order
         ArrayList<Vertex> order = computeProcessingOrder(query, target, candidates, gamma);
         if(order == null){
+            System.out.println("Invalid Processing Order.  Might be invalid algorithm:");
+            System.out.println(noAlgorithmFound);
             // something went wrong
             return -1;
         }
@@ -2850,8 +2865,6 @@ public class SubgraphIsomorphism {
         // compute the spanning tree
         QISequence SEQq = buildSpanningTreeWithOrder(query, order);
 
-        // keep track of the confidence interval
-        double conf = tau +1;
         // keep track of the costs we have seen
         List<Double> costValues = new ArrayList<>();
 
@@ -2861,19 +2874,21 @@ public class SubgraphIsomorphism {
             // get the cost of the walk
             double cost = randomWalkWJ(order, candidates, SEQq, 0, walk, target);
 
-            if(cost!=0){
+            if (cost != 0) {
                 // if it is not an invalid walk, need to check extra edges
                 Map<Vertex, List<Vertex>> extraEdges = SEQq.getEdge();
 
-                for(Vertex u1: extraEdges.keySet()){
-                    for(Vertex u2: extraEdges.get(u1)){
+                for (Vertex u1 : extraEdges.keySet()) {
+                    for (Vertex u2 : extraEdges.get(u1)) {
                         // get the location of the vertices in the edge within the order and walk
-                        int i1 = order.indexOf(u1); int i2 = order.indexOf(u2);
+                        int i1 = order.indexOf(u1);
+                        int i2 = order.indexOf(u2);
                         // get the corresponding vertices within the walk
-                        Vertex v1 = walk.get(i1); Vertex v2 = walk.get(i2);
+                        Vertex v1 = walk.get(i1);
+                        Vertex v2 = walk.get(i2);
 
                         // if there is not a corresponding edge
-                        if(!target.containsEdge(v1, v2)){
+                        if (!target.containsEdge(v1, v2)) {
                             cost = 0;
                             break;
                         }
@@ -2881,7 +2896,7 @@ public class SubgraphIsomorphism {
                 }
 
                 // also check for induced
-                if(isInduced) {
+                if (isInduced) {
                     Map<Vertex, List<Vertex>> noEdge = SEQq.getNoEdge();
                     for (Vertex u1 : noEdge.keySet()) {
                         for (Vertex u2 : noEdge.get(u1)) {
@@ -2902,12 +2917,13 @@ public class SubgraphIsomorphism {
                 }
             }
 
+
             // add the cost to the cost values
             costValues.add(cost);
 
             // every 20 check the confidence value
             if(costValues.size()%25 == 0){
-                conf = computeConfidenceInterval(costValues, zScore);
+                double conf = computeConfidenceInterval(costValues, zScore);
                 if(conf<tau) {
                     break;
                 }
@@ -2933,10 +2949,15 @@ public class SubgraphIsomorphism {
 
         // compute the estimation
         int estimation =  wanderJoins(queryGraph, targetGraph, gamma, tau, maxEpoch, zAlpha, isInduced);
+        if(estimation == -1){
+            BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName));
+            writer.write("Something went wrong");
+            return -1;
+        }
 
         // write to output file
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName));
-        String output = "The estimation for the following is " + estimation +":"+
+        String output = "The matching estimation for the following is " + estimation +":"+
                 "\nquery graph: "+queryFile +
                 "\ntarget graph: "+targetFile+
                 "\n# induced isomorphisms with " +
@@ -3032,6 +3053,10 @@ public class SubgraphIsomorphism {
             }
 
             int estimatedNumber = wanderJoins(query, target, gamma, tau, maxEpoch, zScore, isInduced);
+            if(estimatedNumber == -1){
+                writer.append("Something went wrong!");
+                return;
+            }
 
             double error = Math.abs(actualNumber-estimatedNumber);
             if(actualNumber != 0){
