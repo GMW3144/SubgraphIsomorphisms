@@ -5,33 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6d0b8e23-97b2-4b58-991e-87f7b486f404" name="Default Changelist" comment="used different minimum supports (part 2)">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/HardToFind/Isomorphism/graph103QuickSI.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/HardToFind/Isomorphism/graph104QuickSI.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/HardToFind/Isomorphism/graph163QuickSI.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/HardToFind/Isomorphism/graph19BacktrackingQuickSI.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/HardToFind/Isomorphism/graph19QuickSI.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/HardToFind/Isomorphism/graph21BacktrackingQuickSI.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/HardToFind/Isomorphism/graph21QuickSI.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/HardToFind/Isomorphism/graph231QuickSI.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/HardToFind/Isomorphism/graph232QuickSI.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/HardToFind/Isomorphism/graph233QuickSI.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/HardToFind/Isomorphism/graph59QuickSI.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/HardToFind/Isomorphism/graph65QuickSI.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/HardToFind/Isomorphism/graph66QuickSI.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/HardToFind/Isomorphism/graph67QuickSI.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/HardToFind/Isomorphism/graph88QuickSI.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph137GraphQL.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph147GraphQL.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph150GraphQL.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph155GraphQL.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph46GraphQL.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph71GraphQL.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph72GraphQL.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph72GroundTruth.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/RandomWalk/Isomorphism/graph94GraphQL.txt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/SubgraphIsomorphism.class" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/SubgraphIsomorphism.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -110,13 +84,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1642694530105</updated>
-    </task>
-    <task id="LOCAL-00034" summary="Accounted for possible mappings for leaf of star graph">
-      <created>1643908437565</created>
-      <option name="number" value="00034" />
-      <option name="presentableId" value="LOCAL-00034" />
-      <option name="project" value="LOCAL" />
-      <updated>1643908437565</updated>
     </task>
     <task id="LOCAL-00035" summary="A way to keep track of common mappings between neighbors">
       <created>1643911601377</created>
@@ -454,7 +421,14 @@
       <option name="project" value="LOCAL" />
       <updated>1645893206578</updated>
     </task>
-    <option name="localTasksCounter" value="83" />
+    <task id="LOCAL-00083" summary="Compared with previous isomorphisms">
+      <created>1645897908702</created>
+      <option name="number" value="00083" />
+      <option name="presentableId" value="LOCAL-00083" />
+      <option name="project" value="LOCAL" />
+      <updated>1645897908702</updated>
+    </task>
+    <option name="localTasksCounter" value="84" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -506,7 +480,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Tested and added vertices to trees" />
     <MESSAGE value="First attempt at select spanning edge" />
     <MESSAGE value="First attempt constructing the QI-Sequence" />
     <MESSAGE value="Created order from QI-sequence" />
@@ -531,7 +504,8 @@
     <MESSAGE value="Fixed ordering of extra edge (exists and doesn't exists)" />
     <MESSAGE value="Accounted if the isomorphism is induced" />
     <MESSAGE value="Added commenst and hard code zScore" />
-    <option name="LAST_COMMIT_MESSAGE" value="Added commenst and hard code zScore" />
+    <MESSAGE value="Compared with previous isomorphisms" />
+    <option name="LAST_COMMIT_MESSAGE" value="Compared with previous isomorphisms" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

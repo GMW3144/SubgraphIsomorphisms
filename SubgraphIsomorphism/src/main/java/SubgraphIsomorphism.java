@@ -911,7 +911,7 @@ public class SubgraphIsomorphism {
             SEQq.extraDeg(u0, query.degreeOf(u0));
         }
 
-        // iterate through remaining verticies
+        // iterate through remaining vertices
         for(int i = 1; i < order.size(); i++){
             Vertex ui = order.get(i);
             // keep track if we already assigned the parent
@@ -1092,10 +1092,10 @@ public class SubgraphIsomorphism {
         // create a new QI-Sequence
         SEQq = buildSpanningTree(weightedQuery);
 
-        Map<Integer, Vertex> treeorder = SEQq.getOrder();
+        Map<Integer, Vertex> treeOrder = SEQq.getOrder();
         // add to the order
-        for(int i: treeorder.keySet()){
-            order.add(treeorder.get(i));
+        for(int i: treeOrder.keySet()){
+            order.add(treeOrder.get(i));
         }
 
         return order;
@@ -1314,7 +1314,7 @@ public class SubgraphIsomorphism {
             System.out.println(noAlgorithmFound);
             return null;
         }
-        // reset the QI-SEquence
+        // reset the QI-Sequence
         SEQq = null;
         return results;
     }
@@ -1373,12 +1373,12 @@ public class SubgraphIsomorphism {
                     .append(String.valueOf(subgraphIsomorphism.size())).append("\n");
         }
 
-        System.out.println("# candidates algorithm: "+algorithmNameC);
-        System.out.println("# processing order algorithm: "+algorithmNamePO);
-        System.out.println("# backtracking algorithm: "+algorithmNameB);
-        writer.append("# candidates algorithm: "+ algorithmNameC+"\n" +
+        String algorithmOutput = "# candidates algorithm: "+ algorithmNameC+"\n" +
                 "# processing order algorithm: "+algorithmNamePO+"\n" +
-                "# backtracking algorithm: "+algorithmNameB+"\n");
+                "# backtracking algorithm: "+algorithmNameB+"\n";
+
+        System.out.println(algorithmOutput);
+        writer.append(algorithmOutput);
 
         List<String> isomorphisms = isomorphismOrdered(subgraphIsomorphism);
 
@@ -1475,7 +1475,7 @@ public class SubgraphIsomorphism {
 
         // random walk starting at random vertex
         Iterator<Vertex> iter = new RandomWalkVertexIterator(target, randVertex);
-        int currentId = seen.size();
+        int currentId = 0;
         // get the starting vertex, and create a copy
         Vertex lastVertex = iter.next(); Vertex lastVertexCopy = copyVertex(lastVertex, currentId);
         seen.put(lastVertex, lastVertexCopy);
@@ -1618,9 +1618,9 @@ public class SubgraphIsomorphism {
                     return;
                 }
                 if(numIsomorphisms!= subgraphIsomorphism.size()){
-                    writer.append("Incorrect number of Matching! \n")
-                            .append(queryGraphFile.getName()).append(" : ")
-                            .append(targetGraphFile.getName()).append(" - "+outputString+"\n");
+                    String output = "Incorrect number of Matching! \n"+
+                            queryGraphFile.getName() + " : " + targetGraphFile.getName() + " - "+outputString+"\n";
+                    writer.append(output);
 
                     System.out.println("Problem Here! ("+outputString+") "+queryGraphFile +": "+targetGraphFile);
                     graphProblem = true;
@@ -1829,7 +1829,7 @@ public class SubgraphIsomorphism {
      * @param targetFileLocation the location of the target graph
      * @param outputFileName where we will output the findings
      * @param minSup the minimum support
-     * @throws IOException
+     * @throws IOException for read/write files
      */
     private static void frequentDatasetMining(String targetFileLocation, String outputFileName, double minSup)
             throws IOException {
@@ -1906,8 +1906,7 @@ public class SubgraphIsomorphism {
                     numOccurrences = Integer.parseInt(word);
                     break;
                 }
-                catch (NumberFormatException nfe){
-                    continue;
+                catch (NumberFormatException ignored){
                 }
             }
             System.out.println("]"+":"+numOccurrences);
@@ -2382,8 +2381,7 @@ public class SubgraphIsomorphism {
                     v = seen.get(vID);
                 }
                 else{
-                    v =  target.vertexSet().stream().filter(vertex -> vertex.getId() == vID).findAny()
-                            .get();
+                    v =  target.vertexSet().stream().filter(vertex -> vertex.getId() == vID).findAny().get();
                     seen.put(vID, v);
                 }
 
@@ -2500,27 +2498,24 @@ public class SubgraphIsomorphism {
 
         // union two star graphs
         Graph<Vertex, DefaultEdge> query = null; numCombined = new HashMap<>();
-        // union by merge
-        if(connectionMethod.equals(MERGE)){
-            query = unionGraphsByMerge(target, starGraph1, starGraph2, starGraph1Roots,
+        switch (connectionMethod) {
+            // union by merge
+            case MERGE -> query = unionGraphsByMerge(target, starGraph1, starGraph2, starGraph1Roots,
                     starGraph2Roots, 100);
-        }
-        // union by edge
-        else if(connectionMethod.equals(EDGE)) {
-            query = unionGraphsByEdge(target, starGraph1, starGraph2, starGraph1Roots,
+            // union by edge
+            case EDGE -> query = unionGraphsByEdge(target, starGraph1, starGraph2, starGraph1Roots,
                     starGraph2Roots, 100);
-        }
-        else if(connectionMethod.equals(NONE)){
-            query = starGraph1;
-        }
-        // not a correct merging method
-        else{
-            // write to graph file that couldn't find a connection method
-            BufferedWriter writer = new BufferedWriter(new FileWriter(outputFolderName+"Graphs\\"+graphName));
-            writer.write(noConnectionMethodFound);
-            writer.close();
-            System.out.println(noConnectionMethodFound);
-            return;
+            // no merging
+            case NONE -> query = starGraph1;
+            // not a correct merging method
+            default -> {
+                // write to graph file that couldn't find a connection method
+                BufferedWriter writer = new BufferedWriter(new FileWriter(outputFolderName + "Graphs\\" + graphName));
+                writer.write(noConnectionMethodFound);
+                writer.close();
+                System.out.println(noConnectionMethodFound);
+                return;
+            }
         }
 
         // if we couldn't connect the graphs anywhere
@@ -2676,9 +2671,10 @@ public class SubgraphIsomorphism {
         }
         writer.append("\n");
 
-        writer.append("Used candidate algorithm: " +algorithmNameC+"\n");
-        writer.append("Used processing order algorithm: " +algorithmNamePO+"\n");
-        writer.append("Used backtracking algorithm: " +algorithmNameB+"\n");
+        String algorithmOutput = "Used candidate algorithm: " +algorithmNameC+"\n" +
+                "Used processing order algorithm: " +algorithmNamePO+"\n" +
+                "Used backtracking algorithm: " +algorithmNameB+"\n";
+        writer.append(algorithmOutput);
         // number of backtracking in isomorphism
         writer.append("Number backtracking calls: ").append(String.valueOf(numBackTracking)).append("\n");
         writer.append("\n");
@@ -2743,7 +2739,7 @@ public class SubgraphIsomorphism {
      * @param SEQq the QI-Sequence, tree and extra edge information
      * @param i the current vertex in the walk that we are adding
      * @param walk the current random walk
-     * @param target the tareget graph
+     * @param target the target graph
      * @return the probability of a random walk (0 if invalid walk)
      */
     public static double randomWalkWJ(ArrayList<Vertex> order, Map<Vertex, Set<Vertex>> candidates , QISequence SEQq,
@@ -2936,11 +2932,11 @@ public class SubgraphIsomorphism {
         Graph<Vertex, DefaultEdge> targetGraph = createProteinGraph(targetFile);
 
         // compute the estimation
-        int estiation =  wanderJoins(queryGraph, targetGraph, gamma, tau, maxEpoch, zAlpha, isInduced);
+        int estimation =  wanderJoins(queryGraph, targetGraph, gamma, tau, maxEpoch, zAlpha, isInduced);
 
         // write to output file
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName));
-        String output = "The estimation for the following is " + estiation +":"+
+        String output = "The estimation for the following is " + estimation +":"+
                 "\nquery graph: "+queryFile +
                 "\ntarget graph: "+targetFile+
                 "\n# induced isomorphisms with " +
@@ -2957,7 +2953,7 @@ public class SubgraphIsomorphism {
         System.out.println(output);
 
         // find the estimated cardinality using wander joins
-        return estiation;
+        return estimation;
     }
 
     /**
@@ -3084,7 +3080,7 @@ public class SubgraphIsomorphism {
 
         // estimation
         double tau = 100;
-        int maxEpoch = 10000;
+        int maxEpoch = 1000;
         double zScore = 1.96; // z-score for 95% confidence
 
         // if the two graphs are known
