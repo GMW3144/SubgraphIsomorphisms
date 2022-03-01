@@ -1,4 +1,5 @@
 // Graph Implementation
+import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.jgrapht.*;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.alg.interfaces.MatchingAlgorithm;
@@ -7,6 +8,8 @@ import org.jgrapht.traverse.BreadthFirstIterator;
 import org.jgrapht.traverse.DepthFirstIterator;
 import org.jgrapht.traverse.RandomWalkVertexIterator;
 import org.jgrapht.alg.matching.HopcroftKarpMaximumCardinalityBipartiteMatching;
+
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 import java.io.*;
 import java.util.*;
@@ -2820,16 +2823,15 @@ public class SubgraphIsomorphism {
 
     /**
      * Finds the confidence interval for a given set of values
-     * @param costValues the cost values
+     * @param stats the cost values
      * @param zScore the alpha+1/2 quantile of the normal distribution with mean 0 and variance 1
      * @return the confidence interval
      */
-    public static double computeConfidenceInterval(List<Double> costValues, double zScore){
+    public static double computeConfidenceInterval(StatisticalSummary stats, double zScore){
         // the average
-        double tn = calculateMeanSquareDifference(costValues);
+        double variance = Math.sqrt(stats.getVariance());
 
-
-        return zScore * tn / Math.sqrt(costValues.size());
+        return zScore * variance / Math.sqrt(stats.getN());
     }
 
     /**
@@ -2866,9 +2868,9 @@ public class SubgraphIsomorphism {
         QISequence SEQq = buildSpanningTreeWithOrder(query, order);
 
         // keep track of the costs we have seen
-        List<Double> costValues = new ArrayList<>();
+        SummaryStatistics stats = new SummaryStatistics();
 
-        while (costValues.size()<maxEpoch){
+        while (stats.getN()<maxEpoch){
             // the walk is originally empty
             List<Vertex> walk = new ArrayList<>();
             // get the cost of the walk
@@ -2919,11 +2921,11 @@ public class SubgraphIsomorphism {
 
 
             // add the cost to the cost values
-            costValues.add(cost);
+            stats.addValue(cost);
 
             // every 20 check the confidence value
-            if(costValues.size()%25 == 0){
-                double conf = computeConfidenceInterval(costValues, zScore);
+            if(stats.getN()%25 == 0){
+                double conf = computeConfidenceInterval(stats, zScore);
                 if(conf<tau) {
                     break;
                 }
@@ -2931,7 +2933,7 @@ public class SubgraphIsomorphism {
         }
 
         // average the cost values
-        double avgCost = calculateAverage(costValues);
+        double avgCost = stats.getMean();
 
         // round to nearest integer
         return (int) Math.round(avgCost);
@@ -3041,6 +3043,7 @@ public class SubgraphIsomorphism {
                 }
                 line = br.readLine();
             }
+            br.close();
             Graph<Vertex, DefaultEdge> query = createProteinGraph(new File(queryName));
             Graph<Vertex, DefaultEdge> target = createProteinGraph(new File(targetName));
 
@@ -3083,6 +3086,65 @@ public class SubgraphIsomorphism {
         writer.close();
     }
 
+
+    /**
+     * Calculate the average number of backtracking and matchings for a given graph
+     * @param isomorphismFolder the folder containing the isomorphisms
+     * @throws IOException if file reader error
+     */
+    public static void averageBacktrackingMatching(String isomorphismFolder) throws IOException {
+        // find the isomorphism directory
+        File dir = new File(isomorphismFolder);
+
+        List<Double> allMatchings =  new ArrayList<>();
+        List<Double> allBacktrackings = new ArrayList<>();
+
+        // iterate through the isomorphisms
+        for(File isomorphism: dir.listFiles()) {
+            // reset the values for each isomorphism
+            int numMatchings = -1;
+            int numBacktracking = -1;
+
+            // read from ground truth
+            BufferedReader br = new BufferedReader(new FileReader(isomorphism));
+            String line = br.readLine();
+            while (line != null){
+                // check if comment
+                if(line.length()>0 && line.charAt(0) == '#'){
+                    line = br.readLine();
+                    continue;
+                }
+
+                // get the number of isomorphisms
+                if(line.toLowerCase(Locale.ROOT).contains("subgraph isomorphisms")){
+                    numMatchings = Integer.parseInt(line.split(":")[1].strip());
+                }
+
+                // get the number of backtracking
+                if(line.toLowerCase(Locale.ROOT).contains("number backtracking")){
+                    numBacktracking = Integer.parseInt(line.split(":")[1].strip());
+                }
+
+                if(numBacktracking != -1 && numMatchings != -1){
+                    break;
+                }
+
+                line = br.readLine();
+            }
+            br.close();
+
+            // keep track of the number of matchings and backtracking
+            allMatchings.add((double) numMatchings);
+            allBacktrackings.add((double) numBacktracking);
+        }
+
+        double averageMatchings = calculateAverage(allMatchings);
+        double averageBacktracking = calculateAverage(allBacktrackings);
+
+        System.out.println("Average number matchings: "+averageMatchings +
+                "\nAverage number backtracking: "+averageBacktracking);
+    }
+
     /**
      * Main function where the graphs are constructed and we find the subgraph isomorphisms
      * @param args the command line arguments
@@ -3097,7 +3159,7 @@ public class SubgraphIsomorphism {
         // basic information for isomorphism
         algorithmNameC = GRAPHQL;
         algorithmNamePO = GRAPHQL;
-        algorithmNameB = QUICKSI;
+        algorithmNameB = GRAPHQL;
 
         // isomorphism
         final boolean isInduced = true;
@@ -3180,21 +3242,27 @@ public class SubgraphIsomorphism {
             calculateStatistics(targetGraph);
 
             // iterate through the different size of graphs
-            for(int size = 5; size<25; size++) {
-                // attempt 100 times for each size
-                for(int i = 1; i<10; i++) {
-                    File outputGraphFolder = new File(outputFolderName + "Graphs\\");
-                    int numGraphs = 0;
-                    if (outputGraphFolder.list() != null) {
-                        numGraphs = outputGraphFolder.list().length;
-                    }
-                    String graphName = "graph" + (numGraphs + 1) + ".txt";
+            int size = 5;
+            //for(int size = 5; size<25; size++) {
+            // attempt 100 times for each size
+            for(int i = 1; i<100; i++) {
+                File outputGraphFolder = new File(outputFolderName + "Graphs\\");
+                int numGraphs = 0;
+                if (outputGraphFolder.list() != null) {
+                    numGraphs = outputGraphFolder.list().length;
+                }
+                String graphName = "graph" + (numGraphs + 1) + ".txt";
 
-                    if(randomWalk(targetGraph, targetLocation, size, outputFolderName, graphName, isInduced, gamma) == -1){
-                        return;
-                    }
+                if(randomWalk(targetGraph, targetLocation, size, outputFolderName, graphName, isInduced, gamma) == -1){
+                    return;
                 }
             }
+            //}
+        }
+        else if(mainMethod.equals("Average") && args.length == 2){
+            final String isomorphismFolder = args[1];
+
+            averageBacktrackingMatching(isomorphismFolder);
         }
 
         // test against ground truth
@@ -3237,6 +3305,8 @@ public class SubgraphIsomorphism {
                     "\n\t Creates a query graph from the target graph using a random walk." +
                     "\n\t Find the subgraph isomorphism between given target graph and random query graph"+
                     "\n\t Output folder must contain folders: \"GenerationInfo\", \"Graphs\", \"Isomorphism\""+
+                    "\nAverage <isomorphismFolder>"+
+                    "\n\t Finds the average number of backtracking and matchings for given isomorphisms." +
                     "\nTestIsomorphism <groundTruthFile> <queryFolder> <targetFolder> <outputFile>"+
                     "\n\t Test the subgraph isomorphisms within the ground truth file."+
                     "\n\t Must provide the location of the query and target folders.  If path is contained within " +
