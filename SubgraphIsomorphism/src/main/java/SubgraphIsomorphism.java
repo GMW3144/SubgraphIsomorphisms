@@ -1409,7 +1409,9 @@ public class SubgraphIsomorphism {
             throws IOException {
         // read the info from the file
         File queryFile = new File(queryFileLocation);
+        String queryName = queryFile.getName();
         File targetFile = new File(targetFileLocation);
+        String targetName = targetFile.getName();
 
         // create the graphs
         Graph<Vertex, DefaultEdge> queryGraph = createProteinGraph(queryFile);
@@ -1433,7 +1435,7 @@ public class SubgraphIsomorphism {
         // write to output file
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName));
         writer.write("");
-        displayIsomorphism(subgraphIsomorphism, queryFileLocation, targetFileLocation, writer, isInduced);
+        displayIsomorphism(subgraphIsomorphism, queryName, targetName, writer, isInduced);
         System.out.println("============================");
         writer.append("============================\n");
         writer.close();
@@ -1441,7 +1443,7 @@ public class SubgraphIsomorphism {
         // write to statistics file
         writer = new BufferedWriter(new FileWriter(outputStatisticsName));
         writer.write("");
-        displayGraphStatistics(queryFileLocation, queryGraph, targetFileLocation, targetGraph, writer);
+        displayGraphStatistics(queryName, queryGraph, targetName, targetGraph, writer);
         writer.close();
     }
 
@@ -2533,6 +2535,8 @@ public class SubgraphIsomorphism {
 
         // save the graph
         String queryFileName = writeGraph(query, outputFolderName + "Graphs\\", graphName);
+        String queryName = new File(queryFileName).getName();
+        String targetName = new File(graphLocation).getName();
 
         // now write the information to build the graph
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFolderName+"GenerationInfo\\"+graphName));
@@ -2550,7 +2554,7 @@ public class SubgraphIsomorphism {
 
         writer.append("\n");
         // write to statistics file
-        displayGraphStatistics(queryFileName, query, graphLocation, target, writer);
+        displayGraphStatistics(queryName, query, targetName, target, writer);
         writer.close();
 
         if(subgraphIsomorphism == null){
@@ -2565,7 +2569,7 @@ public class SubgraphIsomorphism {
         writer = new BufferedWriter(new FileWriter(
                 outputFolderName + "Isomorphism\\" + graphName));
         writer.write("");
-        displayIsomorphism(subgraphIsomorphism, queryFileName, graphLocation, writer, isInduced);
+        displayIsomorphism(subgraphIsomorphism, queryName, targetName, writer, isInduced);
         System.out.println("============================");
         writer.append("============================\n");
 
@@ -2594,8 +2598,10 @@ public class SubgraphIsomorphism {
         Graph<Vertex, DefaultEdge> queryGraph = randomGraph(targetGraph, targetLocation, size, writer);
         // save the graph
         String queryFileName = writeGraph(queryGraph, outputFolderName + "Graphs\\", graphName);
+        String queryName = new File(queryFileName).getName();
+        String targetName = new File(targetLocation).getName();
 
-        displayGraphStatistics(queryFileName, queryGraph, targetLocation, targetGraph, writer);
+        displayGraphStatistics(queryName, queryGraph, targetName, targetGraph, writer);
         writer.close();
 
 
@@ -2615,7 +2621,7 @@ public class SubgraphIsomorphism {
         writer = new BufferedWriter(new FileWriter(
                 outputFolderName + "Isomorphism\\" + graphName));
         writer.write("");
-        displayIsomorphism(subgraphIsomorphism, queryFileName, new File(targetLocation).getName(), writer, isInduced);
+        displayIsomorphism(subgraphIsomorphism, queryName, targetName, writer, isInduced);
         System.out.println("============================");
         writer.append("============================\n");
         writer.close();
@@ -3312,16 +3318,6 @@ public class SubgraphIsomorphism {
             }
             //}
         }
-        else if(mainMethod.equals("Average") && args.length == 2){
-            final String isomorphismFolder = args[1];
-
-            averageBacktrackingMatching(isomorphismFolder);
-        }
-        else if(mainMethod.equals("RewriteNames")  && args.length == 2){
-            final String isomorphismFolder = args[1];
-
-            rewriteName(isomorphismFolder);
-        }
 
         // test against ground truth
         else if(mainMethod.equals("TestIsomorphism")  && args.length == 5){
@@ -3337,6 +3333,18 @@ public class SubgraphIsomorphism {
             final String outputFileName = args[4];
 
             testAgainstGroundTruth(groundTruthFile, queryFolderName, targetFolderName, outputFileName, gamma);
+        }
+
+        // extra functions to fix previous values
+        else if(mainMethod.equals("Average") && args.length == 2){
+            final String isomorphismFolder = args[1];
+
+            averageBacktrackingMatching(isomorphismFolder);
+        }
+        else if(mainMethod.equals("RewriteNames")  && args.length == 2){
+            final String isomorphismFolder = args[1];
+
+            rewriteName(isomorphismFolder);
         }
 
         else{
