@@ -3145,6 +3145,59 @@ public class SubgraphIsomorphism {
                 "\nAverage number backtracking: "+averageBacktracking);
     }
 
+    public static void rewriteName(String isomorphismFolder) throws IOException {
+        // find the isomorphism directory
+        File dir = new File(isomorphismFolder);
+
+        // iterate through the isomorphisms
+        for (File inputFile : dir.listFiles()) {
+            // read from isomorphism
+            BufferedReader br = new BufferedReader(new FileReader(inputFile));
+            // new file we will copy to
+            File outputFile = new File(isomorphismFolder+inputFile.getName().replace(".txt", "")+"N.txt");
+            BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
+
+
+            String line = br.readLine();
+            while (line != null) {
+                // check if comment
+                if (line.length() > 0 && line.charAt(0) == '#') {
+                    writer.append(line+"\n");
+                    line = br.readLine();
+                    continue;
+                }
+
+                // get the query and target graph
+                if(line.toLowerCase(Locale.ROOT).contains("query graph")){
+                    String[] info = line.split(",");
+
+                    // change the name
+                    String originalQueryName = info[0].strip().split(" ")[2].strip();
+                    String newQueryName = new File(originalQueryName).getName();
+                    String originalTargeName = info[1].strip().split(" ")[2].strip();
+                    String newTargetName = new File(originalTargeName).getName();
+                    writer.append("Query Graph: "+newQueryName+", Target Graph: "+newTargetName+"\n");
+                }
+                // write the line exactly
+                else{
+                    writer.append(line+"\n");
+                }
+                line = br.readLine();
+            }
+            br.close();
+            writer.close();
+
+            // delete the input file
+            inputFile.delete();
+
+            // rename output file
+            File rename = new File(isomorphismFolder+outputFile.getName().replace("N", ""));
+            outputFile.renameTo(rename);
+        }
+
+
+    }
+
     /**
      * Main function where the graphs are constructed and we find the subgraph isomorphisms
      * @param args the command line arguments
@@ -3166,7 +3219,7 @@ public class SubgraphIsomorphism {
         double gamma = 0.5;
 
         // estimation
-        double tau = 100;
+        double tau = 1;
         int maxEpoch = 1000;
         double zScore = 1.96; // z-score for 95% confidence
 
@@ -3263,6 +3316,11 @@ public class SubgraphIsomorphism {
             final String isomorphismFolder = args[1];
 
             averageBacktrackingMatching(isomorphismFolder);
+        }
+        else if(mainMethod.equals("RewriteNames")  && args.length == 2){
+            final String isomorphismFolder = args[1];
+
+            rewriteName(isomorphismFolder);
         }
 
         // test against ground truth
