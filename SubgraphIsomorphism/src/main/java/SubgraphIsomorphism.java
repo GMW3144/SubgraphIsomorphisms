@@ -70,7 +70,6 @@ public class SubgraphIsomorphism {
 
     // keep track of axillary structures
     private static QISequence SEQq; //QI-Sequence
-    private static Map<Vertex, Set<Vertex>> localCandidates; // local candidates for dynamic processing
 
     /**
      * Saves a graph in a file
@@ -1203,8 +1202,9 @@ public class SubgraphIsomorphism {
      * @return the next vertex in the order
      */
     public static Vertex dynamicProcessingOrder(Graph<Vertex, DefaultEdge> target, Graph<Vertex, DefaultEdge> query,
-                                                Map<Vertex, Vertex> currentFunction, ArrayList<Vertex> order){
-        int minimumCandidateSize = localCandidates.get(order.get(0)).size();
+                                                Map<Vertex, Vertex> currentFunction, ArrayList<Vertex> order,
+                                                Map<Vertex, Set<Vertex>> candidates){
+        int minimumCandidateSize = candidates.get(order.get(0)).size();
         int maxDegree =query.degreeOf(order.get(0));
 
         Set<Vertex> verticesOfMinSize = new HashSet<>();
@@ -1215,19 +1215,19 @@ public class SubgraphIsomorphism {
             Set<Vertex> toCheck = new HashSet<>(Graphs.neighborListOf(query, u));
             toCheck.retainAll(currentFunction.keySet());
             for(Vertex uP: toCheck){
-                int numBefore = localCandidates.get(u).size();
-                localCandidates.get(u).retainAll(Graphs.neighborListOf(target, currentFunction.get(uP)));
+                int numBefore = candidates.get(u).size();
+                candidates.get(u).retainAll(Graphs.neighborListOf(target, currentFunction.get(uP)));
                 // account backtracking calls
-                numBackTracking+=numBefore-localCandidates.get(u).size();
+                numBackTracking+=numBefore-candidates.get(u).size();
                 // there are no possible vertices to check
-                if(localCandidates.get(u).size() == 0){
+                if(candidates.get(u).size() == 0){
                     return u;
                 }
             }
 
             // find the minimum local candidate size
-            if(localCandidates.get(u).size()<minimumCandidateSize){
-                minimumCandidateSize=localCandidates.get(u).size();
+            if(candidates.get(u).size()<minimumCandidateSize){
+                minimumCandidateSize=candidates.get(u).size();
 
                 verticesOfMinSize = new HashSet<>();
                 verticesOfMinSize.add(u);
@@ -1235,7 +1235,7 @@ public class SubgraphIsomorphism {
                 // find the next max degree
                 maxDegree = query.degreeOf(u);
             }
-            else if(localCandidates.get(u).size()==minimumCandidateSize){
+            else if(candidates.get(u).size()==minimumCandidateSize){
                 verticesOfMinSize.add(u);
 
                 // update the maxum degree
@@ -1271,13 +1271,8 @@ public class SubgraphIsomorphism {
                                        ArrayList<Vertex> order, int i, Map<Vertex, Vertex> currentFunction,
                                        Map<Vertex, Set<Vertex>>candidates){
         if(algorithmNamePO.equals(DYNAMIC_ORDER)) {
-            // reset the local candidates and order
-            localCandidates = new HashMap<>();
-            for (Vertex u : order) {
-                localCandidates.put(u, new HashSet<>(candidates.get(u)));
-            }
             // otherwise get the next candidate in the order
-            Vertex uNext = dynamicProcessingOrder(target, query, currentFunction, order);
+            Vertex uNext = dynamicProcessingOrder(target, query, currentFunction, order, candidates);
             order.remove(uNext);
             return uNext;
         }
@@ -1296,9 +1291,6 @@ public class SubgraphIsomorphism {
     public static Set<Vertex> getPossibleVertices(Graph<Vertex, DefaultEdge> target, Map<Vertex, Set<Vertex>> candidates,
                                                   Map<Vertex, Vertex> currentFunction, int i,Vertex u){
         Set<Vertex> possibleVertices = new HashSet<>(candidates.get(u));
-        if(algorithmNamePO.equals(DYNAMIC_ORDER)){
-            return localCandidates.get(u);
-        }
 
         // if quickSI recompute candidates
         if(algorithmNameB.equals(QUICKSI) && i!=0){
@@ -1359,8 +1351,21 @@ public class SubgraphIsomorphism {
                 // check not in another mapping
                 if(!currentFunction.containsValue(v) && isValid(query, target, currentFunction, u, v, isInduced)){
                     currentFunction.put(u, v);
-                    subgraphIsomorphism(query, target, candidates, order, i+1, currentFunction, allFunctionsFound,
-                            isInduced);
+                    // if dynamic program must make a copy of the vertex
+                    if(algorithmNamePO.equals(DYNAMIC_ORDER)){
+                        // reset the local candidates and order
+                        Map<Vertex, Set<Vertex>> candidatesCopy = new HashMap<>();
+                        for (Vertex uCopy : order) {
+                            candidatesCopy.put(uCopy, new HashSet<>(candidates.get(uCopy)));
+                        }
+
+                        subgraphIsomorphism(query, target, candidatesCopy, order, i + 1, currentFunction,
+                                allFunctionsFound, isInduced);
+                    }
+                    else {
+                        subgraphIsomorphism(query, target, candidates, order, i + 1, currentFunction, allFunctionsFound,
+                                isInduced);
+                    }
                     currentFunction.remove(u);
                 }
             }
@@ -1612,10 +1617,9 @@ public class SubgraphIsomorphism {
      * @param sizeQuery the maximum number of vertices in the query
      * @param seen map that keeps track of equivalencies between query and target vertex
      * @return the random graph
-     * @throws IOException for file writer
      */
     private static Graph<Vertex, DefaultEdge> randomGraph(Graph<Vertex, DefaultEdge> target, int sizeQuery,
-                                                          Map<Vertex, Vertex> seen) throws IOException {
+                                                          Map<Vertex, Vertex> seen) {
         Graph<Vertex, DefaultEdge> queryGraph = new SimpleGraph<>(DefaultEdge.class);
         // get a random vertex
         Random rand = new Random();
