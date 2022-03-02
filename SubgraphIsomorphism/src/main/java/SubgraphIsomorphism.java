@@ -34,7 +34,7 @@ public class SubgraphIsomorphism {
     private static final String GROUNDTRUTH = "groundTruth";
     private static final String GRAPHQL = "graphQL";
     private static final String QUICKSI = "quickSI";
-    private static final String DYNAMIC_ORDER = "dynamic ordre";
+    private static final String DYNAMIC_ORDER = "dynamic order";
     // creating graphs
     private static final String MERGE = "merge";
     private static final String EDGE = "edge";
@@ -48,7 +48,7 @@ public class SubgraphIsomorphism {
             "\t "+GRAPHQL+": uses the GraphQL algorithm.\n" +
             "\t "+QUICKSI+": uses the QuickSI algorithm. (Note: cannot be used for processing candidates)\n"+
             "\t "+DYNAMIC_ORDER+": uses the dynamic ordering for process order. (Note: cannot only be used for ordering\n" +
-            "\t\tand connote use QUICKSI isomorphism)\n";
+            "\t\tand cannot use QUICKSI isomorphism)\n";
     // error message if didn't find connection algorithm
     private static final String noConnectionMethodFound = "Connection type of graphs specified is not valid.\n " +
             "Specify one of the following connections methods: \n" +
@@ -70,7 +70,7 @@ public class SubgraphIsomorphism {
 
     // keep track of axillary structures
     private static QISequence SEQq; //QI-Sequence
-    private static Map<Vertex, Set<Vertex>> candidateLocal; // the local candidates for dynamic ordering
+    private static Map<Vertex, Set<Vertex>> localCandidates; // local candidates for dynamic processing
 
     /**
      * Saves a graph in a file
@@ -1204,7 +1204,9 @@ public class SubgraphIsomorphism {
      */
     public static Vertex dynamicProcessingOrder(Graph<Vertex, DefaultEdge> target, Graph<Vertex, DefaultEdge> query,
                                                 Map<Vertex, Vertex> currentFunction, ArrayList<Vertex> order){
-        int minimumCandidateSize = candidateLocal.get(order.get(0)).size();
+        int minimumCandidateSize = localCandidates.get(order.get(0)).size();
+        int maxDegree =query.degreeOf(order.get(0));
+
         Set<Vertex> verticesOfMinSize = new HashSet<>();
         verticesOfMinSize.add(order.get(0));
         // iterate through the query vertices that have not been mapped yet
@@ -1213,30 +1215,46 @@ public class SubgraphIsomorphism {
             Set<Vertex> toCheck = new HashSet<>(Graphs.neighborListOf(query, u));
             toCheck.retainAll(currentFunction.keySet());
             for(Vertex uP: toCheck){
-                for(Vertex vP: candidateLocal.get(uP)){
-                    candidateLocal.get(u).retainAll(Graphs.neighborListOf(target, vP));
+                int numBefore = localCandidates.get(u).size();
+                localCandidates.get(u).retainAll(Graphs.neighborListOf(target, currentFunction.get(uP)));
+                // account backtracking calls
+                numBackTracking+=numBefore-localCandidates.get(u).size();
+                // there are no possible vertices to check
+                if(localCandidates.get(u).size() == 0){
+                    return u;
                 }
             }
 
-            // there are no possible vertices to check
-            if(candidateLocal.get(u).size() == 0){
-                return u;
-            }
-
             // find the minimum local candidate size
-            if(candidateLocal.get(u).size()<minimumCandidateSize){
-                minimumCandidateSize=candidateLocal.get(u).size();
+            if(localCandidates.get(u).size()<minimumCandidateSize){
+                minimumCandidateSize=localCandidates.get(u).size();
 
                 verticesOfMinSize = new HashSet<>();
                 verticesOfMinSize.add(u);
+
+                // find the next max degree
+                maxDegree = query.degreeOf(u);
             }
-            else if(candidateLocal.get(u).size()==minimumCandidateSize){
+            else if(localCandidates.get(u).size()==minimumCandidateSize){
                 verticesOfMinSize.add(u);
+
+                // update the maxum degree
+                if(query.degreeOf(u)>maxDegree){
+                    maxDegree = query.degreeOf(u);
+                }
+            }
+        }
+
+        // only take into account vertices of minim size and maximum degree within those vertices
+        Set<Vertex> verticesMinSizeMaxDegree = new HashSet<>();
+        for(Vertex vMin: verticesOfMinSize){
+            if(query.degreeOf(vMin)==maxDegree){
+                verticesMinSizeMaxDegree.add(vMin);
             }
         }
 
         // return a random vertex with the minimum number of candidates
-        return randomVertex(verticesOfMinSize);
+        return randomVertex(verticesMinSizeMaxDegree);
     }
 
     /**
@@ -1253,14 +1271,15 @@ public class SubgraphIsomorphism {
                                        ArrayList<Vertex> order, int i, Map<Vertex, Vertex> currentFunction,
                                        Map<Vertex, Set<Vertex>>candidates){
         if(algorithmNamePO.equals(DYNAMIC_ORDER)) {
-            // if it is the first vertex then reset the local candidates
-            if (i == 0) {
-                for (Vertex u : candidates.keySet()) {
-                    candidateLocal.put(u, new HashSet<>(candidates.get(u)));
-                }
+            // reset the local candidates and order
+            localCandidates = new HashMap<>();
+            for (Vertex u : order) {
+                localCandidates.put(u, new HashSet<>(candidates.get(u)));
             }
             // otherwise get the next candidate in the order
-            return dynamicProcessingOrder(target, query, currentFunction, order);
+            Vertex uNext = dynamicProcessingOrder(target, query, currentFunction, order);
+            order.remove(uNext);
+            return uNext;
         }
         return order.get(i);
     }
@@ -1277,6 +1296,9 @@ public class SubgraphIsomorphism {
     public static Set<Vertex> getPossibleVertices(Graph<Vertex, DefaultEdge> target, Map<Vertex, Set<Vertex>> candidates,
                                                   Map<Vertex, Vertex> currentFunction, int i,Vertex u){
         Set<Vertex> possibleVertices = new HashSet<>(candidates.get(u));
+        if(algorithmNamePO.equals(DYNAMIC_ORDER)){
+            return localCandidates.get(u);
+        }
 
         // if quickSI recompute candidates
         if(algorithmNameB.equals(QUICKSI) && i!=0){
@@ -1342,6 +1364,11 @@ public class SubgraphIsomorphism {
                     currentFunction.remove(u);
                 }
             }
+
+            // must add the vertex back if dynamic processing order
+            if(algorithmNamePO.equals(DYNAMIC_ORDER)){
+                order.add(u);
+            }
         }
     }
 
@@ -1387,7 +1414,7 @@ public class SubgraphIsomorphism {
             case GROUNDTRUTH -> order = groundTruthComputeProcessingOrder(query, candidates);
             case GRAPHQL -> order = graphQLComputeProcessingOrder(query, candidates, gamma);
             case QUICKSI -> order = quickSIComputeProcessingOrder(target, query, candidates);
-            case DYNAMIC_ORDER -> order = (ArrayList<Vertex>) candidates.keySet();
+            case DYNAMIC_ORDER -> order = new ArrayList<>(candidates.keySet());
             default -> {
                 System.out.println("Processing Order Algorithm:");
                 System.out.println(noAlgorithmFound);
@@ -3519,7 +3546,7 @@ public class SubgraphIsomorphism {
         }
         // basic information for isomorphism
         algorithmNameC = GRAPHQL;
-        algorithmNamePO = GRAPHQL;
+        algorithmNamePO = DYNAMIC_ORDER;
         algorithmNameB = GRAPHQL;
 
         // isomorphism
