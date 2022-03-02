@@ -1218,14 +1218,16 @@ public class SubgraphIsomorphism {
             if(dynamicOrder.size()!=0) {
                 Vertex uP = dynamicOrder.get(dynamicOrder.size()-1);
 
-                int numBefore = candidates.get(u).size();
-                candidates.get(u).retainAll(Graphs.neighborListOf(target, currentFunction.get(uP)));
-                // account backtracking calls
-                numBackTracking += numBefore - candidates.get(u).size();
+                if(query.containsEdge(uP, u)) {
+                    int numBefore = candidates.get(u).size();
+                    candidates.get(u).retainAll(Graphs.neighborListOf(target, currentFunction.get(uP)));
+                    // account backtracking calls
+                    numBackTracking += numBefore - candidates.get(u).size();
 
-                // there are no possible vertices to check
-                if (candidates.get(u).size() == 0) {
-                    return u;
+                    // there are no possible vertices to check
+                    if (candidates.get(u).size() == 0) {
+                        return u;
+                    }
                 }
             }
 
