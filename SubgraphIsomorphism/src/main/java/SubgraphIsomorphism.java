@@ -1,4 +1,5 @@
 // Graph Implementation
+import org.apache.commons.math3.geometry.partitioning.BSPTreeVisitor;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.jgrapht.*;
@@ -33,6 +34,7 @@ public class SubgraphIsomorphism {
     private static final String GROUNDTRUTH = "groundTruth";
     private static final String GRAPHQL = "graphQL";
     private static final String QUICKSI = "quickSI";
+    private static final String DYNAMIC_ORDER = "dynamic ordre";
     // creating graphs
     private static final String MERGE = "merge";
     private static final String EDGE = "edge";
@@ -44,7 +46,9 @@ public class SubgraphIsomorphism {
             "Specify one of the following algorithms: \n" +
             "\t "+GROUNDTRUTH+": finds the ground truth isomorphism.  Only uses LDA in pruning and BFS for ordering.\n" +
             "\t "+GRAPHQL+": uses the GraphQL algorithm.\n" +
-            "\t "+QUICKSI+": uses the QuickSI algorithm. (Note: cannot be used for processing candidates)\n";
+            "\t "+QUICKSI+": uses the QuickSI algorithm. (Note: cannot be used for processing candidates)\n"+
+            "\t "+DYNAMIC_ORDER+": uses the dynamic ordering for process order. (Note: cannot only be used for ordering\n" +
+            "\t\tand connote use QUICKSI isomorphism)\n";
     // error message if didn't find connection algorithm
     private static final String noConnectionMethodFound = "Connection type of graphs specified is not valid.\n " +
             "Specify one of the following connections methods: \n" +
@@ -65,7 +69,8 @@ public class SubgraphIsomorphism {
             "\n <listVerticesIds>";
 
     // keep track of axillary structures
-    private static QISequence SEQq;
+    private static QISequence SEQq; //QI-Sequence
+    private static Map<Vertex, Set<Vertex>> candidateLocal; // the local candidates for dynamic ordering
 
     /**
      * Saves a graph in a file
@@ -1189,12 +1194,74 @@ public class SubgraphIsomorphism {
     }
 
     /**
+     * Finds the next vertex to check dynamically.  Given a local candidate set, it will be the one with a minimum
+     * number of candidates
+     * @param target the target graph
+     * @param query the query graph
+     * @param currentFunction the current isomorphism
+     * @param order the vertices to be checked
+     * @return the next vertex in the order
+     */
+    public static Vertex dynamicProcessingOrder(Graph<Vertex, DefaultEdge> target, Graph<Vertex, DefaultEdge> query,
+                                                Map<Vertex, Vertex> currentFunction, ArrayList<Vertex> order){
+        int minimumCandidateSize = candidateLocal.get(order.get(0)).size();
+        Set<Vertex> verticesOfMinSize = new HashSet<>();
+        verticesOfMinSize.add(order.get(0));
+        // iterate through the query vertices that have not been mapped yet
+        for(Vertex u: order){
+            //  look at the vertices that are in the function and neighbors of the current vertex
+            Set<Vertex> toCheck = new HashSet<>(Graphs.neighborListOf(query, u));
+            toCheck.retainAll(currentFunction.keySet());
+            for(Vertex uP: toCheck){
+                for(Vertex vP: candidateLocal.get(uP)){
+                    candidateLocal.get(u).retainAll(Graphs.neighborListOf(target, vP));
+                }
+            }
+
+            // there are no possible vertices to check
+            if(candidateLocal.get(u).size() == 0){
+                return u;
+            }
+
+            // find the minimum local candidate size
+            if(candidateLocal.get(u).size()<minimumCandidateSize){
+                minimumCandidateSize=candidateLocal.get(u).size();
+
+                verticesOfMinSize = new HashSet<>();
+                verticesOfMinSize.add(u);
+            }
+            else if(candidateLocal.get(u).size()==minimumCandidateSize){
+                verticesOfMinSize.add(u);
+            }
+        }
+
+        // return a random vertex with the minimum number of candidates
+        return randomVertex(verticesOfMinSize);
+    }
+
+    /**
      * Gets the next vertex within the processing order
+     * @param query the query graph
+     * @param target the target graph
      * @param order the processing order of the vertices
      * @param i the current vertex within the order
+     * @param currentFunction the current matching between the query and target for the previous i vertices
+     * @param candidates sets of candidates for each query vertex
      * @return the query next vertex to be checked
      */
-    public static Vertex getNextVertex(ArrayList<Vertex> order, int i){
+    public static Vertex getNextVertex(Graph<Vertex, DefaultEdge> query, Graph<Vertex, DefaultEdge> target,
+                                       ArrayList<Vertex> order, int i, Map<Vertex, Vertex> currentFunction,
+                                       Map<Vertex, Set<Vertex>>candidates){
+        if(algorithmNamePO.equals(DYNAMIC_ORDER)) {
+            // if it is the first vertex then reset the local candidates
+            if (i == 0) {
+                for (Vertex u : candidates.keySet()) {
+                    candidateLocal.put(u, new HashSet<>(candidates.get(u)));
+                }
+            }
+            // otherwise get the next candidate in the order
+            return dynamicProcessingOrder(target, query, currentFunction, order);
+        }
         return order.get(i);
     }
 
@@ -1260,7 +1327,7 @@ public class SubgraphIsomorphism {
         }
         else{
             // look at next node
-            Vertex u = getNextVertex(order, i);
+            Vertex u = getNextVertex(query, target, order, i, currentFunction, candidates);
             Set<Vertex> possibleVertices = getPossibleVertices(target, candidates, currentFunction, i, u);
 
             // look at candidates
@@ -1320,6 +1387,7 @@ public class SubgraphIsomorphism {
             case GROUNDTRUTH -> order = groundTruthComputeProcessingOrder(query, candidates);
             case GRAPHQL -> order = graphQLComputeProcessingOrder(query, candidates, gamma);
             case QUICKSI -> order = quickSIComputeProcessingOrder(target, query, candidates);
+            case DYNAMIC_ORDER -> order = (ArrayList<Vertex>) candidates.keySet();
             default -> {
                 System.out.println("Processing Order Algorithm:");
                 System.out.println(noAlgorithmFound);
@@ -1354,7 +1422,8 @@ public class SubgraphIsomorphism {
 
         // keep track of number of backtracking
         numBackTracking = 0;
-        if(algorithmNameB.equals(GROUNDTRUTH) || algorithmNameB.equals(GRAPHQL) || algorithmNameB.equals(QUICKSI)) {
+        if(algorithmNameB.equals(GROUNDTRUTH) || algorithmNameB.equals(GRAPHQL) ||
+                (algorithmNameB.equals(QUICKSI)&&!algorithmNamePO.equals(DYNAMIC_ORDER))) {
             if(algorithmNameB.equals(QUICKSI)){
                 falseMatchingParents = 0;
                 falseMatchingExtraEdge = 0;
