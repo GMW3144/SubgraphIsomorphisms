@@ -70,6 +70,7 @@ public class SubgraphIsomorphism {
 
     // keep track of axillary structures
     private static QISequence SEQq; //QI-Sequence
+    private static List<Vertex> dynamicOrder; // keep track of elements added with dynamic programing
 
     /**
      * Saves a graph in a file
@@ -1211,18 +1212,22 @@ public class SubgraphIsomorphism {
         verticesOfMinSize.add(order.get(0));
         // iterate through the query vertices that have not been mapped yet
         for(Vertex u: order){
-            //  look at the vertices that are in the function and neighbors of the current vertex
-            Set<Vertex> toCheck = new HashSet<>(Graphs.neighborListOf(query, u));
-            toCheck.retainAll(currentFunction.keySet());
-            for(Vertex uP: toCheck){
-                int numBefore = candidates.get(u).size();
-                candidates.get(u).retainAll(Graphs.neighborListOf(target, currentFunction.get(uP)));
-                // account backtracking calls
-                numBackTracking+=numBefore-candidates.get(u).size();
-                // there are no possible vertices to check
-                if(candidates.get(u).size() == 0){
-                    return u;
+            //  look the last vertices that is in the function and neighbors of the current vertex
+            if(dynamicOrder!=null && dynamicOrder.size()!=0) {
+                Vertex uP = dynamicOrder.get(dynamicOrder.size()-1);
+                if (Graphs.neighborListOf(query, u).contains(uP)) {
+                    int numBefore = candidates.get(u).size();
+                    candidates.get(u).retainAll(Graphs.neighborListOf(target, currentFunction.get(uP)));
+                    // account backtracking calls
+                    numBackTracking += numBefore - candidates.get(u).size();
+                    // there are no possible vertices to check
+                    if (candidates.get(u).size() == 0) {
+                        return u;
+                    }
                 }
+            }
+            else{
+                dynamicOrder = new ArrayList<>();
             }
 
             // find the minimum local candidate size
@@ -1273,6 +1278,7 @@ public class SubgraphIsomorphism {
         if(algorithmNamePO.equals(DYNAMIC_ORDER)) {
             // otherwise get the next candidate in the order
             Vertex uNext = dynamicProcessingOrder(target, query, currentFunction, order, candidates);
+            dynamicOrder.add(uNext);
             order.remove(uNext);
             return uNext;
         }
@@ -1373,6 +1379,7 @@ public class SubgraphIsomorphism {
             // must add the vertex back if dynamic processing order
             if(algorithmNamePO.equals(DYNAMIC_ORDER)){
                 order.add(u);
+                dynamicOrder.remove(u);
             }
         }
     }
