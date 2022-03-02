@@ -69,7 +69,7 @@ public class SubgraphIsomorphism {
 
     // keep track of axillary structures
     private static QISequence SEQq; //QI-Sequence
-    private static List<Vertex> dynamicOrder; // keep track of elements added with dynamic programing
+    private static List<Vertex> dynamicOrder = new ArrayList<>(); // keep track of elements added with dynamic programing
 
     /**
      * Saves a graph in a file
@@ -1204,29 +1204,28 @@ public class SubgraphIsomorphism {
     public static Vertex dynamicProcessingOrder(Graph<Vertex, DefaultEdge> target, Graph<Vertex, DefaultEdge> query,
                                                 Map<Vertex, Vertex> currentFunction, ArrayList<Vertex> order,
                                                 Map<Vertex, Set<Vertex>> candidates){
+        // keep track of the minimum number of candidates and max degree
         int minimumCandidateSize = candidates.get(order.get(0)).size();
         int maxDegree =query.degreeOf(order.get(0));
 
+        // keep track of the vertices of the minimum size
         Set<Vertex> verticesOfMinSize = new HashSet<>();
         verticesOfMinSize.add(order.get(0));
         // iterate through the query vertices that have not been mapped yet
         for(Vertex u: order){
             //  look the last vertices that is in the function and neighbors of the current vertex
-            if(dynamicOrder!=null && dynamicOrder.size()!=0) {
+            if(dynamicOrder.size()!=0) {
                 Vertex uP = dynamicOrder.get(dynamicOrder.size()-1);
-                if (Graphs.neighborListOf(query, u).contains(uP)) {
-                    int numBefore = candidates.get(u).size();
-                    candidates.get(u).retainAll(Graphs.neighborListOf(target, currentFunction.get(uP)));
-                    // account backtracking calls
-                    numBackTracking += numBefore - candidates.get(u).size();
-                    // there are no possible vertices to check
-                    if (candidates.get(u).size() == 0) {
-                        return u;
-                    }
+
+                int numBefore = candidates.get(u).size();
+                candidates.get(u).retainAll(Graphs.neighborListOf(target, currentFunction.get(uP)));
+                // account backtracking calls
+                numBackTracking += numBefore - candidates.get(u).size();
+
+                // there are no possible vertices to check
+                if (candidates.get(u).size() == 0) {
+                    return u;
                 }
-            }
-            else{
-                dynamicOrder = new ArrayList<>();
             }
 
             // find the minimum local candidate size
@@ -1239,17 +1238,18 @@ public class SubgraphIsomorphism {
                 // find the next max degree
                 maxDegree = query.degreeOf(u);
             }
+
             else if(candidates.get(u).size()==minimumCandidateSize){
                 verticesOfMinSize.add(u);
 
-                // update the maximum degree
+                // update the maximum degree with the vertices of a given candidate size
                 if(query.degreeOf(u)>maxDegree){
                     maxDegree = query.degreeOf(u);
                 }
             }
         }
 
-        // only take into account vertices of minim size and maximum degree within those vertices
+        // only take into account vertices of minimum size and maximum degree within those vertices
         Set<Vertex> verticesMinSizeMaxDegree = new HashSet<>();
         for(Vertex vMin: verticesOfMinSize){
             if(query.degreeOf(vMin)==maxDegree){
