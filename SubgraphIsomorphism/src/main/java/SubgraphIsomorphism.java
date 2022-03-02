@@ -1,4 +1,5 @@
 // Graph Implementation
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.jgrapht.*;
 import org.jgrapht.graph.DefaultEdge;
@@ -1461,22 +1462,19 @@ public class SubgraphIsomorphism {
     /**
      * Create a new graph by performing a random walk on the target graph
      * @param target target graph
-     * @param targetLocation the location of the target graph
      * @param sizeQuery the maximum number of vertices in the query
-     * @param writer where we'll write information about the graph construction
+     * @param seen map that keeps track of equivalencies between query and target vertex
      * @return the random graph
      * @throws IOException for file writer
      */
-    private static Graph<Vertex, DefaultEdge> randomGraph(Graph<Vertex, DefaultEdge> target, String targetLocation,
-                                                         int sizeQuery, BufferedWriter writer) throws IOException {
+    private static Graph<Vertex, DefaultEdge> randomGraph(Graph<Vertex, DefaultEdge> target, int sizeQuery,
+                                                          Map<Vertex, Vertex> seen) throws IOException {
         Graph<Vertex, DefaultEdge> queryGraph = new SimpleGraph<>(DefaultEdge.class);
         // get a random vertex
         Random rand = new Random();
         int randVertexID = rand.nextInt(target.vertexSet().size());
         Vertex randVertex = target.vertexSet().stream().filter(vertex -> vertex.getId() == randVertexID).findAny().get();
 
-        // keep track of equivalencies, so know when see a target vertex again
-        Map<Vertex, Vertex> seen = new HashMap<>();
 
         // random walk starting at random vertex
         Iterator<Vertex> iter = new RandomWalkVertexIterator(target, randVertex);
@@ -1533,15 +1531,6 @@ public class SubgraphIsomorphism {
 
             // keep track of last vertex to create edge
             lastVertexCopy = nextVertexCopy;
-        }
-
-        // write the mappings
-        // write to output file info when constructing graph
-        writer.write(targetLocation + " \n");
-        writer.append(seen.toString()).append("\n");
-        for(Vertex targetVertex: seen.keySet()){
-            writer.append(String.valueOf(targetVertex.getId())).append(" ")
-                    .append(String.valueOf(targetVertex.getNumProfileSubsets())).append("\n");
         }
 
         return queryGraph;
@@ -2595,7 +2584,20 @@ public class SubgraphIsomorphism {
 
         BufferedWriter writer = new BufferedWriter(new FileWriter(
                 outputFolderName + "GenerationInfo\\" + graphName));
-        Graph<Vertex, DefaultEdge> queryGraph = randomGraph(targetGraph, targetLocation, size, writer);
+
+        // keep track of equivalencies, so know when see a target vertex again
+        Map<Vertex, Vertex> seen = new HashMap<>();
+        Graph<Vertex, DefaultEdge> queryGraph = randomGraph(targetGraph, size, seen);
+
+        // write the mappings
+        // write to output file info when constructing graph
+        writer.write(targetLocation + " \n");
+        writer.append(seen.toString()).append("\n");
+        for (Vertex targetVertex : seen.keySet()) {
+            writer.append(String.valueOf(targetVertex.getId())).append(" ")
+                    .append(String.valueOf(targetVertex.getNumProfileSubsets())).append("\n");
+        }
+
         // save the graph
         String queryFileName = writeGraph(queryGraph, outputFolderName + "Graphs\\", graphName);
         String queryName = new File(queryFileName).getName();
@@ -2966,8 +2968,8 @@ public class SubgraphIsomorphism {
         // write to output file
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName));
         String output = "The matching estimation for the following is " + estimation +":"+
-                "\nquery graph: "+queryFile +
-                "\ntarget graph: "+targetFile+
+                "\nquery graph: "+queryFile.getName() +
+                "\ntarget graph: "+targetFile.getName()+
                 "\n# induced isomorphisms with " +
                 "\n# candidates algorithm: "+algorithmNameC+
                 "\n# processing order algorithm: "+algorithmNamePO+
@@ -3012,8 +3014,8 @@ public class SubgraphIsomorphism {
 
         for(File isomorphism: dir.listFiles()){
             // reset query and target graph
-            String queryName = null;
-            String targetName = null;
+            String queryFileName = null;
+            String targetFileName = null;
 
             // reset the number of isomorphism
             int actualNumber = -1;
@@ -3033,8 +3035,8 @@ public class SubgraphIsomorphism {
                 // get the query and target graph
                 if(line.toLowerCase(Locale.ROOT).contains("query graph")){
                     String[] info = line.split(",");
-                    queryName = queryFolder+info[0].strip().split(" ")[2].strip();
-                    targetName = targetFolder+info[1].strip().split(" ")[2].strip();
+                    queryFileName = queryFolder+info[0].strip().split(" ")[2].strip();
+                    targetFileName = targetFolder+info[1].strip().split(" ")[2].strip();
                 }
 
                 // get the number of isomorphisms
@@ -3044,14 +3046,17 @@ public class SubgraphIsomorphism {
                 }
 
                 // we found all of the information
-                if(queryName!= null && targetName!=null && actualNumber!=-1 && induceString!= null){
+                if(queryFileName!= null && targetFileName!=null && actualNumber!=-1 && induceString!= null){
                     break;
                 }
                 line = br.readLine();
             }
             br.close();
-            Graph<Vertex, DefaultEdge> query = createProteinGraph(new File(queryName));
-            Graph<Vertex, DefaultEdge> target = createProteinGraph(new File(targetName));
+
+            File queryFile = new File(queryFileName);
+            File targetFile = new File(targetFileName);
+            Graph<Vertex, DefaultEdge> query = createProteinGraph(queryFile);
+            Graph<Vertex, DefaultEdge> target = createProteinGraph(targetFile);
 
             boolean isInduced;
             if(induceString.equals("induced")){
@@ -3076,7 +3081,7 @@ public class SubgraphIsomorphism {
                 error = 1;
             }
 
-            String output = "Query Graph: "+queryName+", Target Graph: "+targetName +
+            String output = "Query Graph: "+queryFile.getName()+", Target Graph: "+targetFile.getName() +
                     "\n# candidates algorithm: "+algorithmNameC+
                     "\n# processing order algorithm: "+algorithmNamePO+
                     "\n\tActual Number Matchings: "+actualNumber+
@@ -3180,8 +3185,8 @@ public class SubgraphIsomorphism {
                     // change the name
                     String originalQueryName = info[0].strip().split(" ")[2].strip();
                     String newQueryName = new File(originalQueryName).getName();
-                    String originalTargeName = info[1].strip().split(" ")[2].strip();
-                    String newTargetName = new File(originalTargeName).getName();
+                    String originalTargetName = info[1].strip().split(" ")[2].strip();
+                    String newTargetName = new File(originalTargetName).getName();
                     writer.append("Query Graph: "+newQueryName+", Target Graph: "+newTargetName+"\n");
                 }
                 // write the line exactly
@@ -3200,8 +3205,185 @@ public class SubgraphIsomorphism {
             File rename = new File(isomorphismFolder+outputFile.getName().replace("N", ""));
             outputFile.renameTo(rename);
         }
+    }
+
+    /**
+     * Finds random query graphs and performs subgraph isomorphism
+     * @param targetLocation the location of the target graph
+     * @param outputFolderName the output folder
+     * @param size the size of the query graph
+     * @param gamma the gamma for graphQL
+     * @param isInduced if the isomorphism is induced
+     * @param maxNumQueryGraphs the maximum number of query graphs we will check
+     * @throws IOException read/write errors
+     */
+    public static void randomGeneration(String targetLocation, String outputFolderName, int size, double gamma,
+                                        boolean isInduced, int maxNumQueryGraphs) throws IOException {
+        // create the target graph and random query graph
+        Graph<Vertex, DefaultEdge> targetGraph = createProteinGraph(new File(targetLocation));
+        calculateStatistics(targetGraph);
+
+        for(int i = 1; i<maxNumQueryGraphs; i++) {
+            File outputGraphFolder = new File(outputFolderName + "Graphs\\");
+            int numGraphs = 0;
+            if (outputGraphFolder.list() != null) {
+                numGraphs = outputGraphFolder.list().length;
+            }
+            String graphName = "graph" + (numGraphs + 1) + ".txt";
+
+            if(randomWalk(targetGraph, targetLocation, size, outputFolderName, graphName, isInduced, gamma) == -1){
+                return;
+            }
+        }
+    }
+
+    /**
+     * Finds hard-to-find query graph for the target graph by finding outliers based on the estimation from wander joins
+     * @param targetLocationName the location of the target graph
+     * @param outputFolderName the output folder
+     * @param size the size of the query graph
+     * @param gamma the gamma for graphQL
+     * @param tau the threshold for the confidence interval
+     * @param maxEpoch the maximum number of random walks for wander joins
+     * @param zScore the zScore for the confidence iterval calculated from wander joins
+     * @param isInduced if the isomorphism is induced
+     * @param maxNumQueryGraphs the maximum number of query graphs we will check
+     * @param batchSize the sample of query graph batch size that we will check outliers
+     * @throws IOException read/write errors
+     */
+    public static void randomGenerationWithEstimate(String targetLocationName, String outputFolderName, int size, double gamma,
+                                                    double tau, int maxEpoch, double zScore, boolean isInduced,
+                                                    int maxNumQueryGraphs, int batchSize)
+            throws IOException {
+        // create the target graph and random query graph
+        File targetLocation = new File(targetLocationName);
+        Graph<Vertex, DefaultEdge> target = createProteinGraph(new File(targetLocationName));
+        calculateStatistics(target);
+
+        // keep track of the random walks and their estimations
+        Map<Integer, Set<Graph<Vertex, DefaultEdge>>> estimationRandomWalk = new HashMap<>();
+        // keep track of estimate values
+        DescriptiveStatistics stats = new DescriptiveStatistics();
+
+        // string value if induced
+        String induce = "Non-induce";
+        if(isInduced){
+            induce = "Induce";
+        }
+
+        // keep track if we found hard-to-find instance
+        boolean foundHardToFind = false;
+
+        while(!foundHardToFind && stats.getN()<maxNumQueryGraphs) {
+            // construct a 100 random walks
+            for (int i = 0; i < batchSize; i++) {
+                // keep track of equivalencies, so know when see a target vertex again
+                Map<Vertex, Vertex> seen = new HashMap<>();
+
+                // create graph of given size from the target
+                Graph<Vertex, DefaultEdge> query = randomGraph(target, size, seen);
+                // estimate the number of matchings
+                int estimate = wanderJoins(query, target, gamma, tau, maxEpoch, zScore, isInduced);
+
+                // add to estimate random walks map
+                if (!estimationRandomWalk.containsKey(estimate)) {
+                    estimationRandomWalk.put(estimate, new HashSet<>());
+                }
+                estimationRandomWalk.get(estimate).add(query);
+                stats.addValue(estimate);
+            }
+
+            // calculate outliers:
+            double q1 = stats.getPercentile(25);
+            double q3 = stats.getPercentile(75);
+            double iqr = q3 - q1;
+
+            double outlier = q3 + 1.5 * iqr;
+
+            System.out.println(outlier +"\n");
+            System.out.println(stats);
+            System.out.println("================");
+
+            // add the outliers as graphs
+            for (int estimate : estimationRandomWalk.keySet()) {
+                if (estimate > outlier) {
+                    foundHardToFind = true;
+                    // iterate through the query graphs
+                    for (Graph<Vertex, DefaultEdge> query : estimationRandomWalk.get(estimate)) {
+                        // store important information when using query graph
+                        File outputGraphFolder = new File(outputFolderName + "Graphs\\");
+                        int numGraphs = 0;
+                        if (outputGraphFolder.list() != null) {
+                            numGraphs = outputGraphFolder.list().length;
+                        }
+                        String queryName = "graph" + (numGraphs + 1) + ".txt";
+
+                        // write graph as hard to find
+                        writeGraph(query, outputFolderName + "Graphs\\", queryName);
+
+                        // write statistics
+                        File outputStatsFile = new File(outputFolderName + "GenerationInfo\\" + queryName);
+                        BufferedWriter writer = new BufferedWriter(new FileWriter(outputStatsFile));
+
+                        displayGraphStatistics(queryName, query, targetLocation.getName(), target, writer);
+
+                        String output = "\nEstimated Number "+induce+" Matchings: " + estimate+"\n" +
+                                "Outlier minimum value: " + outlier + "\n"+
+                                "\ttau: " +tau+ "\n"+
+                                "\tmaxEpoch: " +maxEpoch+"\n"+
+                                "\tzAlpha: "+zScore+ "\n\n" +
+                                "The total number of query graphs found: "+stats.getN()+"\n" +
+                                stats.toString();
+
+                        writer.append(output);
+                        writer.close();
+                    }
+                }
+            }
+        }
+        if(!foundHardToFind){
+            System.out.println("Could not find any hard-to-find instances.  Returned graphs with maximum number of matchings");
+
+            // iterate through the query graphs
+            int maxValue = (int) stats.getMax();
+            for (Graph<Vertex, DefaultEdge> query : estimationRandomWalk.get(maxValue)) {
+                // store important information when using query graph
+                File outputGraphFolder = new File(outputFolderName + "Graphs\\");
+                int numGraphs = 0;
+                if (outputGraphFolder.list() != null) {
+                    numGraphs = outputGraphFolder.list().length;
+                }
+                String queryName = "graph" + (numGraphs + 1) + ".txt";
+
+                // write graph as hard to find
+                writeGraph(query, outputFolderName + "Graphs\\", queryName);
+
+                // write statistics
+                File outputStatsFile = new File(outputFolderName + "GenerationInfo\\" + queryName);
+                BufferedWriter writer = new BufferedWriter(new FileWriter(outputStatsFile));
+
+                displayGraphStatistics(queryName, query, targetLocation.getName(), target, writer);
 
 
+                // calculate outliers:
+                double q1 = stats.getPercentile(25);
+                double q3 = stats.getPercentile(75);
+                double iqr = q3 - q1;
+
+                double outlier = q3 + 1.5 * iqr;
+
+                String output = "\nEstimated Number "+induce+" Matchings: " + maxValue+"\n" +
+                        "Outlier minimum value: " + outlier + "\n"+
+                        "\ttau: " +tau+ "\n"+
+                        "\tmaxEpoch: " +maxEpoch+"\n"+
+                        "\tzAlpha: "+zScore+ "\n\n" +
+                        "The total number of query graphs found: "+stats.getN()+"\n" +
+                        stats.toString();
+
+                writer.append(output);
+                writer.close();
+            }
+        }
     }
 
     /**
@@ -3225,9 +3407,15 @@ public class SubgraphIsomorphism {
         double gamma = 0.5;
 
         // estimation
-        double tau = 1;
+        double tau = 100;
         int maxEpoch = 1000;
         double zScore = 1.96; // z-score for 95% confidence
+
+        // create query graph
+        int minSize = 5;
+        int maxSize = 5;
+        int maxNumQueries = 1000;
+        int batchSize = 100;
 
         // if the two graphs are known
         if(mainMethod.equals("KnownGraphs") && args.length == 5) {
@@ -3296,27 +3484,22 @@ public class SubgraphIsomorphism {
             final String targetLocation = args[1];
             final String outputFolderName = args[2];
 
-            // create the target graph and random query graph
-            Graph<Vertex, DefaultEdge> targetGraph = createProteinGraph(new File(targetLocation));
-            calculateStatistics(targetGraph);
-
-            // iterate through the different size of graphs
-            int size = 5;
-            //for(int size = 5; size<25; size++) {
-            // attempt 100 times for each size
-            for(int i = 1; i<100; i++) {
-                File outputGraphFolder = new File(outputFolderName + "Graphs\\");
-                int numGraphs = 0;
-                if (outputGraphFolder.list() != null) {
-                    numGraphs = outputGraphFolder.list().length;
-                }
-                String graphName = "graph" + (numGraphs + 1) + ".txt";
-
-                if(randomWalk(targetGraph, targetLocation, size, outputFolderName, graphName, isInduced, gamma) == -1){
-                    return;
-                }
+            // iterate through the different size of graphs (from min to max)
+            for(int size = minSize; size<=maxSize; size++) {
+                // attempt maxNumQueries times for each size
+                randomGeneration(targetLocation, outputFolderName, size, gamma, isInduced, maxNumQueries);
             }
-            //}
+        }
+        // find graphs that are outliers when comparing number of matchings
+        else if(mainMethod.equals("RandomWalkEstimation") && args.length == 3){
+            final String targetLocation = args[1];
+            final String outputFolderName = args[2];
+
+            // iterate through the different size of graphs (from min to max)
+            for(int size = minSize; size<=maxSize; size++) {
+                randomGenerationWithEstimate(targetLocation, outputFolderName, size, gamma, tau, maxEpoch, zScore, isInduced,
+                        maxNumQueries, batchSize);
+            }
         }
 
         // test against ground truth
@@ -3370,6 +3553,10 @@ public class SubgraphIsomorphism {
                     "\nRandomWalk <targetFile> <outputFolder>"+
                     "\n\t Creates a query graph from the target graph using a random walk." +
                     "\n\t Find the subgraph isomorphism between given target graph and random query graph"+
+                    "\n\t Output folder must contain folders: \"GenerationInfo\", \"Graphs\", \"Isomorphism\""+
+                    "\nRandomWalkEstimation <targetFile> <outputFolder>"+
+                    "\n\t Creates a query graph from the target graph using a random walk and estimation." +
+                    "\n\t Graphs who's estimation is an outlier compare to other random walks will be created."+
                     "\n\t Output folder must contain folders: \"GenerationInfo\", \"Graphs\", \"Isomorphism\""+
                     "\nAverage <isomorphismFolder>"+
                     "\n\t Finds the average number of backtracking and matchings for given isomorphisms." +
