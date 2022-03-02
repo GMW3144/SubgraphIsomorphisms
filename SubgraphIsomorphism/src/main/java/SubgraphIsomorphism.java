@@ -1106,6 +1106,40 @@ public class SubgraphIsomorphism {
     }
 
     /**
+     * Finds the neighbors of a given vertex, if using QuickSI only will check the neighbors of the extra edges
+     * @param query the query graph
+     * @param u the current query vertex
+     * @return the neighbors of u within the query graph that will be checked
+     */
+    public static List<Vertex> getNeigbhorsU(Graph<Vertex, DefaultEdge> query, Vertex u){
+        // iterate through neighbors of u
+        List<Vertex> neighborsU = Graphs.neighborListOf(query, u);
+        // if quickSI only look at extra edges
+        if(algorithmNameB.equals(QUICKSI)){
+            int sizeNeighbors = neighborsU.size();
+            neighborsU = SEQq.getExtraEdges(u);
+            falseMatchingExtraEdge+= (sizeNeighbors-neighborsU.size());
+        }
+        return neighborsU;
+    }
+
+    /**
+     * Finds the vertices that within the current function, if using QuickSI check vertices that are not neighbors of u
+     * @param currentFunction the current matching between previous query vertices
+     * @param u vertex from the query graph
+     * @return the vertices within currentFunction to be checked
+     */
+    public static Set<Vertex> getPreviousVerticesToCheck(Map<Vertex, Vertex> currentFunction, Vertex u){
+        Set<Vertex> toCheck = currentFunction.keySet();
+        // if quickSI already have information
+        if(algorithmNameB.equals(QUICKSI)){
+            toCheck = new HashSet<>(SEQq.getNoExtraEdges(u));
+        }
+
+        return toCheck;
+    }
+
+    /**
      * Checks to see if there exists a valid matching between u and v
      * @param query the query graph
      * @param target the target graph
@@ -1118,12 +1152,7 @@ public class SubgraphIsomorphism {
     private static boolean isValid(Graph<Vertex, DefaultEdge> query, Graph<Vertex, DefaultEdge> target,
                                   Map<Vertex, Vertex> currentFunction, Vertex u, Vertex v, boolean isInduced){
         // iterate through neighbors of u
-        List<Vertex> neighborsU = Graphs.neighborListOf(query, u); int sizeNeighbors = neighborsU.size();
-        // if quickSI only look at extra edges
-        if(algorithmNameB.equals(QUICKSI)){
-            neighborsU = SEQq.getExtraEdges(u);
-            falseMatchingExtraEdge+= (sizeNeighbors-neighborsU.size());
-        }
+        List<Vertex> neighborsU = getNeigbhorsU(query, u);
 
         for(Vertex uPrime: neighborsU){
             // if u' is in the domain of current function
@@ -1139,11 +1168,7 @@ public class SubgraphIsomorphism {
         }
 
         if(isInduced){
-            Set<Vertex> toCheck = currentFunction.keySet();
-            // if quickSI already have information
-            if(algorithmNameB.equals(QUICKSI)){
-                toCheck = new HashSet<>(SEQq.getNoExtraEdges(u));
-            }
+            Set<Vertex> toCheck = getPreviousVerticesToCheck(currentFunction, u);
 
             for(Vertex uPrime: toCheck){
                 // if u and u' are not neighbors
@@ -1161,6 +1186,55 @@ public class SubgraphIsomorphism {
 
         // we didn't find any problems, so valid mapping
         return true;
+    }
+
+    /**
+     * Gets the next vertex within the processing order
+     * @param order the processing order of the vertices
+     * @param i the current vertex within the order
+     * @return the query next vertex to be checked
+     */
+    public static Vertex getNextVertex(ArrayList<Vertex> order, int i){
+        return order.get(i);
+    }
+
+    /**
+     * Get the possible target vertices for a given query vertex and isomorphism
+     * @param target the target graph
+     * @param candidates sets of candidates for each query vertex
+     * @param currentFunction the current matching between the query and target for the previous i vertices
+     * @param i the current vertex within the order
+     * @param u the current vertex
+     * @return the possible target vertex to map to for a given query vertex
+     */
+    public static Set<Vertex> getPossibleVertices(Graph<Vertex, DefaultEdge> target, Map<Vertex, Set<Vertex>> candidates,
+                                                  Map<Vertex, Vertex> currentFunction, int i,Vertex u){
+        Set<Vertex> possibleVertices = new HashSet<>(candidates.get(u));
+
+        // if quickSI recompute candidates
+        if(algorithmNameB.equals(QUICKSI) && i!=0){
+            // remove candidates that are not neighbors to the parent's candidate
+            Vertex p = SEQq.getParent(u);
+            Vertex pC = currentFunction.get(p);
+
+            Set<Vertex> newPossibleVertices = new HashSet<>();
+
+            // iterate through the vertex candidates
+            for(Vertex uC: candidates.get(u)){
+                // only include if edge exists between two candidates
+                if(target.containsEdge(pC, uC)){
+                    newPossibleVertices.add(uC);
+                }
+                else{
+                    // compared pair, so increase number of backtracking
+                    numBackTracking++;
+                    falseMatchingParents++;
+                }
+            }
+            possibleVertices = newPossibleVertices;
+        }
+
+        return possibleVertices;
     }
 
     /**
@@ -1186,31 +1260,8 @@ public class SubgraphIsomorphism {
         }
         else{
             // look at next node
-            Vertex u = order.get(i);
-            Set<Vertex> possibleVertices = new HashSet<>(candidates.get(u));
-
-            // if quickSI recompute candidates
-            if(algorithmNameB.equals(QUICKSI) && i!=0){
-                // remove candidates that are not neighbors to the parent's candidate
-                Vertex p = SEQq.getParent(u);
-                Vertex pC = currentFunction.get(p);
-
-                Set<Vertex> newPossibleVertices = new HashSet<>();
-
-                // iterate through the vertex candidates
-                for(Vertex uC: candidates.get(u)){
-                    // only include if edge exists between two candidates
-                    if(target.containsEdge(pC, uC)){
-                        newPossibleVertices.add(uC);
-                    }
-                    else{
-                        // compared pair, so increase number of backtracking
-                        numBackTracking++;
-                        falseMatchingParents++;
-                    }
-                }
-                possibleVertices = newPossibleVertices;
-            }
+            Vertex u = getNextVertex(order, i);
+            Set<Vertex> possibleVertices = getPossibleVertices(target, candidates, currentFunction, i, u);
 
             // look at candidates
             for(Vertex v : possibleVertices){
