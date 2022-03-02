@@ -1,5 +1,4 @@
 // Graph Implementation
-import org.apache.commons.math3.geometry.partitioning.BSPTreeVisitor;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.jgrapht.*;
@@ -1116,7 +1115,7 @@ public class SubgraphIsomorphism {
      * @param u the current query vertex
      * @return the neighbors of u within the query graph that will be checked
      */
-    public static List<Vertex> getNeigbhorsU(Graph<Vertex, DefaultEdge> query, Vertex u){
+    public static List<Vertex> getNeighborsU(Graph<Vertex, DefaultEdge> query, Vertex u){
         // iterate through neighbors of u
         List<Vertex> neighborsU = Graphs.neighborListOf(query, u);
         // if quickSI only look at extra edges
@@ -1157,7 +1156,7 @@ public class SubgraphIsomorphism {
     private static boolean isValid(Graph<Vertex, DefaultEdge> query, Graph<Vertex, DefaultEdge> target,
                                   Map<Vertex, Vertex> currentFunction, Vertex u, Vertex v, boolean isInduced){
         // iterate through neighbors of u
-        List<Vertex> neighborsU = getNeigbhorsU(query, u);
+        List<Vertex> neighborsU = getNeighborsU(query, u);
 
         for(Vertex uPrime: neighborsU){
             // if u' is in the domain of current function
@@ -1243,7 +1242,7 @@ public class SubgraphIsomorphism {
             else if(candidates.get(u).size()==minimumCandidateSize){
                 verticesOfMinSize.add(u);
 
-                // update the maxum degree
+                // update the maximum degree
                 if(query.degreeOf(u)>maxDegree){
                     maxDegree = query.degreeOf(u);
                 }
@@ -3403,7 +3402,7 @@ public class SubgraphIsomorphism {
      * @param gamma the gamma for graphQL
      * @param tau the threshold for the confidence interval
      * @param maxEpoch the maximum number of random walks for wander joins
-     * @param zScore the zScore for the confidence iterval calculated from wander joins
+     * @param zScore the zScore for the confidence interval calculated from wander joins
      * @param isInduced if the isomorphism is induced
      * @param maxNumQueryGraphs the maximum number of query graphs we will check
      * @param batchSize the sample of query graph batch size that we will check outliers
