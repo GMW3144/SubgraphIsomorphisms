@@ -1199,6 +1199,7 @@ public class SubgraphIsomorphism {
      * @param query the query graph
      * @param currentFunction the current isomorphism
      * @param order the vertices to be checked
+     * @param candidates the current set of candidates
      * @return the next vertex in the order
      */
     public static Vertex dynamicProcessingOrder(Graph<Vertex, DefaultEdge> target, Graph<Vertex, DefaultEdge> query,
@@ -1334,12 +1335,10 @@ public class SubgraphIsomorphism {
      * @param allFunctionsFound all the solutions that were discovered
      * @param isInduced whether matching is induced
      */
-    private static void subgraphIsomorphism(Graph<Vertex, DefaultEdge> query,
-                                           Graph<Vertex, DefaultEdge> target,
-                                           Map<Vertex, Set<Vertex>> candidates,
-                                           ArrayList<Vertex> order, int i,
-                                           Map<Vertex, Vertex> currentFunction,
-                                           List<Map<Vertex, Vertex>> allFunctionsFound, boolean isInduced){
+    private static void subgraphIsomorphism(Graph<Vertex, DefaultEdge> query, Graph<Vertex, DefaultEdge> target,
+                                            Map<Vertex, Set<Vertex>> candidates, ArrayList<Vertex> order, int i,
+                                            Map<Vertex, Vertex> currentFunction,
+                                            List<Map<Vertex, Vertex>> allFunctionsFound, boolean isInduced){
         // check if found solution
         if(currentFunction.size() == query.vertexSet().size()){
             allFunctionsFound.add(new HashMap<>(currentFunction));
@@ -1418,8 +1417,7 @@ public class SubgraphIsomorphism {
      */
     public static ArrayList<Vertex> computeProcessingOrder(Graph<Vertex, DefaultEdge> query,
                                                            Graph<Vertex, DefaultEdge> target,
-                                                           Map<Vertex, Set<Vertex>> candidates,
-                                                           double gamma){
+                                                           Map<Vertex, Set<Vertex>> candidates, double gamma){
         ArrayList<Vertex> order;
         switch (algorithmNamePO) {
             case GROUNDTRUTH -> order = groundTruthComputeProcessingOrder(query, candidates);
@@ -2648,7 +2646,7 @@ public class SubgraphIsomorphism {
         int starGraph2NumOccurrences = verticesRootOccurs.remove(starGraph2Profile).size();
 
         // union two star graphs
-        Graph<Vertex, DefaultEdge> query = null; numCombined = new HashMap<>();
+        Graph<Vertex, DefaultEdge> query; numCombined = new HashMap<>();
         switch (connectionMethod) {
             // union by merge
             case MERGE -> query = unionGraphsByMerge(target, starGraph1, starGraph2, starGraph1Roots,
@@ -2729,18 +2727,18 @@ public class SubgraphIsomorphism {
      * @param targetLocation the location of the target
      * @param size the size of the query graph
      * @param outputFolderName the folder we are writing the graph information to
-     * @param graphName the name of the query graph
+     * @param queryName the name of the query graph
      * @param isInduced if the isomorphism is induced
      * @param gamma the gamma value
      * @throws IOException for the writer
      * @return if random walk was successful
      */
     public static int randomWalk(Graph<Vertex, DefaultEdge> targetGraph, String targetLocation, int size,
-                                  String outputFolderName, String graphName, boolean isInduced, double gamma)
+                                  String outputFolderName, String queryName, boolean isInduced, double gamma)
             throws IOException {
 
         BufferedWriter writer = new BufferedWriter(new FileWriter(
-                outputFolderName + "GenerationInfo\\" + graphName));
+                outputFolderName + "GenerationInfo\\" + queryName));
 
         // keep track of equivalencies, so know when see a target vertex again
         Map<Vertex, Vertex> seen = new HashMap<>();
@@ -2756,8 +2754,7 @@ public class SubgraphIsomorphism {
         }
 
         // save the graph
-        String queryFileName = writeGraph(queryGraph, outputFolderName + "Graphs\\", graphName);
-        String queryName = new File(queryFileName).getName();
+        String queryFileName = writeGraph(queryGraph, outputFolderName + "Graphs\\", queryName);
         String targetName = new File(targetLocation).getName();
 
         displayGraphStatistics(queryName, queryGraph, targetName, targetGraph, writer);
@@ -2769,7 +2766,7 @@ public class SubgraphIsomorphism {
         if(subgraphIsomorphism == null){
             // write to output file
             writer = new BufferedWriter(new FileWriter(
-                    outputFolderName + "Isomorphism\\" + graphName));
+                    outputFolderName + "Isomorphism\\" + queryName));
             writer.write(noAlgorithmFound);
             writer.close();
 
@@ -2778,7 +2775,7 @@ public class SubgraphIsomorphism {
 
         // write to output file
         writer = new BufferedWriter(new FileWriter(
-                outputFolderName + "Isomorphism\\" + graphName));
+                outputFolderName + "Isomorphism\\" + queryName));
         writer.write("");
         displayIsomorphism(subgraphIsomorphism, queryName, targetName, writer, isInduced);
         System.out.println("============================");
@@ -3000,7 +2997,7 @@ public class SubgraphIsomorphism {
     }
 
     /**
-     * Performs Wander Join to estimate the matchings or backtrackings for a given isomorphism
+     * Performs Wander Join to estimate the number of matchings or backtrackings for a given isomorphism
      * @param query the query graph
      * @param target the target graph
      * @param gamma the gamma value for GraphQL
@@ -3104,8 +3101,22 @@ public class SubgraphIsomorphism {
         return (int) Math.round(avgCost);
     }
 
+    /**
+     * Estimates the cardinality for a given query and target graph
+     * @param queryFileLocation the file containing the query graph
+     * @param targetFileLocation the file containing the target graph
+     * @param gamma the gamma value for graphQL
+     * @param tau the threshold for the confidence interval
+     * @param maxEpoch the maximum number of random walks
+     * @param zAlpha the z score for the confidence interval
+     * @param outputFileName the output file
+     * @param isInduced if the isomorphism is induced
+     * @return an estimation for the number of matchings between a query and target graph
+     * @throws IOException read/write to file
+     */
     public static int estimateCardinality(String queryFileLocation, String targetFileLocation, double gamma, double tau,
-                                          int maxEpoch, double zAlpha, String outputFileName, boolean isInduced) throws IOException {
+                                          int maxEpoch, double zAlpha, String outputFileName, boolean isInduced)
+            throws IOException {
         // read the info from the file
         File queryFile = new File(queryFileLocation);
         File targetFile = new File(targetFileLocation);
@@ -3157,7 +3168,8 @@ public class SubgraphIsomorphism {
      * @throws IOException error with reading/writing files
      */
     public static void testEstimations(String isomorphismFolder, String outputFile, double gamma, double tau,
-                                       int maxEpoch, double zScore, String queryFolder, String targetFolder) throws IOException {
+                                       int maxEpoch, double zScore, String queryFolder, String targetFolder)
+            throws IOException {
         File dir = new File(isomorphismFolder);
         // write to output file
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFile));
@@ -3203,25 +3215,28 @@ public class SubgraphIsomorphism {
                 }
 
                 // we found all of the information
-                if(queryFileName!= null && targetFileName!=null && actualNumber!=-1 && induceString!= null){
+                if(queryFileName!= null && actualNumber!=-1){
                     break;
                 }
                 line = br.readLine();
             }
             br.close();
 
+            if(queryFileName==null || targetFileName==null){
+                System.out.println("Problem with query or target graph file");
+                return;
+            }
+
             File queryFile = new File(queryFileName);
             File targetFile = new File(targetFileName);
             Graph<Vertex, DefaultEdge> query = createProteinGraph(queryFile);
             Graph<Vertex, DefaultEdge> target = createProteinGraph(targetFile);
 
-            boolean isInduced;
-            if(induceString.equals("induced")){
-                isInduced = true;
+            if(induceString==null){
+                System.out.println("Problem with knowing if induced");
+                return;
             }
-            else{
-                isInduced = false;
-            }
+            boolean isInduced = induceString.equals("induced");
 
             int estimatedNumber = wanderJoins(query, target, gamma, tau, maxEpoch, zScore, isInduced);
             if(estimatedNumber == -1){
@@ -3313,6 +3328,11 @@ public class SubgraphIsomorphism {
                 "\nAverage number backtracking: "+averageBacktracking);
     }
 
+    /**
+     * Rewrites the name of the graphs from the location to the name (without the directory it is under)
+     * @param isomorphismFolder the folder containing the isomorphisms
+     * @throws IOException for read/write errors
+     */
     public static void rewriteName(String isomorphismFolder) throws IOException {
         // find the isomorphism directory
         File dir = new File(isomorphismFolder);
@@ -3330,7 +3350,7 @@ public class SubgraphIsomorphism {
             while (line != null) {
                 // check if comment
                 if (line.length() > 0 && line.charAt(0) == '#') {
-                    writer.append(line+"\n");
+                    writer.append(line).append("\n");
                     line = br.readLine();
                     continue;
                 }
@@ -3348,7 +3368,7 @@ public class SubgraphIsomorphism {
                 }
                 // write the line exactly
                 else{
-                    writer.append(line+"\n");
+                    writer.append(line).append("\n");
                 }
                 line = br.readLine();
             }
@@ -3563,6 +3583,9 @@ public class SubgraphIsomorphism {
         final boolean isInduced = true;
         double gamma = 0.5;
 
+        // connecting star graphs
+        final String connectionMethod = MERGE;
+
         // estimation
         double tau = 100;
         int maxEpoch = 1000;
@@ -3615,10 +3638,10 @@ public class SubgraphIsomorphism {
 
             // iterate through the possible target graphs
             File [] files = new File(targetFolderLocation).listFiles();
-            for (int i = 0; i < files.length; i++){
-                if (files[i].isFile()){ //this line weeds out other directories/folders
-                    String targetLocation = String.valueOf(files[i]);
-                    String outputFileName = outputFolderName+files[i].getName();
+            for (File file : files) {
+                if (file.isFile()) { //this line weeds out other directories/folders
+                    String targetLocation = String.valueOf(file);
+                    String outputFileName = outputFolderName + file.getName();
 
                     frequentDatasetMining(targetLocation, outputFileName, minSup);
                     System.out.println("=================");
@@ -3631,7 +3654,6 @@ public class SubgraphIsomorphism {
             final String outputFolderName = args[2];
             // keep track of the minimum profile size while creating graph
             int profileSize = Integer.parseInt(args[3]);// itemsets must be this size
-            final String connectionMethod = MERGE;
 
             // get the information from the fdm file
             fdmGraph(fdmFile, outputFolderName, isInduced, profileSize, gamma, connectionMethod);
