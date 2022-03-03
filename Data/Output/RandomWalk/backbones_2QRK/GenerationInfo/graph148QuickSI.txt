@@ -1,0 +1,34 @@
+Graph Statistics: 
+Query: graph148.txt
+Target: backbones_2QRK.grf
+
+Distribution: (number_profiles:frequency) 
+Query Graph:
+	4:12
+	5:1
+	6:1
+	8:4
+	12:2
+	18:1
+Target Graph:
+	4:3381
+	5:36
+	6:3
+	8:267
+	9:41
+	10:83
+	12:1452
+	16:398
+	18:116
+
+Used candidate algorithm: graphQL
+Used processing order algorithm: quickSI
+Used backtracking algorithm: quickSI
+Number backtracking calls: 78
+
+Total number of possible matchings: 121317
+Number pruned from local pruning: 100141
+Number pruned from global pruning: 21143
+
+False matchings removed using parents from quickSI: 18.0
+False matchings removed using extra edges from quickSI: 72.0

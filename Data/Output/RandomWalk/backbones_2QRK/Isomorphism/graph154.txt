@@ -1,0 +1,5 @@
+Query Graph: graph154.txt, Target Graph: backbones_2QRK.grf
+Number Backtracking: 12289233
+Induced isomorphisms. Total number subgraph isomorphisms: 0
+
+============================

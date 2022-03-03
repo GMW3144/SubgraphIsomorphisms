@@ -1,0 +1,1624 @@
+# Estimate Parameters (tau): 100.0
+# Estimate Parameters (maxEpoch): 1000
+# Estimate Parameters (zScore): 1.96
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph1.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 382
+	Estimated Number Matchings: 388
+	Error: 0.015706806282722512
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph10.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 1512
+	Estimated Number Matchings: 1521
+	Error: 0.005952380952380952
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph100.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 56
+	Estimated Number Matchings: 56
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph101.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 1512
+	Estimated Number Matchings: 1512
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph102.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 112
+	Estimated Number Matchings: 112
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph103.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 100
+	Estimated Number Matchings: 102
+	Error: 0.02
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph104.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 160
+	Estimated Number Matchings: 157
+	Error: 0.01875
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph105.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 16
+	Estimated Number Matchings: 13
+	Error: 0.1875
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph106.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 656
+	Estimated Number Matchings: 639
+	Error: 0.025914634146341462
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph107.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 586
+	Estimated Number Matchings: 580
+	Error: 0.010238907849829351
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph108.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 252
+	Estimated Number Matchings: 250
+	Error: 0.007936507936507936
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph109.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 22
+	Estimated Number Matchings: 22
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph11.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 240
+	Estimated Number Matchings: 239
+	Error: 0.004166666666666667
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph110.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 1800
+	Estimated Number Matchings: 1800
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph111.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 336
+	Estimated Number Matchings: 336
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph112.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 574
+	Estimated Number Matchings: 571
+	Error: 0.005226480836236934
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph113.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 368
+	Estimated Number Matchings: 365
+	Error: 0.008152173913043478
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph114.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 8
+	Estimated Number Matchings: 8
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph115.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 60
+	Estimated Number Matchings: 61
+	Error: 0.016666666666666666
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph116.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 816
+	Estimated Number Matchings: 816
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph117.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 522
+	Estimated Number Matchings: 514
+	Error: 0.01532567049808429
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph118.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 22
+	Estimated Number Matchings: 22
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph119.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 228
+	Estimated Number Matchings: 228
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph12.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 389
+	Estimated Number Matchings: 366
+	Error: 0.05912596401028278
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph120.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 150
+	Estimated Number Matchings: 149
+	Error: 0.006666666666666667
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph121.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 12
+	Estimated Number Matchings: 12
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph122.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 144
+	Estimated Number Matchings: 144
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph123.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 602
+	Estimated Number Matchings: 603
+	Error: 0.0016611295681063123
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph124.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 876
+	Estimated Number Matchings: 875
+	Error: 0.001141552511415525
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph125.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 198
+	Estimated Number Matchings: 198
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph126.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 96
+	Estimated Number Matchings: 93
+	Error: 0.03125
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph127.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 280
+	Estimated Number Matchings: 278
+	Error: 0.007142857142857143
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph128.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 110
+	Estimated Number Matchings: 109
+	Error: 0.00909090909090909
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph129.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 1800
+	Estimated Number Matchings: 1800
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph13.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 2208
+	Estimated Number Matchings: 2183
+	Error: 0.011322463768115942
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph130.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 44
+	Estimated Number Matchings: 44
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph131.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 368
+	Estimated Number Matchings: 364
+	Error: 0.010869565217391304
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph132.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 0
+	Estimated Number Matchings: 0
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph133.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 126
+	Estimated Number Matchings: 126
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph134.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 1034
+	Estimated Number Matchings: 1032
+	Error: 0.0019342359767891683
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph135.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 824
+	Estimated Number Matchings: 832
+	Error: 0.009708737864077669
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph136.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 96
+	Estimated Number Matchings: 96
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph137.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 2592
+	Estimated Number Matchings: 2637
+	Error: 0.017361111111111112
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph138.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 32
+	Estimated Number Matchings: 31
+	Error: 0.03125
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph139.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 0
+	Estimated Number Matchings: 0
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph14.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 46
+	Estimated Number Matchings: 46
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph140.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 312
+	Estimated Number Matchings: 309
+	Error: 0.009615384615384616
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph141.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 224
+	Estimated Number Matchings: 224
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph142.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 264
+	Estimated Number Matchings: 266
+	Error: 0.007575757575757576
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph143.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 256
+	Estimated Number Matchings: 252
+	Error: 0.015625
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph144.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 2400
+	Estimated Number Matchings: 2400
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph145.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 1102
+	Estimated Number Matchings: 1102
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph146.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 588
+	Estimated Number Matchings: 588
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph147.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 4680
+	Estimated Number Matchings: 4664
+	Error: 0.003418803418803419
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph148.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 4
+	Estimated Number Matchings: 4
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph149.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 4
+	Estimated Number Matchings: 4
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph15.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 4366
+	Estimated Number Matchings: 4555
+	Error: 0.04328905176362804
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph150.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 4176
+	Estimated Number Matchings: 4176
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph151.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 104
+	Estimated Number Matchings: 104
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph152.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 2160
+	Estimated Number Matchings: 2153
+	Error: 0.0032407407407407406
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph153.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 2400
+	Estimated Number Matchings: 2400
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph154.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 0
+	Estimated Number Matchings: 0
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph155.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 5904
+	Estimated Number Matchings: 6054
+	Error: 0.02540650406504065
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph156.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 0
+	Estimated Number Matchings: 0
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph157.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 648
+	Estimated Number Matchings: 647
+	Error: 0.0015432098765432098
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph158.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 1476
+	Estimated Number Matchings: 1435
+	Error: 0.027777777777777776
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph159.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 516
+	Estimated Number Matchings: 531
+	Error: 0.029069767441860465
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph16.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 651
+	Estimated Number Matchings: 658
+	Error: 0.010752688172043012
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph160.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 136
+	Estimated Number Matchings: 136
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph161.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 588
+	Estimated Number Matchings: 589
+	Error: 0.0017006802721088435
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph162.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 384
+	Estimated Number Matchings: 385
+	Error: 0.0026041666666666665
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph163.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 280
+	Estimated Number Matchings: 277
+	Error: 0.010714285714285714
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph164.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 1280
+	Estimated Number Matchings: 1280
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph165.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 22
+	Estimated Number Matchings: 22
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph166.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 288
+	Estimated Number Matchings: 290
+	Error: 0.006944444444444444
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph167.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 64
+	Estimated Number Matchings: 64
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph168.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 348
+	Estimated Number Matchings: 347
+	Error: 0.0028735632183908046
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph169.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 288
+	Estimated Number Matchings: 291
+	Error: 0.010416666666666666
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph17.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 312
+	Estimated Number Matchings: 312
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph170.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 80
+	Estimated Number Matchings: 80
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph171.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 1872
+	Estimated Number Matchings: 1800
+	Error: 0.038461538461538464
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph172.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 22
+	Estimated Number Matchings: 22
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph173.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 96
+	Estimated Number Matchings: 96
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph174.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 64
+	Estimated Number Matchings: 64
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph175.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 352
+	Estimated Number Matchings: 349
+	Error: 0.008522727272727272
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph176.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 368
+	Estimated Number Matchings: 373
+	Error: 0.01358695652173913
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph177.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 504
+	Estimated Number Matchings: 502
+	Error: 0.003968253968253968
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph178.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 32
+	Estimated Number Matchings: 32
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph179.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 0
+	Estimated Number Matchings: 0
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph18.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 2002
+	Estimated Number Matchings: 2019
+	Error: 0.008491508491508492
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph180.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 480
+	Estimated Number Matchings: 491
+	Error: 0.022916666666666665
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph19.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 1408
+	Estimated Number Matchings: 1406
+	Error: 0.0014204545454545455
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph2.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 392
+	Estimated Number Matchings: 389
+	Error: 0.007653061224489796
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph20.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 651
+	Estimated Number Matchings: 644
+	Error: 0.010752688172043012
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph21.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 300
+	Estimated Number Matchings: 300
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph22.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 409
+	Estimated Number Matchings: 417
+	Error: 0.019559902200488997
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph23.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 292
+	Estimated Number Matchings: 292
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph24.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 726
+	Estimated Number Matchings: 720
+	Error: 0.008264462809917356
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph25.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 22
+	Estimated Number Matchings: 22
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph26.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 80
+	Estimated Number Matchings: 80
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph27.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 2358
+	Estimated Number Matchings: 2324
+	Error: 0.01441899915182358
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph28.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 228
+	Estimated Number Matchings: 216
+	Error: 0.05263157894736842
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph29.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 591
+	Estimated Number Matchings: 590
+	Error: 0.001692047377326565
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph3.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 441
+	Estimated Number Matchings: 448
+	Error: 0.015873015873015872
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph30.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 5292
+	Estimated Number Matchings: 5187
+	Error: 0.01984126984126984
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph31.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 329
+	Estimated Number Matchings: 332
+	Error: 0.00911854103343465
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph32.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 646
+	Estimated Number Matchings: 647
+	Error: 0.0015479876160990713
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph33.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 87
+	Estimated Number Matchings: 90
+	Error: 0.034482758620689655
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph34.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 684
+	Estimated Number Matchings: 684
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph35.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 160
+	Estimated Number Matchings: 160
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph36.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 379
+	Estimated Number Matchings: 377
+	Error: 0.005277044854881266
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph37.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 1071
+	Estimated Number Matchings: 1072
+	Error: 9.337068160597573E-4
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph38.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 728
+	Estimated Number Matchings: 723
+	Error: 0.006868131868131868
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph39.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 356
+	Estimated Number Matchings: 353
+	Error: 0.008426966292134831
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph4.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 1275
+	Estimated Number Matchings: 1241
+	Error: 0.02666666666666667
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph40.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 638
+	Estimated Number Matchings: 623
+	Error: 0.023510971786833857
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph41.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 326
+	Estimated Number Matchings: 323
+	Error: 0.009202453987730062
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph42.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 225
+	Estimated Number Matchings: 221
+	Error: 0.017777777777777778
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph43.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 288
+	Estimated Number Matchings: 279
+	Error: 0.03125
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph44.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 429
+	Estimated Number Matchings: 432
+	Error: 0.006993006993006993
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph45.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 18
+	Estimated Number Matchings: 18
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph46.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 7224
+	Estimated Number Matchings: 6992
+	Error: 0.03211517165005537
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph47.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 788
+	Estimated Number Matchings: 775
+	Error: 0.01649746192893401
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph48.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 938
+	Estimated Number Matchings: 924
+	Error: 0.014925373134328358
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph49.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 0
+	Estimated Number Matchings: 0
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph5.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 380
+	Estimated Number Matchings: 377
+	Error: 0.007894736842105263
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph50.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 1592
+	Estimated Number Matchings: 1643
+	Error: 0.032035175879396985
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph51.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 788
+	Estimated Number Matchings: 793
+	Error: 0.006345177664974619
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph52.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 174
+	Estimated Number Matchings: 173
+	Error: 0.005747126436781609
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph53.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 144
+	Estimated Number Matchings: 144
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph54.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 12
+	Estimated Number Matchings: 12
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph55.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 160
+	Estimated Number Matchings: 160
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph56.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 539
+	Estimated Number Matchings: 537
+	Error: 0.0037105751391465678
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph57.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 160
+	Estimated Number Matchings: 160
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph58.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 3912
+	Estimated Number Matchings: 3919
+	Error: 0.0017893660531697342
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph59.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 150
+	Estimated Number Matchings: 150
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph6.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 1055
+	Estimated Number Matchings: 1065
+	Error: 0.009478672985781991
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph60.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 412
+	Estimated Number Matchings: 416
+	Error: 0.009708737864077669
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph61.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 600
+	Estimated Number Matchings: 600
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph62.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 495
+	Estimated Number Matchings: 496
+	Error: 0.00202020202020202
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph63.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 592
+	Estimated Number Matchings: 604
+	Error: 0.02027027027027027
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph64.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 34
+	Estimated Number Matchings: 37
+	Error: 0.08823529411764706
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph65.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 784
+	Estimated Number Matchings: 800
+	Error: 0.02040816326530612
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph66.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 936
+	Estimated Number Matchings: 940
+	Error: 0.004273504273504274
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph67.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 443
+	Estimated Number Matchings: 447
+	Error: 0.009029345372460496
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph68.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 72
+	Estimated Number Matchings: 72
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph69.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 10
+	Estimated Number Matchings: 9
+	Error: 0.1
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph7.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 385
+	Estimated Number Matchings: 386
+	Error: 0.0025974025974025974
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph70.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 852
+	Estimated Number Matchings: 844
+	Error: 0.009389671361502348
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph71.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 0
+	Estimated Number Matchings: 0
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph72.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 6624
+	Estimated Number Matchings: 6469
+	Error: 0.02339975845410628
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph73.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 38
+	Estimated Number Matchings: 38
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph74.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 1956
+	Estimated Number Matchings: 1961
+	Error: 0.002556237218813906
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph75.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 18
+	Estimated Number Matchings: 16
+	Error: 0.1111111111111111
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph76.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 72
+	Estimated Number Matchings: 72
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph77.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 512
+	Estimated Number Matchings: 498
+	Error: 0.02734375
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph78.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 320
+	Estimated Number Matchings: 320
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph79.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 1200
+	Estimated Number Matchings: 1200
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph8.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 4726
+	Estimated Number Matchings: 4894
+	Error: 0.03554803216250529
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph80.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 68
+	Estimated Number Matchings: 68
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph81.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 224
+	Estimated Number Matchings: 224
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph82.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 404
+	Estimated Number Matchings: 374
+	Error: 0.07425742574257425
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph83.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 1728
+	Estimated Number Matchings: 1728
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph84.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 346
+	Estimated Number Matchings: 353
+	Error: 0.02023121387283237
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph85.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 1800
+	Estimated Number Matchings: 1800
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph86.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 616
+	Estimated Number Matchings: 613
+	Error: 0.00487012987012987
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph87.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 240
+	Estimated Number Matchings: 243
+	Error: 0.0125
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph88.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 348
+	Estimated Number Matchings: 340
+	Error: 0.022988505747126436
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph89.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 112
+	Estimated Number Matchings: 112
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph9.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 1275
+	Estimated Number Matchings: 1290
+	Error: 0.011764705882352941
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph90.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 11
+	Estimated Number Matchings: 11
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph91.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 0
+	Estimated Number Matchings: 0
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph92.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 2400
+	Estimated Number Matchings: 2400
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph93.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 1176
+	Estimated Number Matchings: 1193
+	Error: 0.01445578231292517
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph94.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 4896
+	Estimated Number Matchings: 4896
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph95.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 2448
+	Estimated Number Matchings: 2448
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph96.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 1800
+	Estimated Number Matchings: 1800
+	Error: 0.0
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph97.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 996
+	Estimated Number Matchings: 971
+	Error: 0.025100401606425703
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph98.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 492
+	Estimated Number Matchings: 494
+	Error: 0.0040650406504065045
+
+===========================
+
+Query Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Graphs\graph99.txt, Target Graph: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 110
+	Estimated Number Matchings: 110
+	Error: 0.0
+
+===========================
+

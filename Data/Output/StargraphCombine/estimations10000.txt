@@ -1,0 +1,121 @@
+# Estimate Parameters (tau): 100.0
+# Estimate Parameters (maxEpoch): 10000
+# Estimate Parameters (zScore): 1.96
+
+Query Graph: graph103.txt, Target Graph: backbones_2JKV.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 2646
+	Estimated Number Matchings: 2614
+	Error: 0.012093726379440665
+
+===========================
+
+Query Graph: graph104.txt, Target Graph: backbones_2NOD.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 2324
+	Estimated Number Matchings: 2362
+	Error: 0.016351118760757316
+
+===========================
+
+Query Graph: graph163.txt, Target Graph: ecoli_K12_2KHO.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 2833
+	Estimated Number Matchings: 2806
+	Error: 0.00953053300388281
+
+===========================
+
+Query Graph: graph19.txt, Target Graph: backbones_1DLO.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 1963
+	Estimated Number Matchings: 1957
+	Error: 0.003056546102903719
+
+===========================
+
+Query Graph: graph21.txt, Target Graph: backbones_1DLO.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 3535
+	Estimated Number Matchings: 3500
+	Error: 0.009900990099009901
+
+===========================
+
+Query Graph: graph231.txt, Target Graph: human_2KS9.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 2452
+	Estimated Number Matchings: 2597
+	Error: 0.059135399673735725
+
+===========================
+
+Query Graph: graph232.txt, Target Graph: human_2KSA.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 2452
+	Estimated Number Matchings: 2528
+	Error: 0.03099510603588907
+
+===========================
+
+Query Graph: graph233.txt, Target Graph: human_2KSB.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 2452
+	Estimated Number Matchings: 2480
+	Error: 0.011419249592169658
+
+===========================
+
+Query Graph: graph59.txt, Target Graph: backbones_1NOD.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 2324
+	Estimated Number Matchings: 2319
+	Error: 0.0021514629948364886
+
+===========================
+
+Query Graph: graph65.txt, Target Graph: backbones_1QMH.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 3191
+	Estimated Number Matchings: 3167
+	Error: 0.007521153243497336
+
+===========================
+
+Query Graph: graph66.txt, Target Graph: backbones_1RA6.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 2695
+	Estimated Number Matchings: 2714
+	Error: 0.007050092764378479
+
+===========================
+
+Query Graph: graph67.txt, Target Graph: backbones_1RA7.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 2695
+	Estimated Number Matchings: 2793
+	Error: 0.03636363636363636
+
+===========================
+
+Query Graph: graph88.txt, Target Graph: backbones_2AXQ.grf
+# candidates algorithm: graphQL
+# processing order algorithm: graphQL
+	Actual Number Matchings: 2462
+	Estimated Number Matchings: 2401
+	Error: 0.024776604386677496
+
+===========================
+

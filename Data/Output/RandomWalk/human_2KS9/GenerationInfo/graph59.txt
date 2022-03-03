@@ -1,0 +1,36 @@
+C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\human_2KS9.grf 
+{4052=1, 4039=3, 4042=2, 4043=0, 4046=4}
+4052 4
+4039 16
+4042 10
+4043 12
+4046 4
+Graph Statistics: 
+Query: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\human_2KS9\Graphs\graph59.txt
+Target: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\human_2KS9.grf
+
+Distribution: (number_profiles:frequency) 
+Query Graph:
+	4:3
+	6:2
+Target Graph:
+	4:3380
+	5:64
+	6:15
+	8:392
+	9:22
+	10:100
+	12:1402
+	16:403
+	18:99
+
+Used candidate algorithm: graphQL
+Used processing order algorithm: graphQL
+Used backtracking algorithm: graphQL
+Number backtracking calls: 9331986
+
+Total number of possible matchings: 29385
+Number pruned from local pruning: 21079
+Number pruned from global pruning: 1646
+
+Cost of order found by graphQL: 2.29253783513894E14

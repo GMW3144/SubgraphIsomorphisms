@@ -1,0 +1,29 @@
+Graph Statistics: 
+Query: graph1.txt
+Target: ecoli_K12_2KHO.grf
+
+Distribution: (number_profiles:frequency) 
+Query Graph:
+	4:3
+	6:2
+Target Graph:
+	4:5463
+	5:23
+	6:14
+	8:240
+	9:97
+	10:136
+	12:2366
+	16:658
+	18:177
+
+Used candidate algorithm: graphQL
+Used processing order algorithm: graphQL
+Used backtracking algorithm: graphQL
+Number backtracking calls: 17910301
+
+Total number of possible matchings: 45870
+Number pruned from local pruning: 33264
+Number pruned from global pruning: 3926
+
+Cost of order found by graphQL: 5.664343886956915E14

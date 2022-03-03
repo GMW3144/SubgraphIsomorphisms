@@ -1,0 +1,29 @@
+Graph Statistics: 
+Query: graph1.txt
+Target: human_2KS9.grf
+
+Distribution: (number_profiles:frequency) 
+Query Graph:
+	4:3
+	6:2
+Target Graph:
+	4:3380
+	5:64
+	6:15
+	8:392
+	9:22
+	10:100
+	12:1402
+	16:403
+	18:99
+
+Used candidate algorithm: graphQL
+Used processing order algorithm: graphQL
+Used backtracking algorithm: graphQL
+Number backtracking calls: 9426838
+
+Total number of possible matchings: 29385
+Number pruned from local pruning: 20781
+Number pruned from global pruning: 2450
+
+Cost of order found by graphQL: 1.06429013122318E14

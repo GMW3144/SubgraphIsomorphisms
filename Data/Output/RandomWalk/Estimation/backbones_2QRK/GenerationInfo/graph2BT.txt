@@ -1,0 +1,29 @@
+Graph Statistics: 
+Query: graph2.txt
+Target: backbones_2QRK.grf
+
+Distribution: (number_profiles:frequency) 
+Query Graph:
+	4:3
+	6:2
+Target Graph:
+	4:3381
+	5:36
+	6:3
+	8:267
+	9:41
+	10:83
+	12:1452
+	16:398
+	18:116
+
+Used candidate algorithm: graphQL
+Used processing order algorithm: graphQL
+Used backtracking algorithm: graphQL
+Number backtracking calls: 8435387
+
+Total number of possible matchings: 28885
+Number pruned from local pruning: 20688
+Number pruned from global pruning: 2231
+
+Cost of order found by graphQL: 9.069690558468E13

@@ -1,0 +1,38 @@
+C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\ecoli_K12_2KHO.grf 
+{2818=0, 2834=2, 2823=4, 2814=3, 2815=1}
+2818 12
+2834 4
+2823 4
+2814 12
+2815 16
+Graph Statistics: 
+Query: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\ecoli_K12_2KHO\Graphs\graph59.txt
+Target: C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\ecoli_K12_2KHO.grf
+
+Distribution: (number_profiles:frequency) 
+Query Graph:
+	3:1
+	4:2
+	8:1
+	12:1
+Target Graph:
+	4:5463
+	5:23
+	6:14
+	8:240
+	9:97
+	10:136
+	12:2366
+	16:658
+	18:177
+
+Used candidate algorithm: graphQL
+Used processing order algorithm: graphQL
+Used backtracking algorithm: graphQL
+Number backtracking calls: 19113930
+
+Total number of possible matchings: 45870
+Number pruned from local pruning: 33318
+Number pruned from global pruning: 3170
+
+Cost of order found by graphQL: 1.0090720730429175E15
