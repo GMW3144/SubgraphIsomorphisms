@@ -3434,6 +3434,13 @@ public class SubgraphIsomorphism {
                                                     double tau, int maxEpoch, double zScore, boolean isInduced,
                                                     int maxNumQueryGraphs, int batchSize)
             throws IOException {
+        // if the processing order is dynamic ordering the break
+        if(algorithmNamePO.equals(DYNAMIC_ORDER)){
+            System.out.println("Cannot use "+dynamicOrder+" for estimations.");
+            System.out.println(noAlgorithmFound);
+            return;
+        }
+
         // create the target graph and random query graph
         File targetLocation = new File(targetLocationName);
         Graph<Vertex, DefaultEdge> target = createProteinGraph(new File(targetLocationName));
