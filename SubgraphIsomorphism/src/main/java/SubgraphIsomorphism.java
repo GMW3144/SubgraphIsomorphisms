@@ -3402,7 +3402,7 @@ public class SubgraphIsomorphism {
         Graph<Vertex, DefaultEdge> targetGraph = createProteinGraph(new File(targetLocation));
         calculateStatistics(targetGraph);
 
-        for(int i = 1; i<maxNumQueryGraphs; i++) {
+        for(int i = 1; i<=maxNumQueryGraphs; i++) {
             File outputGraphFolder = new File(outputFolderName + "Graphs\\");
             int numGraphs = 0;
             if (outputGraphFolder.list() != null) {
@@ -3436,7 +3436,7 @@ public class SubgraphIsomorphism {
             throws IOException {
         // if the processing order is dynamic ordering the break
         if(algorithmNamePO.equals(DYNAMIC_ORDER)){
-            System.out.println("Cannot use "+dynamicOrder+" for estimations.");
+            System.out.println("Cannot use "+DYNAMIC_ORDER+" for estimations.");
             System.out.println(noAlgorithmFound);
             return;
         }
@@ -3585,7 +3585,7 @@ public class SubgraphIsomorphism {
         }
         // basic information for isomorphism
         algorithmNameC = GRAPHQL;
-        algorithmNamePO = DYNAMIC_ORDER;
+        algorithmNamePO = GRAPHQL;
         algorithmNameB = GRAPHQL;
 
         // isomorphism
@@ -3602,9 +3602,12 @@ public class SubgraphIsomorphism {
 
         // create query graph
         int minSize = 5;
-        int maxSize = 5;
-        int maxNumQueries = 1000;
+        int maxSize = 25;
+        int maxNumQueries = 5;
         int batchSize = 100;
+
+        // keep track of time
+        Date startDate = new Date();
 
         // if the two graphs are known
         if(mainMethod.equals("KnownGraphs") && args.length == 5) {
@@ -3754,6 +3757,13 @@ public class SubgraphIsomorphism {
                     "ground truth folder, then give argument '_'."+
                     "\n\t If there is any errors in the isomorphism it will be recorded in the output file.");
         }
+
+        // finish time
+        Date endDate = new Date();
+
+        System.out.println();
+        System.out.println(mainMethod + " started at "+startDate);
+        System.out.println(mainMethod + " ended at "+ endDate);
 
     }
 }

@@ -1,0 +1,54 @@
+C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_1DLO.grf 
+{1952=13, 1953=10, 1925=5, 1926=6, 1927=7, 1928=1, 1930=2, 1934=4, 1937=3, 1939=0, 1940=8, 1941=9, 1942=17, 1943=18, 1944=14, 1945=12, 1946=11, 1947=15, 1950=16}
+1952 4
+1953 4
+1925 16
+1926 12
+1927 4
+1928 10
+1930 12
+1934 4
+1937 4
+1939 4
+1940 8
+1941 16
+1942 12
+1943 4
+1944 12
+1945 12
+1946 18
+1947 4
+1950 4
+Graph Statistics: 
+Query: graph75.txt
+Target: backbones_1DLO.grf
+
+Distribution: (number_profiles:frequency) 
+Query Graph:
+	4:10
+	6:2
+	8:3
+	9:1
+	12:2
+	16:1
+Target Graph:
+	4:5347
+	5:73
+	6:6
+	8:412
+	9:72
+	10:128
+	12:2274
+	16:627
+	18:175
+
+Used candidate algorithm: graphQL
+Used processing order algorithm: graphQL
+Used backtracking algorithm: graphQL
+Number backtracking calls: 1272810
+
+Total number of possible matchings: 173166
+Number pruned from local pruning: 137238
+Number pruned from global pruning: 34108
+
+Cost of order found by graphQL: 3.1254054833934288E29

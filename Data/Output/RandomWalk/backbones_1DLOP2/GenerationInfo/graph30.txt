@@ -1,0 +1,43 @@
+C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_1DLO.grf 
+{3410=0, 3411=3, 3398=1, 3399=2, 3400=4, 3416=5, 3417=6, 3433=7, 3418=8, 3435=9}
+3410 4
+3411 4
+3398 12
+3399 16
+3400 12
+3416 12
+3417 16
+3433 4
+3418 12
+3435 12
+Graph Statistics: 
+Query: graph30.txt
+Target: backbones_1DLO.grf
+
+Distribution: (number_profiles:frequency) 
+Query Graph:
+	4:4
+	6:3
+	8:1
+	12:2
+Target Graph:
+	4:5347
+	5:73
+	6:6
+	8:412
+	9:72
+	10:128
+	12:2274
+	16:627
+	18:175
+
+Used candidate algorithm: graphQL
+Used processing order algorithm: graphQL
+Used backtracking algorithm: graphQL
+Number backtracking calls: 792733
+
+Total number of possible matchings: 91140
+Number pruned from local pruning: 68167
+Number pruned from global pruning: 21028
+
+Cost of order found by graphQL: 1.3551518793070948E19

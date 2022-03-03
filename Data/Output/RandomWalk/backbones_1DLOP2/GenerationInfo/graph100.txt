@@ -1,0 +1,59 @@
+C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_1DLO.grf 
+{2016=9, 2017=0, 2018=2, 2019=1, 2020=3, 2021=6, 2022=5, 2023=17, 2024=12, 2025=23, 2026=16, 2027=10, 2028=11, 2029=4, 2030=8, 2031=7, 2000=21, 2032=22, 2001=20, 2002=19, 2012=18, 2013=13, 2014=14, 2015=15}
+2016 12
+2017 5
+2018 8
+2019 8
+2020 8
+2021 8
+2022 8
+2023 4
+2024 4
+2025 4
+2026 4
+2027 4
+2028 4
+2029 4
+2030 4
+2031 4
+2000 12
+2032 12
+2001 16
+2002 12
+2012 12
+2013 16
+2014 12
+2015 4
+Graph Statistics: 
+Query: graph100.txt
+Target: backbones_1DLO.grf
+
+Distribution: (number_profiles:frequency) 
+Query Graph:
+	4:12
+	5:1
+	6:2
+	8:5
+	12:3
+	16:1
+Target Graph:
+	4:5347
+	5:73
+	6:6
+	8:412
+	9:72
+	10:128
+	12:2274
+	16:627
+	18:175
+
+Used candidate algorithm: graphQL
+Used processing order algorithm: graphQL
+Used backtracking algorithm: graphQL
+Number backtracking calls: 43270
+
+Total number of possible matchings: 218736
+Number pruned from local pruning: 172529
+Number pruned from global pruning: 45186
+
+Cost of order found by graphQL: 3.0585611490226017E31

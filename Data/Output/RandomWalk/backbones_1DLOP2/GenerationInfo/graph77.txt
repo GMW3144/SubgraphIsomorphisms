@@ -1,0 +1,55 @@
+C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_1DLO.grf 
+{1505=5, 1538=13, 1507=8, 1508=10, 1509=11, 1541=17, 1510=14, 1511=15, 1522=9, 1492=4, 1524=12, 1493=6, 1525=16, 1494=7, 1526=18, 1495=2, 1527=19, 1497=1, 1499=3, 1501=0}
+1505 4
+1538 4
+1507 12
+1508 16
+1509 12
+1541 4
+1510 4
+1511 12
+1522 4
+1492 16
+1524 12
+1493 12
+1525 16
+1494 4
+1526 12
+1495 10
+1527 4
+1497 12
+1499 4
+1501 4
+Graph Statistics: 
+Query: graph77.txt
+Target: backbones_1DLO.grf
+
+Distribution: (number_profiles:frequency) 
+Query Graph:
+	3:1
+	4:10
+	6:1
+	8:2
+	9:1
+	12:5
+Target Graph:
+	4:5347
+	5:73
+	6:6
+	8:412
+	9:72
+	10:128
+	12:2274
+	16:627
+	18:175
+
+Used candidate algorithm: graphQL
+Used processing order algorithm: graphQL
+Used backtracking algorithm: graphQL
+Number backtracking calls: 723118
+
+Total number of possible matchings: 182280
+Number pruned from local pruning: 146878
+Number pruned from global pruning: 33080
+
+Cost of order found by graphQL: 1.720312061983638E34

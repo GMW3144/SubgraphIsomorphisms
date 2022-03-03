@@ -1,0 +1,46 @@
+Graph Statistics: 
+Query: graph4.txt
+Target: backbones_1DLO.grf
+
+Distribution: (number_profiles:frequency) 
+Query Graph:
+	4:3
+	6:2
+Target Graph:
+	4:5347
+	5:73
+	6:6
+	8:412
+	9:72
+	10:128
+	12:2274
+	16:627
+	18:175
+
+Used candidate algorithm: graphQL
+Used processing order algorithm: graphQL
+Used backtracking algorithm: graphQL
+Number backtracking calls: -1
+
+Total number of possible matchings: 45570
+Number pruned from local pruning: 36751
+Number pruned from global pruning: 4995
+
+Cost of order found by graphQL: 1.4541548347845E13
+
+Estimated Number Induce Matchings: 8032
+Outlier minimum value: 8723.125
+	tau: 100.0
+	maxEpoch: 1000
+	zAlpha: 1.96
+
+The total number of query graphs found: 1000
+DescriptiveStatistics:
+n: 1000
+min: 14.0
+max: 8032.0
+mean: 2556.2019999999998
+std dev: 2458.999399194974
+median: 1419.0
+skewness: 0.9102795244296477
+kurtosis: -0.7848092069711416
