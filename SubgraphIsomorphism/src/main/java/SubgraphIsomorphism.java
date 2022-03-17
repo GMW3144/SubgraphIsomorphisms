@@ -691,25 +691,6 @@ public class SubgraphIsomorphism {
     }
 
     /**
-     * Choose a random edge from the set, not weighted
-     * @param edges the set of edges
-     * @return a random edge from the set
-     */
-    public static DefaultEdge randomEdgeNotWeighted(Set<DefaultEdge> edges){
-        // get a random edge from the chosen
-        Random random = new Random();
-        // random index
-        int index = random.nextInt(edges.size());
-        // get corresponding edge
-        Iterator<DefaultEdge> edgeIter = edges.iterator();
-        DefaultEdge randomEdge = edgeIter.next();
-        for(int i = 0; i< index; i++){
-            randomEdge = edgeIter.next();
-        }
-        return randomEdge;
-    }
-
-    /**
      * Selects the first edge for the tree
      * @param weightedQuery the query with weighted vertices and edges
      * @return the next edge in the minimum spanning tree
@@ -1757,12 +1738,14 @@ public class SubgraphIsomorphism {
         }
 
         // possible edges we can remove
-        Set<DefaultEdge> possibleEdges = query.edgeSet();
-        while((avgD==null || avgDActual>=avgD.get(1))
-                && (dia==null || dia.get(0)>=diaActual)
-                && (den==null || denActual<=den.get(1))){
+        List<DefaultEdge> possibleEdges = new ArrayList<>(query.edgeSet());
+        while((avgD==null || avgDActual>=avgD.get(0))
+                && (dia==null || dia.get(1)>=diaActual)
+                && (den==null || denActual>=den.get(0))
+                && (possibleEdges.size()>0)){
             // pick a random edge
-            DefaultEdge e = randomEdgeNotWeighted(possibleEdges);
+            int eIndex = (int) Math.floor(Math.random()*possibleEdges.size());
+            DefaultEdge e = possibleEdges.get(eIndex);
             // get the source and target from edge
             Vertex s = query.getEdgeSource(e); Vertex t = query.getEdgeTarget(e);
 
@@ -1772,7 +1755,8 @@ public class SubgraphIsomorphism {
             if(!connectivityInspector.isConnected()){
                 query.addEdge(s, t);
                 // cant use this edge in the future
-                possibleEdges.remove(e);
+                possibleEdges.remove(eIndex);
+                continue;
             }
 
             // recalculate properties
@@ -3569,8 +3553,8 @@ public class SubgraphIsomorphism {
         while(!foundHardToFind && stats.getN()<maxNumQueryGraphs) {
             // construct a 100 random walks
             for (int i = 0; i < batchSize; i++) {
-                if(failedAttempts >= 1000){
-                    System.out.println("Could not find a graph with the given properties");
+                if(failedAttempts >= 100){
+                    System.out.println("Could not find a graph with the given properties\n================");
                     return;
                 }
 
@@ -3649,7 +3633,8 @@ public class SubgraphIsomorphism {
             }
         }
         if(!foundHardToFind){
-            System.out.println("Could not find any hard-to-find instances.  Returned graphs with maximum number of matchings");
+            System.out.println("Could not find any hard-to-find instances.  Returned graphs with maximum number of matchings\n" +
+                    "================================================\n");
 
             // iterate through the query graphs
             int maxValue = (int) stats.getMax();
@@ -3718,19 +3703,19 @@ public class SubgraphIsomorphism {
 
         // estimation
         double tau = 100;
-        int maxEpoch = 1000;
+        int maxEpoch = 100;
         double zScore = 1.96; // z-score for 95% confidence
 
         // create query graph
         int minSize = 5;
         int maxSize = 25;
-        int maxNumQueries = 5;
-        int batchSize = 100;
+        int maxNumQueries = 100;
+        int batchSize = 25;
 
         // properties of query graph
         List<Double> avgD = new ArrayList<>(List.of(1.0, 2.0));
-        List<Double> dia = new ArrayList<>(List.of(3.0, 3.0));
-        List<Double> den = new ArrayList<>(List.of(0.0, 0.5));
+        List<Double> dia = new ArrayList<>(List.of(5.0, 5.0));
+        List<Double> den = new ArrayList<>(List.of(0.0, 1.0));
 
         // keep track of time
         Date startDate = new Date();
@@ -3814,6 +3799,7 @@ public class SubgraphIsomorphism {
 
             // iterate through the different size of graphs (from min to max)
             for(int size = minSize; size<=maxSize; size++) {
+                System.out.println("Graph Size : "+size);
                 randomGenerationWithEstimate(targetLocation, outputFolderName, size, gamma, tau, maxEpoch, zScore, isInduced,
                         maxNumQueries, batchSize, avgD, dia, den);
             }
