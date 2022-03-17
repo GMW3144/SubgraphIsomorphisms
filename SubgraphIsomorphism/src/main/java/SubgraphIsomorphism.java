@@ -1718,7 +1718,8 @@ public class SubgraphIsomorphism {
 
     public static Graph<Vertex, DefaultEdge> randomGraphWithProperties(Graph<Vertex, DefaultEdge> target,
                                                                        Map<Vertex, Vertex> seen,
-                                                                       int n, int avgD, int dia, int den){
+                                                                       int n, List<Double> avgD, List<Double> dia,
+                                                                       List<Double> den){
         Graph<Vertex, DefaultEdge> query = randomGraph(target, n, seen);
 
         // keep track of average degree of graph
@@ -1743,23 +1744,23 @@ public class SubgraphIsomorphism {
         GraphMeasurer<Vertex, DefaultEdge> graphMeasurer = new GraphMeasurer<>(query);
         double diaActual = graphMeasurer.getDiameter();
         double denActual = 2*eSize/(vSize*(vSize-1)); // assuming it is undirected and simple
-        if((avgD!=-1 || avgD==avgDActual)
-                && (dia!=-1 || dia==diaActual)
-                && (den!=-1 || den==denActual)){
+        if((avgD==null || (avgD.get(0)<=avgDActual&&avgDActual<=avgD.get(1)))
+                && (dia==null || (dia.get(0)<=diaActual&&diaActual<=dia.get(1)))
+                && (den==null || (den.get(0)<=denActual&&denActual<=den.get(1)))){
             return query;
         }
         // check if changing edges will help
-        else if((avgD!=-1 || avgDActual<avgD)
-                || (dia!=-1 || dia<diaActual)
-                || (den!=-1 || denActual<den)){
+        else if((avgD!=null && avgDActual<avgD.get(0))
+                || (dia!=null && dia.get(1)<diaActual)
+                || (den!=null && denActual<den.get(0))){
             return null;
         }
 
         // possible edges we can remove
         Set<DefaultEdge> possibleEdges = query.edgeSet();
-        while((avgD!=-1 || avgDActual>avgD)
-                && (dia!=-1 || dia>diaActual)
-                && (den!=-1 || denActual>den)){
+        while((avgD==null || avgDActual>=avgD.get(1))
+                && (dia==null || dia.get(0)>=diaActual)
+                && (den==null || denActual<=den.get(1))){
             // pick a random edge
             DefaultEdge e = randomEdgeNotWeighted(possibleEdges);
             // get the source and target from edge
@@ -1783,9 +1784,9 @@ public class SubgraphIsomorphism {
 
             denActual = 2*eSize/(vSize*(vSize-1));
 
-            if((avgD!=-1 || avgD==avgDActual)
-                    && (dia!=-1 || dia==diaActual)
-                    && (den!=-1 || den==denActual)){
+            if((avgD==null || (avgD.get(0)<=avgDActual&&avgDActual<=avgD.get(1)))
+                    && (dia==null || (dia.get(0)<=diaActual&&diaActual<=dia.get(1)))
+                    && (den==null || (den.get(0)<=denActual&&denActual<=den.get(1)))){
                 return query;
             }
         }
@@ -3527,11 +3528,15 @@ public class SubgraphIsomorphism {
      * @param isInduced if the isomorphism is induced
      * @param maxNumQueryGraphs the maximum number of query graphs we will check
      * @param batchSize the sample of query graph batch size that we will check outliers
+     * @param avgD the range of average degree we want our graph to be
+     * @param dia the range of diameter we want our graph to be
+     * @param den the range of density we want our graph to be
      * @throws IOException read/write errors
      */
     public static void randomGenerationWithEstimate(String targetLocationName, String outputFolderName, int size, double gamma,
                                                     double tau, int maxEpoch, double zScore, boolean isInduced,
-                                                    int maxNumQueryGraphs, int batchSize)
+                                                    int maxNumQueryGraphs, int batchSize,
+                                                    List<Double> avgD, List<Double> dia, List<Double> den)
             throws IOException {
         // if the processing order is dynamic ordering the break
         if(algorithmNamePO.equals(DYNAMIC_ORDER)){
@@ -3558,15 +3563,29 @@ public class SubgraphIsomorphism {
 
         // keep track if we found hard-to-find instance
         boolean foundHardToFind = false;
+        // keep track of the failed attempts
+        int failedAttempts = 0;
 
         while(!foundHardToFind && stats.getN()<maxNumQueryGraphs) {
             // construct a 100 random walks
             for (int i = 0; i < batchSize; i++) {
+                if(failedAttempts >= 1000){
+                    System.out.println("Could not find a graph with the given properties");
+                    return;
+                }
+
                 // keep track of equivalencies, so know when see a target vertex again
                 Map<Vertex, Vertex> seen = new HashMap<>();
 
                 // create graph of given size from the target
-                Graph<Vertex, DefaultEdge> query = randomGraph(target, size, seen);
+                Graph<Vertex, DefaultEdge> query = randomGraphWithProperties(target, seen, size, avgD, dia, den);
+                if(query == null){
+                    failedAttempts++;
+                    i--;
+                    continue;
+                }
+                failedAttempts = 0;
+
                 // estimate the number of matchings
                 int estimate = wanderJoins(query, target, gamma, tau, maxEpoch, zScore, isInduced);
 
@@ -3618,7 +3637,10 @@ public class SubgraphIsomorphism {
                                 "\tmaxEpoch: " +maxEpoch+"\n"+
                                 "\tzAlpha: "+zScore+ "\n\n" +
                                 "The total number of query graphs found: "+stats.getN()+"\n" +
-                                stats.toString();
+                                stats.toString()+"\n\n"+
+                                "Average Diameter Range: "+avgD+"\n"+
+                                "Diameter Range: "+dia+"\n"+
+                                "Density Range: "+den+"\n";
 
                         writer.append(output);
                         writer.close();
@@ -3705,6 +3727,11 @@ public class SubgraphIsomorphism {
         int maxNumQueries = 5;
         int batchSize = 100;
 
+        // properties of query graph
+        List<Double> avgD = new ArrayList<>(List.of(1.0, 2.0));
+        List<Double> dia = new ArrayList<>(List.of(3.0, 3.0));
+        List<Double> den = new ArrayList<>(List.of(0.0, 0.5));
+
         // keep track of time
         Date startDate = new Date();
 
@@ -3788,7 +3815,7 @@ public class SubgraphIsomorphism {
             // iterate through the different size of graphs (from min to max)
             for(int size = minSize; size<=maxSize; size++) {
                 randomGenerationWithEstimate(targetLocation, outputFolderName, size, gamma, tau, maxEpoch, zScore, isInduced,
-                        maxNumQueries, batchSize);
+                        maxNumQueries, batchSize, avgD, dia, den);
             }
         }
 
