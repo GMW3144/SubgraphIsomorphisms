@@ -3500,6 +3500,28 @@ public class SubgraphIsomorphism {
         }
     }
 
+    public static void removeIsomorphicGraphs(Map<Graph<Vertex, DefaultEdge>, Integer> hardToFindGraphs, boolean isInduced,
+                                              double gamma){
+        Set<Graph<Vertex, DefaultEdge>> toRemove = new HashSet<>();
+        // combine query graphs that are equivalent
+        for (Graph<Vertex, DefaultEdge>q1: hardToFindGraphs.keySet()){
+            for(Graph<Vertex, DefaultEdge>q2: hardToFindGraphs.keySet()){
+                // same instance
+                if(q1==q2){
+                    continue;
+                }
+                if(matching(q1, q2, isInduced, gamma).size()>=1){
+                    if(!toRemove.contains(q1)) {
+                        toRemove.add(q2);
+                    }
+                }
+            }
+        }
+        for(Graph<Vertex, DefaultEdge>q:toRemove){
+            hardToFindGraphs.remove(q);
+        }
+    }
+
     /**
      * Finds hard-to-find query graph for the target graph by finding outliers based on the estimation from wander joins
      * @param targetLocationName the location of the target graph
@@ -3547,6 +3569,8 @@ public class SubgraphIsomorphism {
 
         // keep track if we found hard-to-find instance
         boolean foundHardToFind = false;
+        Map<Graph<Vertex, DefaultEdge>, Integer> hardToFindGraphs = new HashMap<>();
+        double outlier = 0;
         // keep track of the failed attempts
         int failedAttempts = 0;
 
@@ -3586,7 +3610,7 @@ public class SubgraphIsomorphism {
             double q3 = stats.getPercentile(75);
             double iqr = q3 - q1;
 
-            double outlier = q3 + 1.5 * iqr;
+            outlier = q3 + 1.5 * iqr;
 
             System.out.println(outlier +"\n");
             System.out.println(stats);
@@ -3596,49 +3620,20 @@ public class SubgraphIsomorphism {
             for (int estimate : estimationRandomWalk.keySet()) {
                 if (estimate > outlier) {
                     foundHardToFind = true;
+
                     // iterate through the query graphs
-                    for (Graph<Vertex, DefaultEdge> query : estimationRandomWalk.get(estimate)) {
-                        // store important information when using query graph
-                        File outputGraphFolder = new File(outputFolderName + "Graphs\\");
-                        int numGraphs = 0;
-                        if (outputGraphFolder.list() != null) {
-                            numGraphs = outputGraphFolder.list().length;
-                        }
-                        String queryName = "graph" + (numGraphs + 1) + ".txt";
-
-                        // write graph as hard to find
-                        writeGraph(query, outputFolderName + "Graphs\\", queryName);
-
-                        // write statistics
-                        File outputStatsFile = new File(outputFolderName + "GenerationInfo\\" + queryName);
-                        BufferedWriter writer = new BufferedWriter(new FileWriter(outputStatsFile));
-
-                        displayGraphStatistics(queryName, query, targetLocation.getName(), target, writer);
-
-                        String output = "\nEstimated Number "+induce+" Matchings: " + estimate+"\n" +
-                                "Outlier minimum value: " + outlier + "\n"+
-                                "\ttau: " +tau+ "\n"+
-                                "\tmaxEpoch: " +maxEpoch+"\n"+
-                                "\tzAlpha: "+zScore+ "\n\n" +
-                                "The total number of query graphs found: "+stats.getN()+"\n" +
-                                stats.toString()+"\n\n"+
-                                "Average Diameter Range: "+avgD+"\n"+
-                                "Diameter Range: "+dia+"\n"+
-                                "Density Range: "+den+"\n";
-
-                        writer.append(output);
-                        writer.close();
+                    for(Graph<Vertex, DefaultEdge> query : estimationRandomWalk.get(estimate)) {
+                        hardToFindGraphs.put(query, estimate);
                     }
                 }
             }
         }
-        if(!foundHardToFind){
-            System.out.println("Could not find any hard-to-find instances.  Returned graphs with maximum number of matchings\n" +
-                    "================================================\n");
-
+        if(foundHardToFind){
+            // remove isomorphic graphs
+            removeIsomorphicGraphs(hardToFindGraphs, isInduced, gamma);
             // iterate through the query graphs
-            int maxValue = (int) stats.getMax();
-            for (Graph<Vertex, DefaultEdge> query : estimationRandomWalk.get(maxValue)) {
+            for (Graph<Vertex, DefaultEdge> query : hardToFindGraphs.keySet()) {
+                int estimate = hardToFindGraphs.get(query);
                 // store important information when using query graph
                 File outputGraphFolder = new File(outputFolderName + "Graphs\\");
                 int numGraphs = 0;
@@ -3656,13 +3651,58 @@ public class SubgraphIsomorphism {
 
                 displayGraphStatistics(queryName, query, targetLocation.getName(), target, writer);
 
+                String output = "\nEstimated Number "+induce+" Matchings: " + estimate+"\n" +
+                        "Outlier minimum value: " + outlier + "\n"+
+                        "\ttau: " +tau+ "\n"+
+                        "\tmaxEpoch: " +maxEpoch+"\n"+
+                        "\tzAlpha: "+zScore+ "\n\n" +
+                        "The total number of query graphs found: "+stats.getN()+"\n" +
+                        stats.toString()+"\n\n"+
+                        "Average Diameter Range: "+avgD+"\n"+
+                        "Diameter Range: "+dia+"\n"+
+                        "Density Range: "+den+"\n";
+
+                writer.append(output);
+                writer.close();
+            }
+        }
+        else{
+            System.out.println("Could not find any hard-to-find instances.  Returned graphs with maximum number of matchings\n" +
+                    "================================================\n");
+
+            // iterate through the query graphs
+            int maxValue = (int) stats.getMax();
+            for (Graph<Vertex, DefaultEdge> query : estimationRandomWalk.get(maxValue)) {
+                hardToFindGraphs.put(query, maxValue);
+            }
+
+            // remove isomorphic graphs
+            removeIsomorphicGraphs(hardToFindGraphs, isInduced, gamma);
+
+            for(Graph<Vertex, DefaultEdge> query: hardToFindGraphs.keySet()){
+                // store important information when using query graph
+                File outputGraphFolder = new File(outputFolderName + "Graphs\\");
+                int numGraphs = 0;
+                if (outputGraphFolder.list() != null) {
+                    numGraphs = outputGraphFolder.list().length;
+                }
+                String queryName = "graph" + (numGraphs + 1) + ".txt";
+
+                // write graph as hard to find
+                writeGraph(query, outputFolderName + "Graphs\\", queryName);
+
+                // write statistics
+                File outputStatsFile = new File(outputFolderName + "GenerationInfo\\" + queryName);
+                BufferedWriter writer = new BufferedWriter(new FileWriter(outputStatsFile));
+
+                displayGraphStatistics(queryName, query, targetLocation.getName(), target, writer);
 
                 // calculate outliers:
                 double q1 = stats.getPercentile(25);
                 double q3 = stats.getPercentile(75);
                 double iqr = q3 - q1;
 
-                double outlier = q3 + 1.5 * iqr;
+                outlier = q3 + 1.5 * iqr;
 
                 String output = "\nEstimated Number "+induce+" Matchings: " + maxValue+"\n" +
                         "Outlier minimum value: " + outlier + "\n"+

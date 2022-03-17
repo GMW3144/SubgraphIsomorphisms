@@ -87,13 +87,6 @@
       <option name="presentableId" value="Default" />
       <updated>1642694530105</updated>
     </task>
-    <task id="LOCAL-00057" summary="First attempt at select vertex order">
-      <created>1644860456765</created>
-      <option name="number" value="00057" />
-      <option name="presentableId" value="LOCAL-00057" />
-      <option name="project" value="LOCAL" />
-      <updated>1644860456767</updated>
-    </task>
     <task id="LOCAL-00058" summary="Tested and added vertices to trees">
       <created>1644861245400</created>
       <option name="number" value="00058" />
@@ -430,7 +423,14 @@
       <option name="project" value="LOCAL" />
       <updated>1647531811875</updated>
     </task>
-    <option name="localTasksCounter" value="106" />
+    <task id="LOCAL-00106" summary="Fixed some small issues">
+      <created>1647535089216</created>
+      <option name="number" value="00106" />
+      <option name="presentableId" value="LOCAL-00106" />
+      <option name="project" value="LOCAL" />
+      <updated>1647535089216</updated>
+    </task>
+    <option name="localTasksCounter" value="107" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -482,7 +482,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Fixed ordering of extra edge (exists and doesn't exists)" />
     <MESSAGE value="Accounted if the isomorphism is induced" />
     <MESSAGE value="Added commenst and hard code zScore" />
     <MESSAGE value="Compared with previous isomorphisms" />
@@ -507,7 +506,8 @@
     <MESSAGE value="Performed random walks, fixed so create maxNumQuries instead of one less" />
     <MESSAGE value="First try at making graphs with given properties" />
     <MESSAGE value="Working with intervals instead of doubles" />
-    <option name="LAST_COMMIT_MESSAGE" value="Working with intervals instead of doubles" />
+    <MESSAGE value="Fixed some small issues" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed some small issues" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -559,7 +559,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>3724</line>
+          <line>3764</line>
           <option name="timeStamp" value="374" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -599,23 +599,23 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>3634</line>
+          <line>3668</line>
           <option name="timeStamp" value="450" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>3666</line>
+          <line>3706</line>
           <option name="timeStamp" value="451" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1762</line>
-          <option name="timeStamp" value="457" />
+          <line>3634</line>
+          <option name="timeStamp" value="459" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1770</line>
-          <option name="timeStamp" value="458" />
+          <line>3621</line>
+          <option name="timeStamp" value="460" />
         </line-breakpoint>
         <breakpoint enabled="true" type="java-exception">
           <properties class="java.lang.NullPointerException" package="java.lang" />
