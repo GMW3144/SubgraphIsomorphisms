@@ -2,6 +2,8 @@
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.jgrapht.*;
+import org.jgrapht.alg.connectivity.ConnectivityInspector;
+import org.jgrapht.alg.shortestpath.GraphMeasurer;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.alg.interfaces.MatchingAlgorithm;
 import org.jgrapht.graph.*;
@@ -682,6 +684,25 @@ public class SubgraphIsomorphism {
         // get corresponding edge
         Iterator<DefaultWeightedEdge> edgeIter = edges.iterator();
         DefaultWeightedEdge randomEdge = edgeIter.next();
+        for(int i = 0; i< index; i++){
+            randomEdge = edgeIter.next();
+        }
+        return randomEdge;
+    }
+
+    /**
+     * Choose a random edge from the set, not weighted
+     * @param edges the set of edges
+     * @return a random edge from the set
+     */
+    public static DefaultEdge randomEdgeNotWeighted(Set<DefaultEdge> edges){
+        // get a random edge from the chosen
+        Random random = new Random();
+        // random index
+        int index = random.nextInt(edges.size());
+        // get corresponding edge
+        Iterator<DefaultEdge> edgeIter = edges.iterator();
+        DefaultEdge randomEdge = edgeIter.next();
         for(int i = 0; i< index; i++){
             randomEdge = edgeIter.next();
         }
@@ -1638,7 +1659,7 @@ public class SubgraphIsomorphism {
         int currentId = 0;
         // get the starting vertex, and create a copy
         Vertex lastVertex = iter.next(); Vertex lastVertexCopy = copyVertex(lastVertex, currentId);
-        seen.put(lastVertex, lastVertexCopy);
+        seen.put(lastVertex, lastVertexCopy); // target, query
 
         // the maximum amount of vertices will check
         int maxIteration = 100000;
@@ -1690,7 +1711,85 @@ public class SubgraphIsomorphism {
             lastVertexCopy = nextVertexCopy;
         }
 
+
+
         return queryGraph;
+    }
+
+    public static Graph<Vertex, DefaultEdge> randomGraphWithProperties(Graph<Vertex, DefaultEdge> target,
+                                                                       Map<Vertex, Vertex> seen,
+                                                                       int n, int avgD, int dia, int den){
+        Graph<Vertex, DefaultEdge> query = randomGraph(target, n, seen);
+
+        // keep track of average degree of graph
+        double avgDActual = 0;
+
+        // add all the edges within the target graph to the query graph
+        for(Vertex u: seen.keySet()){
+            List<Vertex> possibleNeighbors = Graphs.neighborListOf(target, u);
+            possibleNeighbors.retainAll(seen.keySet());
+            avgDActual+=possibleNeighbors.size();
+            for(Vertex v: possibleNeighbors){
+                if(!query.containsEdge(seen.get(u), seen.get(v))){
+                    query.addEdge(seen.get(u), seen.get(v));
+                }
+            }
+        }
+
+        // check if matches properties
+        double vSize = query.vertexSet().size();
+        double eSize = query.edgeSet().size();
+        avgDActual = avgDActual/vSize;
+        GraphMeasurer<Vertex, DefaultEdge> graphMeasurer = new GraphMeasurer<>(query);
+        double diaActual = graphMeasurer.getDiameter();
+        double denActual = 2*eSize/(vSize*(vSize-1)); // assuming it is undirected and simple
+        if((avgD!=-1 || avgD==avgDActual)
+                && (dia!=-1 || dia==diaActual)
+                && (den!=-1 || den==denActual)){
+            return query;
+        }
+        // check if changing edges will help
+        else if((avgD!=-1 || avgDActual<avgD)
+                || (dia!=-1 || dia<diaActual)
+                || (den!=-1 || denActual<den)){
+            return null;
+        }
+
+        // possible edges we can remove
+        Set<DefaultEdge> possibleEdges = query.edgeSet();
+        while((avgD!=-1 || avgDActual>avgD)
+                && (dia!=-1 || dia>diaActual)
+                && (den!=-1 || denActual>den)){
+            // pick a random edge
+            DefaultEdge e = randomEdgeNotWeighted(possibleEdges);
+            // get the source and target from edge
+            Vertex s = query.getEdgeSource(e); Vertex t = query.getEdgeTarget(e);
+
+            // check if connected when remove edge
+            query.removeEdge(e);
+            ConnectivityInspector<Vertex,DefaultEdge> connectivityInspector = new ConnectivityInspector<>(query);
+            if(!connectivityInspector.isConnected()){
+                query.addEdge(s, t);
+                // cant use this edge in the future
+                possibleEdges.remove(e);
+            }
+
+            // recalculate properties
+            eSize-=1;
+            avgDActual = (avgDActual*vSize-2)/vSize;
+
+            graphMeasurer = new GraphMeasurer<>(query);
+            diaActual = graphMeasurer.getDiameter();
+
+            denActual = 2*eSize/(vSize*(vSize-1));
+
+            if((avgD!=-1 || avgD==avgDActual)
+                    && (dia!=-1 || dia==diaActual)
+                    && (den!=-1 || den==denActual)){
+                return query;
+            }
+        }
+        return null;
     }
 
     /**
