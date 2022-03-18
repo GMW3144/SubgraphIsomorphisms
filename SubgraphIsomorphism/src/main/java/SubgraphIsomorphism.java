@@ -1,4 +1,5 @@
 // Graph Implementation
+import org.apache.commons.math3.geometry.spherical.twod.Edge;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.jgrapht.*;
@@ -1056,6 +1057,82 @@ public class SubgraphIsomorphism {
         }
 
         return SEQq;
+    }
+
+    public static DirectedAcyclicGraph<Vertex, DefaultEdge> constructDAG(Graph<Vertex, Edge> query,
+                                                                  Map<Vertex, Set<Vertex>> candidates, List<Vertex> order){
+        DirectedAcyclicGraph<Vertex, DefaultEdge> qD = new DirectedAcyclicGraph<>(DefaultEdge.class);
+        Iterator<Vertex> vertexIterator = query.vertexSet().iterator();
+
+        Map<Double, Set<Vertex>> vertexWeights = new HashMap<>();
+
+        Vertex u = vertexIterator.next();
+        double candidateSize =  candidates.get(u).size();
+        double degreeSize = query.degreeOf(u);
+        double size = candidateSize/degreeSize;
+
+        vertexWeights.put(size, new HashSet<>());
+        vertexWeights.get(size).add(u);
+        double minimum = size;
+
+        // find the minimum size which is the root
+        while(vertexIterator.hasNext()){
+            u = vertexIterator.next();
+
+            candidateSize =  candidates.get(u).size();
+            degreeSize = query.degreeOf(u);
+            size = candidateSize/degreeSize;
+
+            if(!vertexWeights.containsKey(size)){
+                vertexWeights.put(size, new HashSet<>());
+            }
+            vertexWeights.get(size).add(u);
+
+            if(size<minimum){
+                minimum = size;
+            }
+        }
+
+        // root is randomly chosen from smalles sizes
+        Vertex root = randomVertex(vertexWeights.get(minimum));
+        qD.addVertex(root);
+        order.add(root);
+
+        // keep track of the vertices to add
+        List<Vertex> layerLast = new ArrayList<>();
+        layerLast.add(root);
+
+        while(layerLast.size()!=0){
+            List<Vertex> layerNext = new ArrayList<>();
+            // sort last layer by degree descending
+            layerLast.sort(
+                    (Vertex v1, Vertex v2) -> Integer.compare(query.degreeOf(v2), query.degreeOf(v1))
+            );
+            // sort last layer by candidate set ascending
+            layerLast.sort(
+                    (Vertex v1, Vertex v2) -> Integer.compare(candidates.get(v1).size(), candidates.get(v2).size())
+            );
+
+            // iterate through the vertices
+            for(Vertex v: layerLast){
+                // add to be next to be checked
+                layerNext.addAll(Graphs.neighborListOf(query, v));
+                layerNext.removeAll(qD.vertexSet());
+
+                for(Vertex vP: Graphs.neighborListOf(query, v)){
+                    if(!qD.containsVertex(vP)){
+                        qD.addVertex(vP);
+                        order.add(vP);
+                    }
+                    if(!qD.containsEdge(v, vP)){
+                        qD.addEdge(vP, v);
+                    }
+                }
+                layerLast=layerNext;
+            }
+        }
+
+        return qD;
     }
 
     /**
