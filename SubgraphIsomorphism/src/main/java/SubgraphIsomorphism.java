@@ -905,6 +905,7 @@ public class SubgraphIsomorphism {
         return randomEdge(minimumEdges);
     }
 
+
     /**
      * Build the QI-Sequence (spanning tree) with a given order
      * @param query the query graph
@@ -1729,12 +1730,6 @@ public class SubgraphIsomorphism {
                 && (dia==null || (dia.get(0)<=diaActual&&diaActual<=dia.get(1)))
                 && (den==null || (den.get(0)<=denActual&&denActual<=den.get(1)))){
             return query;
-        }
-        // check if changing edges will help
-        else if((avgD!=null && avgDActual<avgD.get(0))
-                || (dia!=null && dia.get(1)<diaActual)
-                || (den!=null && denActual<den.get(0))){
-            return null;
         }
 
         // possible edges we can remove
@@ -3500,17 +3495,21 @@ public class SubgraphIsomorphism {
         }
     }
 
-    public static void removeIsomorphicGraphs(Map<Graph<Vertex, DefaultEdge>, Integer> hardToFindGraphs, boolean isInduced,
-                                              double gamma){
+    /**
+     * Check a set of graphs and get rid of any isomorphic graphs that are not the same instance.  We are checking
+     * isomorphism so it is induced and the gamma value will just be set to 0.5
+     * @param graphs the set of graphs
+     */
+    public static void removeIsomorphicGraphs(Map<Graph<Vertex, DefaultEdge>, Integer> graphs){
         Set<Graph<Vertex, DefaultEdge>> toRemove = new HashSet<>();
         // combine query graphs that are equivalent
-        for (Graph<Vertex, DefaultEdge>q1: hardToFindGraphs.keySet()){
-            for(Graph<Vertex, DefaultEdge>q2: hardToFindGraphs.keySet()){
+        for (Graph<Vertex, DefaultEdge>q1: graphs.keySet()){
+            for(Graph<Vertex, DefaultEdge>q2: graphs.keySet()){
                 // same instance
                 if(q1==q2){
                     continue;
                 }
-                if(matching(q1, q2, isInduced, gamma).size()>=1){
+                if(matching(q1, q2, true, 0.5).size()>=1){
                     if(!toRemove.contains(q1)) {
                         toRemove.add(q2);
                     }
@@ -3518,7 +3517,7 @@ public class SubgraphIsomorphism {
             }
         }
         for(Graph<Vertex, DefaultEdge>q:toRemove){
-            hardToFindGraphs.remove(q);
+            graphs.remove(q);
         }
     }
 
@@ -3630,7 +3629,7 @@ public class SubgraphIsomorphism {
         }
         if(foundHardToFind){
             // remove isomorphic graphs
-            removeIsomorphicGraphs(hardToFindGraphs, isInduced, gamma);
+            removeIsomorphicGraphs(hardToFindGraphs);
             // iterate through the query graphs
             for (Graph<Vertex, DefaultEdge> query : hardToFindGraphs.keySet()) {
                 int estimate = hardToFindGraphs.get(query);
@@ -3677,7 +3676,7 @@ public class SubgraphIsomorphism {
             }
 
             // remove isomorphic graphs
-            removeIsomorphicGraphs(hardToFindGraphs, isInduced, gamma);
+            removeIsomorphicGraphs(hardToFindGraphs);
 
             for(Graph<Vertex, DefaultEdge> query: hardToFindGraphs.keySet()){
                 // store important information when using query graph
