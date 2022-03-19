@@ -37,6 +37,7 @@ public class SubgraphIsomorphism {
     private static final String GRAPHQL = "graphQL";
     private static final String QUICKSI = "quickSI";
     private static final String DYNAMIC_ORDER = "dynamic order";
+    private static final String DAF = "DAF";
     // creating graphs
     private static final String MERGE = "merge";
     private static final String EDGE = "edge";
@@ -50,6 +51,7 @@ public class SubgraphIsomorphism {
             "\t "+GRAPHQL+": uses the GraphQL algorithm.\n" +
             "\t "+QUICKSI+": uses the QuickSI algorithm. (Note: cannot be used for processing candidates)\n"+
             "\t "+DYNAMIC_ORDER+": uses the dynamic ordering for process order. (Note: cannot only be used for ordering\n" +
+            "\t "+DAF+": uses the DAF algorithm. (Note: equivalent to "+GROUNDTRUTH+" for processing candidates)"+
             "\t\tand cannot use QUICKSI isomorphism)\n";
     // error message if didn't find connection algorithm
     private static final String noConnectionMethodFound = "Connection type of graphs specified is not valid.\n " +
@@ -72,6 +74,7 @@ public class SubgraphIsomorphism {
 
     // keep track of axillary structures
     private static QISequence SEQq; //QI-Sequence
+    private static DirectedAcyclicGraph<Vertex, DefaultEdge> DAG; // directed acyclic graph
     private static List<Vertex> dynamicOrder = new ArrayList<>(); // keep track of elements added with dynamic programing
 
     /**
@@ -1059,7 +1062,14 @@ public class SubgraphIsomorphism {
         return SEQq;
     }
 
-    public static DirectedAcyclicGraph<Vertex, DefaultEdge> constructDAG(Graph<Vertex, Edge> query,
+    /**
+     * Constructs the DAG and order for a query graph
+     * @param query the query graph
+     * @param candidates the candidates
+     * @param order the processing order, should be empty
+     * @return the DAG of the query graph
+     */
+    public static DirectedAcyclicGraph<Vertex, DefaultEdge> constructDAG(Graph<Vertex, DefaultEdge> query,
                                                                   Map<Vertex, Set<Vertex>> candidates, List<Vertex> order){
         DirectedAcyclicGraph<Vertex, DefaultEdge> qD = new DirectedAcyclicGraph<>(DefaultEdge.class);
         Iterator<Vertex> vertexIterator = query.vertexSet().iterator();
@@ -1096,11 +1106,9 @@ public class SubgraphIsomorphism {
         // root is randomly chosen from smalles sizes
         Vertex root = randomVertex(vertexWeights.get(minimum));
         qD.addVertex(root);
-        order.add(root);
 
         // keep track of the vertices to add
-        List<Vertex> layerLast = new ArrayList<>();
-        layerLast.add(root);
+        List<Vertex> layerLast = new ArrayList<>(); layerLast.add(root);
 
         while(layerLast.size()!=0){
             List<Vertex> layerNext = new ArrayList<>();
@@ -1117,19 +1125,19 @@ public class SubgraphIsomorphism {
             for(Vertex v: layerLast){
                 // add to be next to be checked
                 layerNext.addAll(Graphs.neighborListOf(query, v));
-                layerNext.removeAll(qD.vertexSet());
+                layerNext.removeAll(order);
 
                 for(Vertex vP: Graphs.neighborListOf(query, v)){
                     if(!qD.containsVertex(vP)){
                         qD.addVertex(vP);
-                        order.add(vP);
                     }
                     if(!qD.containsEdge(v, vP)){
                         qD.addEdge(vP, v);
                     }
                 }
-                layerLast=layerNext;
             }
+            order.addAll(layerLast);
+            layerLast=layerNext;
         }
 
         return qD;
@@ -1477,6 +1485,7 @@ public class SubgraphIsomorphism {
         switch (algorithmNameC) {
             // using ground truth
             case GROUNDTRUTH -> candidates = groundTruthComputeCandidates(query, target);
+            case DAF -> candidates = groundTruthComputeCandidates(query, target);
             // using GraphQL
             case GRAPHQL -> candidates = graphQLComputeCandidates(query, target);
             // did not find a valid algorithm
@@ -1500,12 +1509,13 @@ public class SubgraphIsomorphism {
     public static ArrayList<Vertex> computeProcessingOrder(Graph<Vertex, DefaultEdge> query,
                                                            Graph<Vertex, DefaultEdge> target,
                                                            Map<Vertex, Set<Vertex>> candidates, double gamma){
-        ArrayList<Vertex> order;
+        ArrayList<Vertex> order = new ArrayList<>();
         switch (algorithmNamePO) {
             case GROUNDTRUTH -> order = groundTruthComputeProcessingOrder(query, candidates);
             case GRAPHQL -> order = graphQLComputeProcessingOrder(query, candidates, gamma);
             case QUICKSI -> order = quickSIComputeProcessingOrder(target, query, candidates);
             case DYNAMIC_ORDER -> order = new ArrayList<>(candidates.keySet());
+            case DAF -> DAG = constructDAG(query, candidates, order);
             default -> {
                 System.out.println("Processing Order Algorithm:");
                 System.out.println(noAlgorithmFound);
@@ -3806,8 +3816,8 @@ public class SubgraphIsomorphism {
             mainMethod = args[0];
         }
         // basic information for isomorphism
-        algorithmNameC = GRAPHQL;
-        algorithmNamePO = GRAPHQL;
+        algorithmNameC = DAF;
+        algorithmNamePO = DAF;
         algorithmNameB = GRAPHQL;
 
         // isomorphism
