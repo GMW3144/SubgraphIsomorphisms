@@ -1143,6 +1143,42 @@ public class SubgraphIsomorphism {
         return qD;
     }
 
+    public static DirectedAcyclicGraph<Vertex, DefaultEdge> constructDAGWithOrder(Graph<Vertex, DefaultEdge> query,
+                                                                                  List<Vertex> order){
+        DirectedAcyclicGraph<Vertex, DefaultEdge> qD = new DirectedAcyclicGraph<>(DefaultEdge.class);
+        // store the vertices we have seen
+        Set<Vertex> seen = new HashSet<>();
+
+        // add the root
+        Vertex root = order.get(0);
+        qD.addVertex(root);
+
+        // iterate through the processing order
+        for(int i =0; i<order.size(); i++){
+            Vertex u = order.get(i);
+            seen.add(u);
+
+            // get the neighbors of the nodes
+            List<Vertex> nu = Graphs.neighborListOf(query, u);
+            // sort by time appear in processing order
+            nu.sort((Vertex v1, Vertex v2) -> Integer.compare(order.indexOf(v1), order.indexOf(v2)));
+
+            // iterate through neighbors in that order
+            for (Vertex uP: nu){
+                if(query.containsEdge(u, uP) && !seen.contains(uP)){
+                    if(!qD.containsVertex(uP)){
+                        qD.addVertex(uP);
+                    }
+                    if(!qD.containsEdge(u, uP)){
+                        qD.addEdge(uP, u);
+                    }
+                }
+            }
+        }
+
+        return qD;
+    }
+
     /**
      * Finds the processing order with QuickSI.  First build the QI-sequence then return the corresponding vertices
      * to the vertices within the tree.
@@ -1560,6 +1596,11 @@ public class SubgraphIsomorphism {
                 SEQq = buildSpanningTreeWithOrder(query, order);
             }
             subgraphIsomorphism(query, target, candidates, order, 0, new HashMap<>(), results, isInduced);
+        }
+        else if(algorithmNameB.equals(DAF)){
+            if(!algorithmNamePO.equals(DAF)){
+                DAG = constructDAGWithOrder(query, order);
+            }
         }
         else{
             System.out.println("Backtracking Algorithm:");
@@ -3816,9 +3857,9 @@ public class SubgraphIsomorphism {
             mainMethod = args[0];
         }
         // basic information for isomorphism
-        algorithmNameC = DAF;
-        algorithmNamePO = DAF;
-        algorithmNameB = GRAPHQL;
+        algorithmNameC = GRAPHQL;
+        algorithmNamePO = GRAPHQL;
+        algorithmNameB = DAF;
 
         // isomorphism
         final boolean isInduced = true;
