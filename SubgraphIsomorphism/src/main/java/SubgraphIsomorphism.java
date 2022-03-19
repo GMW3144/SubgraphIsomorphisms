@@ -1143,6 +1143,12 @@ public class SubgraphIsomorphism {
         return qD;
     }
 
+    /**
+     * Create a DAG of the query graph given a processing order
+     * @param query the query graph
+     * @param order the processing order
+     * @return a DAG of the query graph
+     */
     public static DirectedAcyclicGraph<Vertex, DefaultEdge> constructDAGWithOrder(Graph<Vertex, DefaultEdge> query,
                                                                                   List<Vertex> order){
         DirectedAcyclicGraph<Vertex, DefaultEdge> qD = new DirectedAcyclicGraph<>(DefaultEdge.class);
@@ -1826,6 +1832,16 @@ public class SubgraphIsomorphism {
         return queryGraph;
     }
 
+    /**
+     * Construct a random query graph which is a subgraph of given target graph with given properties
+     * @param target the target graph
+     * @param seen keep track of the mapping from query to target vertices
+     * @param n the number of vertices in query graph
+     * @param avgD the range of average degree of query graph
+     * @param dia the range of diameter of query graph
+     * @param den the range of density of query graph
+     * @return the query graph
+     */
     public static Graph<Vertex, DefaultEdge> randomGraphWithProperties(Graph<Vertex, DefaultEdge> target,
                                                                        Map<Vertex, Vertex> seen,
                                                                        int n, List<Double> avgD, List<Double> dia,
