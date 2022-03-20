@@ -31,6 +31,12 @@ public class SubgraphIsomorphism {
     private static String algorithmNameC = ""; // algorithm in use for candidates
     private static String algorithmNamePO = ""; // algorithm in use for processing order
     private static String algorithmNameB = ""; // algorithm in use for backtracking
+    // failing sets
+    private static int fullSolutions = 0,
+            partialSolutions = 0,
+            emptyCandidates = 0,
+            conflicts = 0;
+
 
     // algorithms
     // isomorphisms
@@ -1134,8 +1140,8 @@ public class SubgraphIsomorphism {
                     if(!qD.containsVertex(vP)){
                         qD.addVertex(vP);
                     }
-                    if(!qD.containsEdge(v, vP)){
-                        qD.addEdge(vP, v);
+                    if(!qD.containsEdge(vP, v)){
+                        qD.addEdge(v, vP);
                     }
                 }
             }
@@ -4138,7 +4144,7 @@ public class SubgraphIsomorphism {
         }
         // basic information for isomorphism
         algorithmNameC = GRAPHQL;
-        algorithmNamePO = GRAPHQL;
+        algorithmNamePO = DAF;
         algorithmNameB = DAF;
 
         // isomorphism
