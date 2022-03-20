@@ -15,6 +15,7 @@ import org.jgrapht.alg.matching.HopcroftKarpMaximumCardinalityBipartiteMatching;
 
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
+import javax.xml.stream.events.EndDocument;
 import java.io.*;
 import java.util.*;
 
@@ -75,6 +76,7 @@ public class SubgraphIsomorphism {
     // keep track of axillary structures
     private static QISequence SEQq; //QI-Sequence
     private static DirectedAcyclicGraph<Vertex, DefaultEdge> queryDAG; // directed acyclic graph
+    private static Graph<Vertex, LabeledEdge> CS; // the CS structure
     private static List<Vertex> dynamicOrder = new ArrayList<>(); // keep track of elements added with dynamic programing
 
     /**
@@ -1184,7 +1186,14 @@ public class SubgraphIsomorphism {
         return qD;
     }
 
-    public static void refineCS(Graph<Vertex, DefaultEdge> query, Graph<Vertex, DefaultEdge> target, Map<Vertex, Set<Vertex>> candidates){
+    /**
+     * Refine the candidate set for the CS structure
+     * @param query the query graph
+     * @param target the target graph
+     * @param candidates the candidate set
+     */
+    public static void refineCS(Graph<Vertex, DefaultEdge> query, Graph<Vertex, DefaultEdge> target,
+                                Map<Vertex, Set<Vertex>> candidates){
         boolean isRefined = true;
         int count = 0;
 
@@ -1252,6 +1261,38 @@ public class SubgraphIsomorphism {
                             }
 
                         }
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * Construct the CS structure
+     * @param target the target graph
+     * @param candidates the candidates
+     */
+    public static void materalizeCS(Graph<Vertex, DefaultEdge> target, Map<Vertex, Set<Vertex>> candidates){
+        // CS is initially a graph with multiple edges between two vertices
+        CS = new Multigraph<>(LabeledEdge.class);
+        // iterate through the vertices
+        for(Vertex u: queryDAG.vertexSet()){
+            // and their parents
+            for(Vertex uP: Graphs.predecessorListOf(queryDAG, u)){
+                // iterate through their candidates
+                for(Vertex vP : candidates.get(uP)){
+                    for(Vertex v: candidates.get(u)){
+                        // add new edge if there exists one within target graph
+                        if(target.containsEdge(v, vP)){
+                            if(!CS.containsVertex(v)){
+                                CS.addVertex(v);
+                            }
+                            if(!CS.containsVertex(vP)){
+                                CS.addVertex(vP);
+                            }
+                        }
+
+                        CS.addEdge(v, vP, new LabeledEdge(uP+"-"+u));
                     }
                 }
             }
@@ -1680,6 +1721,7 @@ public class SubgraphIsomorphism {
             if(!algorithmNamePO.equals(DAF)){
                 queryDAG = constructDAGWithOrder(query, order);
                 refineCS(query, target, candidates);
+                materalizeCS(target, candidates);
             }
         }
         else{
