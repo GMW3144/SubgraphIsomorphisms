@@ -1234,6 +1234,7 @@ public class SubgraphIsomorphism {
                 for(Vertex u: query.vertexSet()){
                     if(processed.containsAll(toCheck.get(u))){
                         processed.add(u);
+                        Set<Vertex> toRemove = new HashSet<>();
                         for(Vertex v: candidates.get(u)){
                             // create a new graph, which will be the bipartite graph
                             Graph<Vertex, DefaultEdge> B = new SimpleGraph<>(DefaultEdge.class);
@@ -1279,11 +1280,12 @@ public class SubgraphIsomorphism {
 
                             // matching does not contain all query vertices
                             if(bipartiteMatching.getEdges().size() != uPVertices.size()){
-                                candidates.get(u).remove(v);
+                                toRemove.add(v);
                                 isRefined = true;
                             }
 
                         }
+                        candidates.get(u).removeAll(toRemove);
                     }
                 }
             }
