@@ -1176,8 +1176,8 @@ public class SubgraphIsomorphism {
                     if(!qD.containsVertex(uP)){
                         qD.addVertex(uP);
                     }
-                    if(!qD.containsEdge(u, uP)){
-                        qD.addEdge(uP, u);
+                    if(!qD.containsEdge(uP, u)){
+                        qD.addEdge(u, uP);
                     }
                 }
             }
@@ -1214,10 +1214,10 @@ public class SubgraphIsomorphism {
             // add the parents/children
             for(Vertex u: queryDAG.vertexSet()){
                 if(reverse){
-                    toCheck.get(u).addAll(Graphs.successorListOf(queryDAG, u));
+                    toCheck.get(u).addAll(Graphs.predecessorListOf(queryDAG, u));
                 }
                 else{
-                    toCheck.get(u).addAll(Graphs.predecessorListOf(queryDAG, u));
+                    toCheck.get(u).addAll(Graphs.successorListOf(queryDAG, u));
                 }
             }
 
@@ -1242,7 +1242,7 @@ public class SubgraphIsomorphism {
                             for(Vertex uP: toCheck.get(u)){
                                 B.addVertex(uP);
                                 uPVertices.add(uP);
-                                for(Vertex vP: Graphs.neighborListOf(query,v)){
+                                for(Vertex vP: Graphs.neighborListOf(target,v)){
                                     if(candidates.get(uP).contains(vP)){
                                         B.addEdge(uP, vP);
                                     }
@@ -1290,9 +1290,9 @@ public class SubgraphIsomorphism {
                             if(!CS.containsVertex(vP)){
                                 CS.addVertex(vP);
                             }
-                        }
 
-                        CS.addEdge(v, vP, new LabeledEdge(uP+"-"+u));
+                            CS.addEdge(v, vP, new LabeledEdge(uP+"-"+u));
+                        }
                     }
                 }
             }

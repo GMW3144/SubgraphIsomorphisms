@@ -7,6 +7,7 @@
     <list default="true" id="6d0b8e23-97b2-4b58-991e-87f7b486f404" name="Default Changelist" comment="used different minimum supports (part 2)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/SubgraphIsomorphism.class" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/SubgraphIsomorphism.class" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,13 +86,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1642694530105</updated>
-    </task>
-    <task id="LOCAL-00068" summary="Added clarifying statement for noAlgorithmFound error message">
-      <created>1644947060492</created>
-      <option name="number" value="00068" />
-      <option name="presentableId" value="LOCAL-00068" />
-      <option name="project" value="LOCAL" />
-      <updated>1644947060492</updated>
     </task>
     <task id="LOCAL-00069" summary="Fixed testing function and quickSI">
       <created>1644948828581</created>
@@ -429,7 +423,14 @@
       <option name="project" value="LOCAL" />
       <updated>1647796944936</updated>
     </task>
-    <option name="localTasksCounter" value="117" />
+    <task id="LOCAL-00117" summary="Attempt MaterializeCS">
+      <created>1647797779418</created>
+      <option name="number" value="00117" />
+      <option name="presentableId" value="LOCAL-00117" />
+      <option name="project" value="LOCAL" />
+      <updated>1647797779418</updated>
+    </task>
+    <option name="localTasksCounter" value="118" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -481,7 +482,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="First attempt at dynamic programming" />
     <MESSAGE value="Made it so not copying the same array list each time" />
     <MESSAGE value="Create a copy of the candidates to keep track of the local candidates recursively" />
     <MESSAGE value="Only look at the last vertex added, since already checked for previous orders" />
@@ -506,7 +506,8 @@
     <MESSAGE value="Added comments" />
     <MESSAGE value="Attempt to refineCS" />
     <MESSAGE value="Created an edge class with a label" />
-    <option name="LAST_COMMIT_MESSAGE" value="Created an edge class with a label" />
+    <MESSAGE value="Attempt MaterializeCS" />
+    <option name="LAST_COMMIT_MESSAGE" value="Attempt MaterializeCS" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -610,6 +611,16 @@
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
           <line>1721</line>
           <option name="timeStamp" value="474" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
+          <line>1185</line>
+          <option name="timeStamp" value="475" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
+          <line>1276</line>
+          <option name="timeStamp" value="483" />
         </line-breakpoint>
         <breakpoint enabled="true" type="java-exception">
           <properties class="java.lang.NullPointerException" package="java.lang" />
