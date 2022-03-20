@@ -74,7 +74,7 @@ public class SubgraphIsomorphism {
 
     // keep track of axillary structures
     private static QISequence SEQq; //QI-Sequence
-    private static DirectedAcyclicGraph<Vertex, DefaultEdge> DAG; // directed acyclic graph
+    private static DirectedAcyclicGraph<Vertex, DefaultEdge> queryDAG; // directed acyclic graph
     private static List<Vertex> dynamicOrder = new ArrayList<>(); // keep track of elements added with dynamic programing
 
     /**
@@ -1156,8 +1156,7 @@ public class SubgraphIsomorphism {
         Set<Vertex> seen = new HashSet<>();
 
         // add the root
-        Vertex root = order.get(0);
-        qD.addVertex(root);
+        qD.addVertex(order.get(0));
 
         // iterate through the processing order
         for(int i =0; i<order.size(); i++){
@@ -1183,6 +1182,80 @@ public class SubgraphIsomorphism {
         }
 
         return qD;
+    }
+
+    public static void refineCS(Graph<Vertex, DefaultEdge> query, Graph<Vertex, DefaultEdge> target, Map<Vertex, Set<Vertex>> candidates){
+        boolean isRefined = true;
+        int count = 0;
+
+        // keep refining until we don't any more
+        while(isRefined){
+            isRefined = false;
+
+            // alternate between children and parent
+            boolean reverse = count % 2 != 0;
+            count++;
+
+            // set the parents/children to empty sets initially
+            Map<Vertex, Set<Vertex>> toCheck = new HashMap<>();
+            for(Vertex u : query.vertexSet()){
+                toCheck.put(u, new HashSet<>());
+            }
+
+            // add the parents/children
+            for(Vertex u: queryDAG.vertexSet()){
+                if(reverse){
+                    toCheck.get(u).addAll(Graphs.successorListOf(queryDAG, u));
+                }
+                else{
+                    toCheck.get(u).addAll(Graphs.predecessorListOf(queryDAG, u));
+                }
+            }
+
+            Set<Vertex> processed = new HashSet<>();
+            while(processed.size()<query.vertexSet().size()){
+                for(Vertex u: query.vertexSet()){
+                    if(processed.containsAll(toCheck.get(u))){
+                        processed.add(u);
+                        for(Vertex v: candidates.get(u)){
+                            // create a new graph, which will be the bipartite graph
+                            Graph<Vertex, DefaultEdge> B = new SimpleGraph<>(DefaultEdge.class);
+
+                            // keep track of u neighbors added
+                            Set<Vertex> uPVertices = new HashSet<>();
+                            Set<Vertex> vPVertices = new HashSet<>();
+
+                            for(Vertex vP: Graphs.neighborListOf(target,v)){
+                                B.addVertex(vP);
+                                vPVertices.add(vP);
+                            }
+
+                            for(Vertex uP: toCheck.get(u)){
+                                B.addVertex(uP);
+                                uPVertices.add(uP);
+                                for(Vertex vP: Graphs.neighborListOf(query,v)){
+                                    if(candidates.get(uP).contains(vP)){
+                                        B.addEdge(uP, vP);
+                                    }
+                                }
+                            }
+
+                            // find the maximum matching of B
+                            HopcroftKarpMaximumCardinalityBipartiteMatching<Vertex, DefaultEdge> matchingAlgorithm =
+                                    new HopcroftKarpMaximumCardinalityBipartiteMatching<>(B, uPVertices, vPVertices);
+                            MatchingAlgorithm.Matching<Vertex, DefaultEdge> bipartiteMatching = matchingAlgorithm.getMatching();
+
+                            // matching does not contain all query vertices
+                            if(bipartiteMatching.getEdges().size() != uPVertices.size()){
+                                candidates.get(u).remove(v);
+                                isRefined = true;
+                            }
+
+                        }
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -1557,7 +1630,7 @@ public class SubgraphIsomorphism {
             case GRAPHQL -> order = graphQLComputeProcessingOrder(query, candidates, gamma);
             case QUICKSI -> order = quickSIComputeProcessingOrder(target, query, candidates);
             case DYNAMIC_ORDER -> order = new ArrayList<>(candidates.keySet());
-            case DAF -> DAG = constructDAG(query, candidates, order);
+            case DAF -> queryDAG = constructDAG(query, candidates, order);
             default -> {
                 System.out.println("Processing Order Algorithm:");
                 System.out.println(noAlgorithmFound);
@@ -1605,7 +1678,8 @@ public class SubgraphIsomorphism {
         }
         else if(algorithmNameB.equals(DAF)){
             if(!algorithmNamePO.equals(DAF)){
-                DAG = constructDAGWithOrder(query, order);
+                queryDAG = constructDAGWithOrder(query, order);
+                refineCS(query, target, candidates);
             }
         }
         else{
