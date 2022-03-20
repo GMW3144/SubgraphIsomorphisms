@@ -1544,6 +1544,7 @@ public class SubgraphIsomorphism {
     public static Set<Vertex> getPossibleVertices(Graph<Vertex, DefaultEdge> target, Map<Vertex, Set<Vertex>> candidates,
                                                   Map<Vertex, Vertex> currentFunction, int i,Vertex u){
         Set<Vertex> possibleVertices = new HashSet<>(candidates.get(u));
+        int initialSize = possibleVertices.size();
 
         // if quickSI recompute candidates
         if(algorithmNameB.equals(QUICKSI) && i!=0){
@@ -1581,6 +1582,7 @@ public class SubgraphIsomorphism {
                 }
                 possibleVertices.retainAll(CM);
             }
+            numBackTracking+=(initialSize-possibleVertices.size());
         }
 
         return possibleVertices;
@@ -1644,6 +1646,18 @@ public class SubgraphIsomorphism {
         }
     }
 
+    /**
+     * Does backtracking with the addition of failing sets
+     * @param query the query graph
+     * @param target the target graph
+     * @param candidates the candidate set
+     * @param order the processing order
+     * @param i  the current vertex within the order
+     * @param currentFunction the current matching between the query and target for the previous i vertices
+     * @param allFunctionsFound all the solutions that were discovered
+     * @param allFailingSets the failing sets
+     * @param isInduced whether the isomorphism is induced
+     */
     private static void subgraphIsomorphismWithFailingSets(Graph<Vertex, DefaultEdge> query,
                                                            Graph<Vertex, DefaultEdge> target,
                                                            Map<Vertex, Set<Vertex>> candidates, ArrayList<Vertex> order,

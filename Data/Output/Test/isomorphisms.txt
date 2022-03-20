@@ -1,5 +1,5 @@
 Query Graph: human_2GW6.8.sub.grf, Target Graph: human_2EQF.grf
-Number Backtracking: 75
+Number Backtracking: 355
 Induced isomorphisms. Total number subgraph isomorphisms: 10
 # candidates algorithm: graphQL
 # processing order algorithm: graphQL
