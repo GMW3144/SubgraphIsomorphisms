@@ -1569,9 +1569,12 @@ public class SubgraphIsomorphism {
             possibleVertices = newPossibleVertices;
         }
         else if(i!=0 && algorithmNameB.equals(DAF)){
+            // iterate through the parents
             for(Vertex uP: Graphs.predecessorListOf(queryDAG, u)){
                 Set<Vertex> CM = new HashSet<>();
+                // if it is contained within the function
                 if(currentFunction.containsKey(uP)) {
+                    // find all of the possible vertices we can map to
                     Vertex vP = currentFunction.get(uP);
                     for (LabeledEdge e : CS.edgeSet()) {
                         if (vP == queryDAG.getEdgeSource(e)
@@ -1582,6 +1585,7 @@ public class SubgraphIsomorphism {
                 }
                 possibleVertices.retainAll(CM);
             }
+            // the number we were able to prune
             numBackTracking+=(initialSize-possibleVertices.size());
         }
 
