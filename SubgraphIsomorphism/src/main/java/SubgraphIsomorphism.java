@@ -1230,21 +1230,36 @@ public class SubgraphIsomorphism {
                         for(Vertex v: candidates.get(u)){
                             // create a new graph, which will be the bipartite graph
                             Graph<Vertex, DefaultEdge> B = new SimpleGraph<>(DefaultEdge.class);
+                            // keep track of where the copy came from
+                            Map<Vertex, Vertex> copyToOriginal = new HashMap<>(); int id = 0;
 
                             // keep track of u neighbors added
                             Set<Vertex> uPVertices = new HashSet<>();
                             Set<Vertex> vPVertices = new HashSet<>();
 
+                            // add the neighbors of v
                             for(Vertex vP: Graphs.neighborListOf(target,v)){
-                                B.addVertex(vP);
-                                vPVertices.add(vP);
+                                Vertex vPCopy = copyVertex(vP, id); id++;
+                                copyToOriginal.put(vPCopy, vP);
+
+                                B.addVertex(vPCopy);
+                                vPVertices.add(vPCopy);
                             }
 
-                            for(Vertex uP: toCheck.get(u)){
-                                B.addVertex(uP);
-                                uPVertices.add(uP);
-                                for(Vertex vP: Graphs.neighborListOf(target,v)){
-                                    if(candidates.get(uP).contains(vP)){
+                            // add the vertices to check
+                            for(Vertex uP: toCheck.get(u)) {
+                                Vertex uPCopy = copyVertex(uP, id);
+                                id++;
+                                copyToOriginal.put(uPCopy, uP);
+
+                                B.addVertex(uPCopy);
+                                uPVertices.add(uPCopy);
+                            }
+
+                            // add the edges
+                            for(Vertex uP: uPVertices){
+                                for(Vertex vP: vPVertices){
+                                    if(candidates.get(copyToOriginal.get(uP)).contains(copyToOriginal.get(vP))){
                                         B.addEdge(uP, vP);
                                     }
                                 }
