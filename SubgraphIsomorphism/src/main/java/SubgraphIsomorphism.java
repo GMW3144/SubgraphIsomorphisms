@@ -3406,6 +3406,16 @@ public class SubgraphIsomorphism {
                     .append("\n");
         }
 
+        if(algorithmNameB.equals(DAF)){
+            String output = "\nFailing Sets Statistics:\n" +
+                    "Number of full solutions: "+fullSolutions+
+                    "Number of partial solutions: "+partialSolutions+
+                    "Number of empty candidates: "+emptyCandidates+
+                    "Number of conflicts: "+conflicts+
+                    "\n\n";
+
+        }
+
         // the combination information if combined two graphs
         if(numCombined!=null){
             writer.append("Star Graph Combination:\n");
@@ -4189,7 +4199,7 @@ public class SubgraphIsomorphism {
             mainMethod = args[0];
         }
         // basic information for isomorphism
-        algorithmNameC = GRAPHQL;
+        algorithmNameC = DAF;
         algorithmNamePO = DAF;
         algorithmNameB = DAF;
 
