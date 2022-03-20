@@ -22,7 +22,7 @@ Target Graph:
 Used candidate algorithm: graphQL
 Used processing order algorithm: graphQL
 Used backtracking algorithm: DAF
-Number backtracking calls: 0
+Number backtracking calls: 75
 
 Total number of possible matchings: 5072
 Number pruned from local pruning: 4341

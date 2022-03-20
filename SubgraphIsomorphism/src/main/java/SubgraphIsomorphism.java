@@ -52,8 +52,9 @@ public class SubgraphIsomorphism {
             "\t "+GRAPHQL+": uses the GraphQL algorithm.\n" +
             "\t "+QUICKSI+": uses the QuickSI algorithm. (Note: cannot be used for processing candidates)\n"+
             "\t "+DYNAMIC_ORDER+": uses the dynamic ordering for process order. (Note: cannot only be used for ordering\n" +
-            "\t "+DAF+": uses the DAF algorithm. (Note: equivalent to "+GROUNDTRUTH+" for processing candidates)"+
-            "\t\tand cannot use QUICKSI isomorphism)\n";
+            "\t\tand cannot use QUICKSI isomorphism)\n"+
+            "\t "+DAF+": uses the DAF algorithm. (Note: equivalent to "+GROUNDTRUTH+" for processing candidates " +
+            "\t\tand cannot use " +DYNAMIC_ORDER+")";
     // error message if didn't find connection algorithm
     private static final String noConnectionMethodFound = "Connection type of graphs specified is not valid.\n " +
             "Specify one of the following connections methods: \n" +
@@ -1291,7 +1292,7 @@ public class SubgraphIsomorphism {
                                 CS.addVertex(vP);
                             }
 
-                            CS.addEdge(v, vP, new LabeledEdge(uP+"-"+u));
+                            CS.addEdge(vP, v, new LabeledEdge(uP+"-"+u));
                         }
                     }
                 }
@@ -1566,6 +1567,21 @@ public class SubgraphIsomorphism {
             }
             possibleVertices = newPossibleVertices;
         }
+        else if(i!=0 && algorithmNameB.equals(DAF)){
+            for(Vertex uP: Graphs.predecessorListOf(queryDAG, u)){
+                Set<Vertex> CM = new HashSet<>();
+                if(currentFunction.containsKey(uP)) {
+                    Vertex vP = currentFunction.get(uP);
+                    for (LabeledEdge e : CS.edgeSet()) {
+                        if (vP == queryDAG.getEdgeSource(e)
+                                && e.getLabel().equals(uP + "-" + u)) {
+                            CM.add(queryDAG.getEdgeTarget(e));
+                        }
+                    }
+                }
+                possibleVertices.retainAll(CM);
+            }
+        }
 
         return possibleVertices;
     }
@@ -1624,6 +1640,95 @@ public class SubgraphIsomorphism {
             if(algorithmNamePO.equals(DYNAMIC_ORDER)){
                 order.add(u);
                 dynamicOrder.remove(u);
+            }
+        }
+    }
+
+    private static void subgraphIsomorphismWithFailingSets(Graph<Vertex, DefaultEdge> query,
+                                                           Graph<Vertex, DefaultEdge> target,
+                                                           Map<Vertex, Set<Vertex>> candidates, ArrayList<Vertex> order,
+                                                           int i, Map<Vertex, Vertex> currentFunction,
+                                                           List<Map<Vertex, Vertex>> allFunctionsFound,
+                                                           Map<Integer, List<Set<Vertex>>> allFailingSets,
+                                                           boolean isInduced){
+        // check if found solution
+        if(currentFunction.size() == query.vertexSet().size()){
+            allFunctionsFound.add(new HashMap<>(currentFunction));
+            allFailingSets.get(i).add(new HashSet<>());
+        }
+        else{
+            // look at next node
+            Vertex u = getNextVertex(query, target, order, i, currentFunction, candidates);
+            Set<Vertex> possibleVertices = getPossibleVertices(target, candidates, currentFunction, i, u);
+
+            if(possibleVertices.size() == 0){
+                allFailingSets.get(i).add(queryDAG.getAncestors(u));
+            }
+
+            // look at candidates
+            for(Vertex v : possibleVertices){
+                // looking at new element
+                numBackTracking+=1;
+                if(currentFunction.containsValue(v)){
+                    // add the current ancestors to the vertex
+                    Set<Vertex> cuplprits = new HashSet<>(queryDAG.getAncestors(u));
+                    // find the conflicting vertex
+                    for(Vertex uP: currentFunction.keySet()){
+                        Vertex vP = currentFunction.get(uP);
+                        if(!u.equals(uP) && v.equals(vP)){
+                            cuplprits.addAll(queryDAG.getAncestors(uP));
+                            break;
+                        }
+                    }
+                    // add all the ancestors involved to failingsets
+                    allFailingSets.get(i).add(cuplprits);
+                    continue;
+                }
+
+                // check not in another mapping
+                if(!isInduced || isValid(query, target, currentFunction, u, v, isInduced)){
+                    currentFunction.put(u, v);
+                    subgraphIsomorphismWithFailingSets(query, target, candidates, order, i+1, currentFunction,
+                             allFunctionsFound, allFailingSets, isInduced);
+                    currentFunction.remove(u);
+
+                    // failing sets
+                    List<Set<Vertex>> T = allFailingSets.get(i+1);
+                    // Get next vertex.
+                    Vertex un = i+1<order.size()?order.get(i+1):null;
+
+                    Set<Vertex> current = new HashSet<>();
+                    Set<Vertex> failingSetWithoutUn = null;
+                    // check the three conditions
+                    for(Set<Vertex> t : T){
+                        // if find an empty set, them must continue
+                        if(t.size()==0){
+                            current = new HashSet<>();
+                            break;
+                        }
+                        // keep track of conflicting vertex
+                        else if(!t.contains(un)){
+                            failingSetWithoutUn = t;
+                        }
+                        // otherwise just keep track of everything
+                        else {
+                            current.addAll(t);
+                        }
+                    }
+                    if(current.size()!=0 && failingSetWithoutUn != null){
+                        current = failingSetWithoutUn;
+                    }
+                    allFailingSets.get(i).add(current);
+
+                    // clear subtree
+                    T.clear();
+                    if(current.size()!=0 && !current.contains(u)){
+                        break;
+                    }
+                }
+                else{
+                    allFailingSets.get(i).add(new HashSet<>());
+                }
             }
         }
     }
@@ -1717,12 +1822,22 @@ public class SubgraphIsomorphism {
             }
             subgraphIsomorphism(query, target, candidates, order, 0, new HashMap<>(), results, isInduced);
         }
-        else if(algorithmNameB.equals(DAF)){
+        else if(algorithmNameB.equals(DAF) && !algorithmNamePO.equals(DYNAMIC_ORDER)){
             if(!algorithmNamePO.equals(DAF)){
                 queryDAG = constructDAGWithOrder(query, order);
-                refineCS(query, target, candidates);
-                materalizeCS(target, candidates);
             }
+            refineCS(query, target, candidates);
+            materalizeCS(target, candidates);
+
+            // For each query node in the order, we will create a list of failing sets to record i
+            // nformation of the backtracking process.
+            Map<Integer, List<Set<Vertex>>> allFailingSets = new HashMap<>();
+            for (int i = 0; i <= order.size(); i++)
+                allFailingSets.put(i, new ArrayList<>());
+
+
+            subgraphIsomorphismWithFailingSets(query, target, candidates, order, 0, new HashMap<>(), results,
+                    allFailingSets, isInduced);
         }
         else{
             System.out.println("Backtracking Algorithm:");
