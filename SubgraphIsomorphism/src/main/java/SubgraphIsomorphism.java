@@ -1145,6 +1145,7 @@ public class SubgraphIsomorphism {
                     }
                 }
             }
+            layerLast.removeAll(order);
             order.addAll(layerLast);
             layerLast=layerNext;
         }
@@ -1693,7 +1694,7 @@ public class SubgraphIsomorphism {
         // check if found solution
         if(currentFunction.size() == query.vertexSet().size()){
             allFunctionsFound.add(new HashMap<>(currentFunction));
-            allFailingSets.get(i).add(new HashSet<>());
+            allFailingSets.get(i).add(getFullSolution());
         }
         else{
             // look at next node
@@ -1701,7 +1702,7 @@ public class SubgraphIsomorphism {
             Set<Vertex> possibleVertices = getPossibleVertices(target, candidates, currentFunction, i, u);
 
             if(possibleVertices.size() == 0){
-                allFailingSets.get(i).add(queryDAG.getAncestors(u));
+                allFailingSets.get(i).add(getEmptyCandidates(u));
             }
 
             // look at candidates
@@ -1709,18 +1710,7 @@ public class SubgraphIsomorphism {
                 // looking at new element
                 numBackTracking+=1;
                 if(currentFunction.containsValue(v)){
-                    // add the current ancestors to the vertex
-                    Set<Vertex> cuplprits = new HashSet<>(queryDAG.getAncestors(u));
-                    // find the conflicting vertex
-                    for(Vertex uP: currentFunction.keySet()){
-                        Vertex vP = currentFunction.get(uP);
-                        if(!u.equals(uP) && v.equals(vP)){
-                            cuplprits.addAll(queryDAG.getAncestors(uP));
-                            break;
-                        }
-                    }
-                    // add all the ancestors involved to failingsets
-                    allFailingSets.get(i).add(cuplprits);
+                    allFailingSets.get(i).add(getConflict(u, v, currentFunction));
                     continue;
                 }
 
@@ -1742,7 +1732,7 @@ public class SubgraphIsomorphism {
                     for(Set<Vertex> t : T){
                         // if find an empty set, them must continue
                         if(t.size()==0){
-                            current = new HashSet<>();
+                            current = getPartialSolution();
                             break;
                         }
                         // keep track of conflicting vertex
@@ -1762,6 +1752,7 @@ public class SubgraphIsomorphism {
                     // clear subtree
                     T.clear();
                     if(current.size()!=0 && !current.contains(u)){
+                        partialSolutions++;
                         break;
                     }
                 }
@@ -1770,6 +1761,58 @@ public class SubgraphIsomorphism {
                 }
             }
         }
+    }
+
+    /**
+     * A full solution was found
+     * @return an empty set
+     */
+    private static Set<Vertex> getFullSolution(){
+        fullSolutions++;
+        return new HashSet<>();
+    }
+
+    /**
+     * A partial solution was found
+     * @return a empty set
+     */
+    private static Set<Vertex> getPartialSolution(){
+        partialSolutions++;
+        return new HashSet<>();
+    }
+
+    /**
+     * If there is no candidates for the given vertex
+     * @param u the given vertex
+     * @return the set of ancestors
+     */
+    private static Set<Vertex> getEmptyCandidates(Vertex u){
+        emptyCandidates++;
+        return queryDAG.getAncestors(u);
+    }
+
+    /**
+     * There is already a vertex that maps to v
+     * @param u the query vertex
+     * @param v the target vertex
+     * @param currentFunction the current function
+     * @return the ancestors of the conflicting vertices
+     */
+    private static Set<Vertex> getConflict(Vertex u, Vertex v, Map<Vertex, Vertex> currentFunction){
+        conflicts++;
+
+        // add the current ancestors to the vertex
+        Set<Vertex> cuplprits = new HashSet<>(queryDAG.getAncestors(u));
+        // find the conflicting vertex
+        for(Vertex uP: currentFunction.keySet()){
+            Vertex vP = currentFunction.get(uP);
+            if(!u.equals(uP) && v.equals(vP)){
+                cuplprits.addAll(queryDAG.getAncestors(uP));
+                break;
+            }
+        }
+        // add all the ancestors involved to failingsets
+        return cuplprits;
     }
 
     /**
@@ -2228,6 +2271,9 @@ public class SubgraphIsomorphism {
 
                 File queryGraphFile = new File(queryFolderName+queryGraphName);
                 File targetGraphFile = new File(targetFolderName+targetGraphName);
+                if(queryGraphName.equals("backbones_1QMH.32.sub.grf") && targetGraphName.equals("backbones_1AUJ.grf")){
+                    System.out.println("HERE");
+                }
 
                 // construct the graphs
                 Graph<Vertex, DefaultEdge> query = createProteinGraph(queryGraphFile);
