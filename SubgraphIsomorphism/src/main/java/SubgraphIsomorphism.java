@@ -2080,10 +2080,7 @@ public class SubgraphIsomorphism {
                                                           Map<Vertex, Vertex> seen) {
         Graph<Vertex, DefaultEdge> queryGraph = new SimpleGraph<>(DefaultEdge.class);
         // get a random vertex
-        Random rand = new Random();
-        int randVertexID = rand.nextInt(target.vertexSet().size());
-        Vertex randVertex = target.vertexSet().stream().filter(vertex -> vertex.getId() == randVertexID).findAny().get();
-
+        Vertex randVertex = randomVertex(target.vertexSet());
 
         // random walk starting at random vertex
         Iterator<Vertex> iter = new RandomWalkVertexIterator(target, randVertex);
@@ -2093,56 +2090,67 @@ public class SubgraphIsomorphism {
         seen.put(lastVertex, lastVertexCopy); // target, query
 
         // the maximum amount of vertices will check
-        int maxIteration = 100000;
+        int maxIteration = 1000;
+        // the maximum number of vertices that will be checked
+        int maxTimesChecked = 100;
 
         // create a new vertex, by copying info
         queryGraph.addVertex(lastVertexCopy);
         // build the profile to include own label
         lastVertexCopy.addToProfile(lastVertexCopy);
 
-        // perform the walk
-        while(iter.hasNext()) {
-            // keeps it from getting stuck in an infinite loop
-            maxIteration--;
-            if(maxIteration<0){
+        for(int i = 0; i<maxTimesChecked; i++) {
+            // perform the walk
+            while (iter.hasNext()) {
+                // keeps it from getting stuck in an infinite loop
+                maxIteration--;
+                if (maxIteration < 0) {
+                    break;
+                }
+
+                currentId = seen.size();
+                // stop when reach given size
+                if (currentId >= sizeQuery) {
+                    break;
+                }
+
+                // get the next vertex and its edge
+                Vertex nextVertex = iter.next();
+                Vertex nextVertexCopy = copyVertex(nextVertex, currentId);
+
+                // if we have already seen it, then use the previously made copy vertex
+                if (seen.containsKey(nextVertex)) {
+                    nextVertexCopy = seen.get(nextVertex);
+                }
+                // if we haven't seen it, then add new vertex to query graph
+                else {
+                    seen.put(nextVertex, nextVertexCopy);
+                    queryGraph.addVertex(nextVertexCopy);
+                    // build the profile to include own label
+                    nextVertexCopy.addToProfile(nextVertexCopy);
+                }
+
+                // only add edge if haven't seen it before in query
+                if (!queryGraph.containsEdge(lastVertexCopy, nextVertexCopy)) {
+                    queryGraph.addEdge(lastVertexCopy, nextVertexCopy);
+
+                    // build the profile of each
+                    lastVertexCopy.addToProfile(nextVertexCopy);
+                    nextVertexCopy.addToProfile(lastVertexCopy);
+                }
+
+                // keep track of last vertex to create edge
+                lastVertexCopy = nextVertexCopy;
+            }
+            if(queryGraph.vertexSet().size()==sizeQuery){
                 break;
             }
-
-            currentId = seen.size();
-            // stop when reach given size
-            if(currentId>=sizeQuery){
-                break;
-            }
-
-            // get the next vertex and its edge
-            Vertex nextVertex = iter.next(); Vertex nextVertexCopy = copyVertex(nextVertex, currentId);
-
-            // if we have already seen it, then use the previously made copy vertex
-            if(seen.containsKey(nextVertex)){
-                nextVertexCopy = seen.get(nextVertex);
-            }
-            // if we haven't seen it, then add new vertex to query graph
-            else {
-                seen.put(nextVertex, nextVertexCopy);
-                queryGraph.addVertex(nextVertexCopy);
-                // build the profile to include own label
-                nextVertexCopy.addToProfile(nextVertexCopy);
-            }
-
-            // only add edge if haven't seen it before in query
-            if(!queryGraph.containsEdge(lastVertexCopy, nextVertexCopy)) {
-                queryGraph.addEdge(lastVertexCopy, nextVertexCopy);
-
-                // build the profile of each
-                lastVertexCopy.addToProfile(nextVertexCopy);
-                nextVertexCopy.addToProfile(lastVertexCopy);
-            }
-
-            // keep track of last vertex to create edge
-            lastVertexCopy = nextVertexCopy;
         }
 
-
+        // if we are unable to find a vertex of that size
+        if(queryGraph.vertexSet().size()!=sizeQuery){
+            return null;
+        }
 
         return queryGraph;
     }
@@ -2162,6 +2170,9 @@ public class SubgraphIsomorphism {
                                                                        int n, List<Double> avgD, List<Double> dia,
                                                                        List<Double> den){
         Graph<Vertex, DefaultEdge> query = randomGraph(target, n, seen);
+        if(query == null){
+            return null;
+        }
 
         // keep track of average degree of graph
         double avgDActual = 0;
@@ -3286,6 +3297,10 @@ public class SubgraphIsomorphism {
         // keep track of equivalencies, so know when see a target vertex again
         Map<Vertex, Vertex> seen = new HashMap<>();
         Graph<Vertex, DefaultEdge> queryGraph = randomGraph(targetGraph, size, seen);
+        // problem with finding query graph
+        if(queryGraph==null){
+            return -1;
+        }
 
         // write the mappings
         // write to output file info when constructing graph
@@ -4201,7 +4216,7 @@ public class SubgraphIsomorphism {
             mainMethod = args[0];
         }
         // basic information for isomorphism
-        algorithmNameC = DAF;
+        algorithmNameC = GRAPHQL;
         algorithmNamePO = DAF;
         algorithmNameB = DAF;
 
