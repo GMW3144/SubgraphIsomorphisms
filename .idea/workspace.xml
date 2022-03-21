@@ -87,13 +87,6 @@
       <option name="presentableId" value="Default" />
       <updated>1642694530105</updated>
     </task>
-    <task id="LOCAL-00082" summary="Added commenst and hard code zScore">
-      <created>1645893206578</created>
-      <option name="number" value="00082" />
-      <option name="presentableId" value="LOCAL-00082" />
-      <option name="project" value="LOCAL" />
-      <updated>1645893206578</updated>
-    </task>
     <task id="LOCAL-00083" summary="Compared with previous isomorphisms">
       <created>1645897908702</created>
       <option name="number" value="00083" />
@@ -430,7 +423,14 @@
       <option name="project" value="LOCAL" />
       <updated>1647883301220</updated>
     </task>
-    <option name="localTasksCounter" value="131" />
+    <task id="LOCAL-00131" summary="fixed random node neighbor">
+      <created>1647885149509</created>
+      <option name="number" value="00131" />
+      <option name="presentableId" value="LOCAL-00131" />
+      <option name="project" value="LOCAL" />
+      <updated>1647885149509</updated>
+    </task>
+    <option name="localTasksCounter" value="132" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -482,7 +482,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Fixed some small issues" />
     <MESSAGE value="Got rid of isomorphic graphs at the end" />
     <MESSAGE value="Removed redundent check" />
     <MESSAGE value="Added comments, and made sure the the isomorphism for getting rid of isomorphic graphs is induced and set a value for gamma" />
@@ -507,7 +506,8 @@
     <MESSAGE value="Added number of distinct labels as a property" />
     <MESSAGE value="Attempted random node neighbor algorithm" />
     <MESSAGE value="Fixed comment errors" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed comment errors" />
+    <MESSAGE value="fixed random node neighbor" />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed random node neighbor" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -624,11 +624,6 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1088</line>
-          <option name="timeStamp" value="511" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
           <line>1243</line>
           <option name="timeStamp" value="513" />
         </line-breakpoint>
@@ -639,8 +634,18 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>2101</line>
-          <option name="timeStamp" value="521" />
+          <line>2245</line>
+          <option name="timeStamp" value="522" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
+          <line>4246</line>
+          <option name="timeStamp" value="532" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
+          <line>4244</line>
+          <option name="timeStamp" value="533" />
         </line-breakpoint>
         <breakpoint enabled="true" type="java-exception">
           <properties class="java.lang.NullPointerException" package="java.lang" />

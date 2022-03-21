@@ -4169,7 +4169,7 @@ public class SubgraphIsomorphism {
         while(!foundHardToFind && stats.getN()<maxNumQueryGraphs) {
             // construct a 100 random walks
             for (int i = 0; i < batchSize; i++) {
-                if(failedAttempts >= 100){
+                if(failedAttempts >= 1000){
                     System.out.println("Could not find a graph with the given properties\n================");
                     return;
                 }
@@ -4304,7 +4304,11 @@ public class SubgraphIsomorphism {
                         "\tmaxEpoch: " +maxEpoch+"\n"+
                         "\tzAlpha: "+zScore+ "\n\n" +
                         "The total number of query graphs found: "+stats.getN()+"\n" +
-                        stats.toString();
+                        stats.toString()+"\n\n"+
+                        "Average Diameter Range: "+avgD+"\n"+
+                        "Diameter Range: "+dia+"\n"+
+                        "Density Range: "+den+"\n" +
+                        "Number of distinct labels: "+numLabels;
 
                 writer.append(output);
                 writer.close();
@@ -4345,8 +4349,8 @@ public class SubgraphIsomorphism {
         // create query graph
         int minSize = 5;
         int maxSize = 25;
-        int maxNumQueries = 100;
-        int batchSize = 25;
+        int maxNumQueries = 500;
+        int batchSize = 100;
 
         // properties of query graph
         List<Double> avgD = new ArrayList<>(List.of(1.0, 2.0));
