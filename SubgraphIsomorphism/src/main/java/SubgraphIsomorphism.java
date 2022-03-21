@@ -4251,10 +4251,11 @@ public class SubgraphIsomorphism {
                         "\tzAlpha: "+zScore+ "\n\n" +
                         "The total number of query graphs found: "+stats.getN()+"\n" +
                         stats.toString()+"\n\n"+
+                        "Number of Vertices: "+size+"\n"+
                         "Average Diameter Range: "+avgD+"\n"+
                         "Diameter Range: "+dia+"\n"+
                         "Density Range: "+den+"\n" +
-                        "Number of distinct labels: "+numLabels;
+                        "Number of Distinct Labels: "+numLabels;
 
                 writer.append(output);
                 writer.close();
@@ -4305,10 +4306,11 @@ public class SubgraphIsomorphism {
                         "\tzAlpha: "+zScore+ "\n\n" +
                         "The total number of query graphs found: "+stats.getN()+"\n" +
                         stats.toString()+"\n\n"+
+                        "Number of Vertices: "+size+"\n"+
                         "Average Diameter Range: "+avgD+"\n"+
                         "Diameter Range: "+dia+"\n"+
                         "Density Range: "+den+"\n" +
-                        "Number of distinct labels: "+numLabels;
+                        "Number of Distinct Labels: "+numLabels;
 
                 writer.append(output);
                 writer.close();
