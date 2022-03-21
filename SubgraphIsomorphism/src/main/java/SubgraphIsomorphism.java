@@ -45,10 +45,13 @@ public class SubgraphIsomorphism {
     private static final String QUICKSI = "quickSI";
     private static final String DYNAMIC_ORDER = "dynamic order";
     private static final String DAF = "DAF";
-    // creating graphs
+    // creating graphs from star graph
     private static final String MERGE = "merge";
     private static final String EDGE = "edge";
     private static final String NONE = "none";
+    // creating random subgraphs
+    private static final String RANDOM_WALK = "random walk";
+    private static final String RANDOM_NODE_NEIGHBOR = "random node neighbor";
 
     // error messages
     // error message if didn't find isomorphism algorithm
@@ -67,6 +70,11 @@ public class SubgraphIsomorphism {
             "\t "+MERGE+": merge two vertices of the same label.\n" +
             "\t "+EDGE+": create an edge between two vertices.\n " +
             "\t "+NONE+": use star graph of largest size.\n";
+    // error message if didn't find random subgraph algorithm
+    private static final String noRandomSubgraphMethodFound = "Random subgraph creation method is not valid.\n " +
+            "Specify one of the following connections methods: \n" +
+            "\t "+RANDOM_WALK+": constructs non-induced subgraph using random walk algorithm.\n" +
+            "\t "+RANDOM_NODE_NEIGHBOR+": constructs induced subgraph using random node neighbor algorithm.\n ";
     // error message if threshold is too high
     private static final String thresholdToHigh = "Threshold too large for graph or graphs not connectable";
     // error message if minimum support is too high
@@ -2070,13 +2078,61 @@ public class SubgraphIsomorphism {
     }
 
     /**
+     * Finds an induced subgraph of the target graph using random node neighbor algorithm
+     * @param target the target graph
+     * @param sizeQuery the size of the query graph
+     * @param seen the vertices we have seen
+     * @return the induced subgraph
+     */
+    private static Graph<Vertex, DefaultEdge> randomGraphRandomNodeNeighbor(Graph<Vertex, DefaultEdge> target, int sizeQuery,
+                                                                            Map<Vertex, Vertex> seen){
+        Graph<Vertex, DefaultEdge> queryGraph = new SimpleGraph<>(DefaultEdge.class);
+
+        // get a random vertex
+        Vertex firstVertex = randomVertex(target.vertexSet());
+
+        int currentId = 0;
+        // get the starting vertex, and create a copy
+        Vertex lastVertexCopy = copyVertex(firstVertex, currentId);
+        seen.put(firstVertex, lastVertexCopy); // target, query
+
+        // add the first vertex to the graph
+        queryGraph.addVertex(lastVertexCopy); currentId++;
+
+        // the set of possible vertices is initially the neighbors list
+        Set<Vertex> possibleVertices = new HashSet<>(Graphs.neighborListOf(target, firstVertex));
+        while(queryGraph.vertexSet().size()<sizeQuery){
+            // pick a random vertex from the neighbors
+            Vertex randVertex = randomVertex(possibleVertices);
+
+            // add the neighbors of the random vertex, and remove any that we have already visited
+            possibleVertices.addAll(Graphs.neighborListOf(target, randVertex));
+            possibleVertices.removeAll(seen.keySet());
+
+            // create a copy of the vertex and add to graph
+            lastVertexCopy = copyVertex(firstVertex, currentId);
+            seen.put(firstVertex, lastVertexCopy); // target, query
+            queryGraph.addVertex(lastVertexCopy); currentId++;
+
+            // add an edge between it and all existing vertices
+            for(Vertex prevVertice: seen.keySet()){
+                if(target.containsEdge(prevVertice, randVertex)){
+                    queryGraph.addEdge(seen.get(prevVertice), seen.get(randVertex));
+                }
+            }
+        }
+
+        return queryGraph;
+    }
+
+    /**
      * Create a new graph by performing a random walk on the target graph
      * @param target target graph
      * @param sizeQuery the maximum number of vertices in the query
      * @param seen map that keeps track of equivalencies between query and target vertex
      * @return the random graph
      */
-    private static Graph<Vertex, DefaultEdge> randomGraph(Graph<Vertex, DefaultEdge> target, int sizeQuery,
+    private static Graph<Vertex, DefaultEdge> randomGraphRandomWalk(Graph<Vertex, DefaultEdge> target, int sizeQuery,
                                                           Map<Vertex, Vertex> seen) {
         Graph<Vertex, DefaultEdge> queryGraph = new SimpleGraph<>(DefaultEdge.class);
         // get a random vertex
@@ -2182,28 +2238,42 @@ public class SubgraphIsomorphism {
     public static Graph<Vertex, DefaultEdge> randomGraphWithProperties(Graph<Vertex, DefaultEdge> target,
                                                                        Map<Vertex, Vertex> seen,
                                                                        int n, List<Double> avgD, List<Double> dia,
-                                                                       List<Double> den, List<Double> numLabels){
-        Graph<Vertex, DefaultEdge> query = randomGraph(target, n, seen);
-        // if there is a problem constructing the graph
-        if(query == null){
-            return null;
-        }
-        // since we are only changing edges, must check labels first
-        double numLabelsActual = numberOfDistinctLables(query);
-        if(numLabelsActual<numLabels.get(0) || numLabels.get(1)<numLabelsActual ){
-            return null;
-        }
+                                                                       List<Double> den, List<Double> numLabels,
+                                                                       String subgraphMethod){
+
+        Graph<Vertex, DefaultEdge> query;
 
         // keep track of average degree of graph
         double avgDActual = 0;
+        if(subgraphMethod.equals(RANDOM_WALK)) {
+            query = randomGraphRandomWalk(target, n, seen);
+        }
+        else if(subgraphMethod.equals(RANDOM_NODE_NEIGHBOR)){
+            query = randomGraphRandomWalk(target, n, seen);
+        }
+        else{
+            System.out.println(noRandomSubgraphMethodFound);
+            return null;
+        }
+
+        // if there is a problem constructing the graph
+        if (query == null) {
+            return null;
+        }
+
+        // since we are only changing edges, must check labels first
+        double numLabelsActual = numberOfDistinctLables(query);
+        if (numLabelsActual < numLabels.get(0) || numLabels.get(1) < numLabelsActual) {
+            return null;
+        }
 
         // add all the edges within the target graph to the query graph
-        for(Vertex u: seen.keySet()){
+        for (Vertex u : seen.keySet()) {
             List<Vertex> possibleNeighbors = Graphs.neighborListOf(target, u);
             possibleNeighbors.retainAll(seen.keySet());
-            avgDActual+=possibleNeighbors.size();
-            for(Vertex v: possibleNeighbors){
-                if(!query.containsEdge(seen.get(u), seen.get(v))){
+            avgDActual += possibleNeighbors.size();
+            for (Vertex v : possibleNeighbors) {
+                if (!query.containsEdge(seen.get(u), seen.get(v))) {
                     query.addEdge(seen.get(u), seen.get(v));
                 }
             }
@@ -3307,8 +3377,9 @@ public class SubgraphIsomorphism {
      * @throws IOException for the writer
      * @return if random walk was successful
      */
-    public static int randomWalk(Graph<Vertex, DefaultEdge> targetGraph, String targetLocation, int size,
-                                  String outputFolderName, String queryName, boolean isInduced, double gamma)
+    public static int randomSubgraph(Graph<Vertex, DefaultEdge> targetGraph, String targetLocation, int size,
+                                  String outputFolderName, String queryName, boolean isInduced, double gamma,
+                                  String subgraphMethod)
             throws IOException {
 
         BufferedWriter writer = new BufferedWriter(new FileWriter(
@@ -3316,7 +3387,15 @@ public class SubgraphIsomorphism {
 
         // keep track of equivalencies, so know when see a target vertex again
         Map<Vertex, Vertex> seen = new HashMap<>();
-        Graph<Vertex, DefaultEdge> queryGraph = randomGraph(targetGraph, size, seen);
+        Graph<Vertex, DefaultEdge> queryGraph;
+        switch (subgraphMethod) {
+            case RANDOM_WALK -> queryGraph = randomGraphRandomWalk(targetGraph, size, seen);
+            case RANDOM_NODE_NEIGHBOR -> queryGraph = randomGraphRandomNodeNeighbor(targetGraph, size, seen);
+            default -> {
+                System.out.println(noRandomSubgraphMethodFound);
+                return -1;
+            }
+        }
         // problem with finding query graph
         if(queryGraph==null){
             return -1;
@@ -3983,7 +4062,8 @@ public class SubgraphIsomorphism {
      * @throws IOException read/write errors
      */
     public static void randomGeneration(String targetLocation, String outputFolderName, int size, double gamma,
-                                        boolean isInduced, int maxNumQueryGraphs) throws IOException {
+                                        boolean isInduced, int maxNumQueryGraphs, String subgraphMethod)
+            throws IOException {
         // create the target graph and random query graph
         Graph<Vertex, DefaultEdge> targetGraph = createProteinGraph(new File(targetLocation));
         calculateStatistics(targetGraph);
@@ -3996,7 +4076,8 @@ public class SubgraphIsomorphism {
             }
             String graphName = "graph" + (numGraphs + 1) + ".txt";
 
-            if(randomWalk(targetGraph, targetLocation, size, outputFolderName, graphName, isInduced, gamma) == -1){
+            if(randomSubgraph(targetGraph, targetLocation, size, outputFolderName, graphName, isInduced, gamma,
+                    subgraphMethod) == -1){
                 return;
             }
         }
@@ -4049,7 +4130,8 @@ public class SubgraphIsomorphism {
     public static void randomGenerationWithEstimate(String targetLocationName, String outputFolderName, int size, double gamma,
                                                     double tau, int maxEpoch, double zScore, boolean isInduced,
                                                     int maxNumQueryGraphs, int batchSize,  List<Double> avgD,
-                                                    List<Double> dia, List<Double> den, List<Double> numLabels)
+                                                    List<Double> dia, List<Double> den, List<Double> numLabels,
+                                                    String subgraphMethod)
             throws IOException {
         // if the processing order is dynamic ordering the break
         if(algorithmNamePO.equals(DYNAMIC_ORDER)){
@@ -4093,7 +4175,8 @@ public class SubgraphIsomorphism {
                 Map<Vertex, Vertex> seen = new HashMap<>();
 
                 // create graph of given size from the target
-                Graph<Vertex, DefaultEdge> query = randomGraphWithProperties(target, seen, size, avgD, dia, den, numLabels);
+                Graph<Vertex, DefaultEdge> query = randomGraphWithProperties(target, seen, size, avgD, dia, den,
+                        numLabels, subgraphMethod);
                 if(query == null){
                     failedAttempts++;
                     i--;
@@ -4248,6 +4331,9 @@ public class SubgraphIsomorphism {
         // connecting star graphs
         final String connectionMethod = MERGE;
 
+        // random subgraph generator
+        final String subgraphMethod = RANDOM_WALK;
+
         // estimation
         double tau = 100;
         int maxEpoch = 100;
@@ -4337,7 +4423,8 @@ public class SubgraphIsomorphism {
             // iterate through the different size of graphs (from min to max)
             for(int size = minSize; size<=maxSize; size++) {
                 // attempt maxNumQueries times for each size
-                randomGeneration(targetLocation, outputFolderName, size, gamma, isInduced, maxNumQueries);
+                randomGeneration(targetLocation, outputFolderName, size, gamma, isInduced, maxNumQueries,
+                        subgraphMethod);
             }
         }
         // find graphs that are outliers when comparing number of matchings
@@ -4349,7 +4436,7 @@ public class SubgraphIsomorphism {
             for(int size = minSize; size<=maxSize; size++) {
                 System.out.println("Graph Size : "+size);
                 randomGenerationWithEstimate(targetLocation, outputFolderName, size, gamma, tau, maxEpoch, zScore, isInduced,
-                        maxNumQueries, batchSize, avgD, dia, den, numLabels);
+                        maxNumQueries, batchSize, avgD, dia, den, numLabels, subgraphMethod);
             }
         }
 
