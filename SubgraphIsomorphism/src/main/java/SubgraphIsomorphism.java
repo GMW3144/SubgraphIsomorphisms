@@ -2156,6 +2156,19 @@ public class SubgraphIsomorphism {
     }
 
     /**
+     * Finds the number of distinct labels within the graph
+     * @param graph the given graph
+     * @return number of distinct labels in graph
+     */
+    public static int numberOfDistinctLables(Graph<Vertex, DefaultEdge> graph){
+        Set<String> labels = new HashSet<>();
+        for(Vertex v: graph.vertexSet()){
+            labels.add(v.getLabel());
+        }
+        return labels.size();
+    }
+
+    /**
      * Construct a random query graph which is a subgraph of given target graph with given properties
      * @param target the target graph
      * @param seen keep track of the mapping from query to target vertices
@@ -2163,14 +2176,21 @@ public class SubgraphIsomorphism {
      * @param avgD the range of average degree of query graph
      * @param dia the range of diameter of query graph
      * @param den the range of density of query graph
+     * @param numLabels the range of number of distinct labels
      * @return the query graph
      */
     public static Graph<Vertex, DefaultEdge> randomGraphWithProperties(Graph<Vertex, DefaultEdge> target,
                                                                        Map<Vertex, Vertex> seen,
                                                                        int n, List<Double> avgD, List<Double> dia,
-                                                                       List<Double> den){
+                                                                       List<Double> den, List<Double> numLabels){
         Graph<Vertex, DefaultEdge> query = randomGraph(target, n, seen);
+        // if there is a problem constructing the graph
         if(query == null){
+            return null;
+        }
+        // since we are only changing edges, must check labels first
+        double numLabelsActual = numberOfDistinctLables(query);
+        if(numLabelsActual<numLabels.get(0) || numLabels.get(1)<numLabelsActual ){
             return null;
         }
 
@@ -4023,12 +4043,13 @@ public class SubgraphIsomorphism {
      * @param avgD the range of average degree we want our graph to be
      * @param dia the range of diameter we want our graph to be
      * @param den the range of density we want our graph to be
+     * @param numLabels the range of number of distinct labels
      * @throws IOException read/write errors
      */
     public static void randomGenerationWithEstimate(String targetLocationName, String outputFolderName, int size, double gamma,
                                                     double tau, int maxEpoch, double zScore, boolean isInduced,
-                                                    int maxNumQueryGraphs, int batchSize,
-                                                    List<Double> avgD, List<Double> dia, List<Double> den)
+                                                    int maxNumQueryGraphs, int batchSize,  List<Double> avgD,
+                                                    List<Double> dia, List<Double> den, List<Double> numLabels)
             throws IOException {
         // if the processing order is dynamic ordering the break
         if(algorithmNamePO.equals(DYNAMIC_ORDER)){
@@ -4072,7 +4093,7 @@ public class SubgraphIsomorphism {
                 Map<Vertex, Vertex> seen = new HashMap<>();
 
                 // create graph of given size from the target
-                Graph<Vertex, DefaultEdge> query = randomGraphWithProperties(target, seen, size, avgD, dia, den);
+                Graph<Vertex, DefaultEdge> query = randomGraphWithProperties(target, seen, size, avgD, dia, den, numLabels);
                 if(query == null){
                     failedAttempts++;
                     i--;
@@ -4242,6 +4263,7 @@ public class SubgraphIsomorphism {
         List<Double> avgD = new ArrayList<>(List.of(1.0, 2.0));
         List<Double> dia = new ArrayList<>(List.of(5.0, 5.0));
         List<Double> den = new ArrayList<>(List.of(0.0, 1.0));
+        List<Double> numLabels = new ArrayList<>(List.of(1.0, 2.0));
 
         // keep track of time
         Date startDate = new Date();
@@ -4327,7 +4349,7 @@ public class SubgraphIsomorphism {
             for(int size = minSize; size<=maxSize; size++) {
                 System.out.println("Graph Size : "+size);
                 randomGenerationWithEstimate(targetLocation, outputFolderName, size, gamma, tau, maxEpoch, zScore, isInduced,
-                        maxNumQueries, batchSize, avgD, dia, den);
+                        maxNumQueries, batchSize, avgD, dia, den, numLabels);
             }
         }
 
