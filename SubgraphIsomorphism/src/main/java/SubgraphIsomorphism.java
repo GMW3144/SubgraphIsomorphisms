@@ -2100,17 +2100,21 @@ public class SubgraphIsomorphism {
         // the set of possible vertices is initially the neighbors list
         Set<Vertex> possibleVertices = new HashSet<>(Graphs.neighborListOf(target, firstVertex));
         while(queryGraph.vertexSet().size()<sizeQuery){
+            // haven't reached size and there are no more vertices to go to
+            if(possibleVertices.isEmpty()){
+                return null;
+            }
             // pick a random vertex from the neighbors
             Vertex randVertex = randomVertex(possibleVertices);
+
+            // create a copy of the vertex and add to graph
+            lastVertexCopy = copyVertex(randVertex, currentId);
+            seen.put(randVertex, lastVertexCopy); // target, query
+            queryGraph.addVertex(lastVertexCopy); currentId++;
 
             // add the neighbors of the random vertex, and remove any that we have already visited
             possibleVertices.addAll(Graphs.neighborListOf(target, randVertex));
             possibleVertices.removeAll(seen.keySet());
-
-            // create a copy of the vertex and add to graph
-            lastVertexCopy = copyVertex(firstVertex, currentId);
-            seen.put(firstVertex, lastVertexCopy); // target, query
-            queryGraph.addVertex(lastVertexCopy); currentId++;
 
             // add an edge between it and all existing vertices
             for(Vertex prevVertices: seen.keySet()){
@@ -4107,7 +4111,8 @@ public class SubgraphIsomorphism {
 
     /**
      * Finds hard-to-find query graph for the target graph by finding outliers based on the estimation from wander joins
-     * @param targetLocationName the location of the target graph
+     * @param target the target graph
+     * @param targetLocation the location of the target graph
      * @param outputFolderName the output folder
      * @param size the size of the query graph
      * @param gamma the gamma for graphQL
@@ -4123,7 +4128,8 @@ public class SubgraphIsomorphism {
      * @param numLabels the range of number of distinct labels
      * @throws IOException read/write errors
      */
-    public static void randomGenerationWithEstimate(String targetLocationName, String outputFolderName, int size, double gamma,
+    public static void randomGenerationWithEstimate(Graph<Vertex, DefaultEdge> target, File targetLocation,
+                                                    String outputFolderName, int size, double gamma,
                                                     double tau, int maxEpoch, double zScore, boolean isInduced,
                                                     int maxNumQueryGraphs, int batchSize,  List<Double> avgD,
                                                     List<Double> dia, List<Double> den, List<Double> numLabels,
@@ -4141,11 +4147,6 @@ public class SubgraphIsomorphism {
             System.out.println(noAlgorithmFound);
             return;
         }
-
-        // create the target graph and random query graph
-        File targetLocation = new File(targetLocationName);
-        Graph<Vertex, DefaultEdge> target = createProteinGraph(new File(targetLocationName));
-        calculateStatistics(target);
 
         // keep track of the random walks and their estimations
         Map<Integer, Set<Graph<Vertex, DefaultEdge>>> estimationRandomWalk = new HashMap<>();
@@ -4252,7 +4253,8 @@ public class SubgraphIsomorphism {
                         stats.toString()+"\n\n"+
                         "Average Diameter Range: "+avgD+"\n"+
                         "Diameter Range: "+dia+"\n"+
-                        "Density Range: "+den+"\n";
+                        "Density Range: "+den+"\n" +
+                        "Number of distinct labels: "+numLabels;
 
                 writer.append(output);
                 writer.close();
@@ -4323,8 +4325,8 @@ public class SubgraphIsomorphism {
         }
         // basic information for isomorphism
         algorithmNameC = GRAPHQL;
-        algorithmNamePO = DAF;
-        algorithmNameB = DAF;
+        algorithmNamePO = GRAPHQL;
+        algorithmNameB = GRAPHQL;
 
         // isomorphism
         final boolean isInduced = true;
@@ -4332,9 +4334,8 @@ public class SubgraphIsomorphism {
 
         // connecting star graphs
         final String connectionMethod = MERGE;
-
         // random subgraph generator
-        final String subgraphMethod = RANDOM_WALK;
+        final String subgraphMethod = RANDOM_NODE_NEIGHBOR;
 
         // estimation
         double tau = 100;
@@ -4431,14 +4432,20 @@ public class SubgraphIsomorphism {
         }
         // find graphs that are outliers when comparing number of matchings
         else if(mainMethod.equals("RandomWalkEstimation") && args.length == 3){
-            final String targetLocation = args[1];
+            final String targetLocationName = args[1];
             final String outputFolderName = args[2];
+
+            // create the target graph and random query graph
+            File targetLocation = new File(targetLocationName);
+            Graph<Vertex, DefaultEdge> target = createProteinGraph(targetLocation);
+            calculateStatistics(target);
+
 
             // iterate through the different size of graphs (from min to max)
             for(int size = minSize; size<=maxSize; size++) {
                 System.out.println("Graph Size : "+size);
-                randomGenerationWithEstimate(targetLocation, outputFolderName, size, gamma, tau, maxEpoch, zScore, isInduced,
-                        maxNumQueries, batchSize, avgD, dia, den, numLabels, subgraphMethod);
+                randomGenerationWithEstimate(target, targetLocation, outputFolderName, size, gamma, tau, maxEpoch,
+                        zScore, isInduced, maxNumQueries, batchSize, avgD, dia, den, numLabels, subgraphMethod);
             }
         }
 
