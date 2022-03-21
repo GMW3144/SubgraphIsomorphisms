@@ -1,5 +1,4 @@
 // Graph Implementation
-import org.apache.commons.math3.geometry.spherical.twod.Edge;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
 import org.jgrapht.*;
@@ -15,7 +14,6 @@ import org.jgrapht.alg.matching.HopcroftKarpMaximumCardinalityBipartiteMatching;
 
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
-import javax.xml.stream.events.EndDocument;
 import java.io.*;
 import java.util.*;
 
@@ -1120,7 +1118,7 @@ public class SubgraphIsomorphism {
             }
         }
 
-        // root is randomly chosen from smalles sizes
+        // root is randomly chosen from smallest sizes
         Vertex root = randomVertex(vertexWeights.get(minimum));
         qD.addVertex(root);
 
@@ -1305,7 +1303,7 @@ public class SubgraphIsomorphism {
      * @param target the target graph
      * @param candidates the candidates
      */
-    public static void materalizeCS(Graph<Vertex, DefaultEdge> target, Map<Vertex, Set<Vertex>> candidates){
+    public static void materializeCS(Graph<Vertex, DefaultEdge> target, Map<Vertex, Set<Vertex>> candidates){
         // CS is initially a graph with multiple edges between two vertices
         CS = new Multigraph<>(LabeledEdge.class);
         // iterate through the vertices
@@ -1812,17 +1810,17 @@ public class SubgraphIsomorphism {
         conflicts++;
 
         // add the current ancestors to the vertex
-        Set<Vertex> cuplprits = new HashSet<>(queryDAG.getAncestors(u));
+        Set<Vertex> culprits = new HashSet<>(queryDAG.getAncestors(u));
         // find the conflicting vertex
         for(Vertex uP: currentFunction.keySet()){
             Vertex vP = currentFunction.get(uP);
             if(!u.equals(uP) && v.equals(vP)){
-                cuplprits.addAll(queryDAG.getAncestors(uP));
+                culprits.addAll(queryDAG.getAncestors(uP));
                 break;
             }
         }
-        // add all the ancestors involved to failingsets
-        return cuplprits;
+        // add all the ancestors involved to failing sets
+        return culprits;
     }
 
     /**
@@ -1919,10 +1917,10 @@ public class SubgraphIsomorphism {
                 queryDAG = constructDAGWithOrder(query, order);
             }
             refineCS(query, target, candidates);
-            materalizeCS(target, candidates);
+            materializeCS(target, candidates);
 
             // For each query node in the order, we will create a list of failing sets to record i
-            // nformation of the backtracking process.
+            // information of the backtracking process.
             Map<Integer, List<Set<Vertex>>> allFailingSets = new HashMap<>();
             for (int i = 0; i <= order.size(); i++)
                 allFailingSets.put(i, new ArrayList<>());
@@ -2115,9 +2113,9 @@ public class SubgraphIsomorphism {
             queryGraph.addVertex(lastVertexCopy); currentId++;
 
             // add an edge between it and all existing vertices
-            for(Vertex prevVertice: seen.keySet()){
-                if(target.containsEdge(prevVertice, randVertex)){
-                    queryGraph.addEdge(seen.get(prevVertice), seen.get(randVertex));
+            for(Vertex prevVertices: seen.keySet()){
+                if(target.containsEdge(prevVertices, randVertex)){
+                    queryGraph.addEdge(seen.get(prevVertices), seen.get(randVertex));
                 }
             }
         }
@@ -2216,7 +2214,7 @@ public class SubgraphIsomorphism {
      * @param graph the given graph
      * @return number of distinct labels in graph
      */
-    public static int numberOfDistinctLables(Graph<Vertex, DefaultEdge> graph){
+    public static int numberOfDistinctLabels(Graph<Vertex, DefaultEdge> graph){
         Set<String> labels = new HashSet<>();
         for(Vertex v: graph.vertexSet()){
             labels.add(v.getLabel());
@@ -2245,15 +2243,13 @@ public class SubgraphIsomorphism {
 
         // keep track of average degree of graph
         double avgDActual = 0;
-        if(subgraphMethod.equals(RANDOM_WALK)) {
-            query = randomGraphRandomWalk(target, n, seen);
-        }
-        else if(subgraphMethod.equals(RANDOM_NODE_NEIGHBOR)){
-            query = randomGraphRandomWalk(target, n, seen);
-        }
-        else{
-            System.out.println(noRandomSubgraphMethodFound);
-            return null;
+        switch (subgraphMethod) {
+            case RANDOM_WALK -> query = randomGraphRandomWalk(target, n, seen);
+            case RANDOM_NODE_NEIGHBOR -> query = randomGraphRandomNodeNeighbor(target, n, seen);
+            default -> {
+                System.out.println(noRandomSubgraphMethodFound);
+                return null;
+            }
         }
 
         // if there is a problem constructing the graph
@@ -2262,7 +2258,7 @@ public class SubgraphIsomorphism {
         }
 
         // since we are only changing edges, must check labels first
-        double numLabelsActual = numberOfDistinctLables(query);
+        double numLabelsActual = numberOfDistinctLabels(query);
         if (numLabelsActual < numLabels.get(0) || numLabels.get(1) < numLabelsActual) {
             return null;
         }
@@ -4133,6 +4129,12 @@ public class SubgraphIsomorphism {
                                                     List<Double> dia, List<Double> den, List<Double> numLabels,
                                                     String subgraphMethod)
             throws IOException {
+        // check if proper method
+        if(!subgraphMethod.equals(RANDOM_WALK) && !subgraphMethod.equals(RANDOM_NODE_NEIGHBOR)){
+            System.out.println(noRandomSubgraphMethodFound);
+            return;
+        }
+
         // if the processing order is dynamic ordering the break
         if(algorithmNamePO.equals(DYNAMIC_ORDER)){
             System.out.println("Cannot use "+DYNAMIC_ORDER+" for estimations.");
