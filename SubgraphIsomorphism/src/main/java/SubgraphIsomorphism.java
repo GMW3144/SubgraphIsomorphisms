@@ -35,7 +35,8 @@ public class SubgraphIsomorphism {
     private static int fullSolutions = 0,
             partialSolutions = 0,
             emptyCandidates = 0,
-            conflicts = 0;
+            conflicts = 0,
+            numRefined = 0;
 
 
     // algorithms
@@ -1323,6 +1324,7 @@ public class SubgraphIsomorphism {
                             }
 
                         }
+                        numRefined+=toRemove.size();
                         candidates.get(u).removeAll(toRemove);
                     }
                 }
@@ -1949,6 +1951,11 @@ public class SubgraphIsomorphism {
             if(!algorithmNamePO.equals(DAF)){
                 queryDAG = constructDAGWithOrder(query, order);
             }
+            fullSolutions = 0;
+            partialSolutions = 0;
+            emptyCandidates = 0;
+            conflicts = 0;
+            numRefined = 0;
             refineCS(query, target, candidates);
             materializeCS(target, candidates);
 
@@ -3551,15 +3558,15 @@ public class SubgraphIsomorphism {
             writer.append("False matchings removed using extra edges from quickSI: ").append(String.valueOf(falseMatchingExtraEdge))
                     .append("\n");
         }
-
         if(algorithmNameB.equals(DAF)){
             String output = "\nFailing Sets Statistics:\n" +
-                    "Number of full solutions: "+fullSolutions+
-                    "Number of partial solutions: "+partialSolutions+
-                    "Number of empty candidates: "+emptyCandidates+
-                    "Number of conflicts: "+conflicts+
+                    "Number of full solutions: "+fullSolutions+"\n"+
+                    "Number of partial solutions: "+partialSolutions+"\n"+
+                    "Number of empty candidates: "+emptyCandidates+"\n"+
+                    "Number of conflicts: "+conflicts+"\n"+
+                    "Number Refined: "+numRefined+
                     "\n\n";
-
+            writer.append(output);
         }
 
         // the combination information if combined two graphs
@@ -4371,7 +4378,7 @@ public class SubgraphIsomorphism {
         }
         // basic information for isomorphism
         algorithmNameC = DAF;
-        algorithmNamePO = GRAPHQL;
+        algorithmNamePO = DAF;
         algorithmNameB = DAF;
 
         // isomorphism

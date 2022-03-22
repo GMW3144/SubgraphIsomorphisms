@@ -1,0 +1,5 @@
+There were the following incorrect subgraph isomorphisms using:
+Candidates algorithm: DAF 
+Processing order algorithm: DAF
+Backtracking algorithm: DAF
+
