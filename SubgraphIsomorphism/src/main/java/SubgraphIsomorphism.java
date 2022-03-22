@@ -25,6 +25,8 @@ public class SubgraphIsomorphism {
     private static double totalCostGraphQL = -1; // keep track of the total cost when computing the order for GraphQL
     private static double falseMatchingParents = -1; // keep track of the vertices removed from parent in SEQq
     private static double falseMatchingExtraEdge = -1; // keep track of the vertices removed from extra edge in SEQq
+    private static Map<Graph<Vertex, DefaultEdge>, Integer> numIsomorphic = null; // the number of graphs that are isomorphic and removed
+    // when finding hard-to-find graps
     private static Map<List<Vertex>, Integer> numCombined = null; // keep track of the statistics when combine graphs
     private static String algorithmNameC = ""; // algorithm in use for candidates
     private static String algorithmNamePO = ""; // algorithm in use for processing order
@@ -1159,6 +1161,34 @@ public class SubgraphIsomorphism {
         return qD;
     }
 
+    public static void convertOrderBFS(Graph<Vertex, DefaultEdge> query,
+                                       List<Vertex> order){
+        // make sure order is in BFS
+        List<Vertex> pastOrder = new ArrayList<>(order);
+        List<Vertex> newOrder = new ArrayList<>();
+        List<Vertex> lastLayer = new ArrayList<>(); lastLayer.add(order.get(0));
+
+        while(!lastLayer.isEmpty()){
+            Set<Vertex> nextLayer = new HashSet<>();
+            // sort by time appear in processing order
+            lastLayer.sort((Vertex v1, Vertex v2) -> Integer.compare(pastOrder.indexOf(v1),
+                    pastOrder.indexOf(v2)));
+
+            for(Vertex v: lastLayer){
+                newOrder.add(v);
+                // get the neighbors of the nodes
+                List<Vertex> nv = Graphs.neighborListOf(query, v);
+
+                // iterate through neighbors in that order
+                nextLayer.addAll(nv);
+            }
+            nextLayer.removeAll(newOrder);
+            lastLayer = new ArrayList<>(nextLayer);
+        }
+        order.removeAll(order);
+        order.addAll(newOrder);
+    }
+
     /**
      * Create a DAG of the query graph given a processing order
      * @param query the query graph
@@ -1167,30 +1197,32 @@ public class SubgraphIsomorphism {
      */
     public static DirectedAcyclicGraph<Vertex, DefaultEdge> constructDAGWithOrder(Graph<Vertex, DefaultEdge> query,
                                                                                   List<Vertex> order){
+        convertOrderBFS(query, order);
+
         DirectedAcyclicGraph<Vertex, DefaultEdge> qD = new DirectedAcyclicGraph<>(DefaultEdge.class);
         // store the vertices we have seen
         Set<Vertex> seen = new HashSet<>();
 
-        // add the root
-        qD.addVertex(order.get(0));
-
         // iterate through the processing order
-        for(int i =0; i<order.size(); i++){
-            Vertex u = order.get(i);
+        for(Vertex u: order){
+            if(!qD.containsVertex(u)){
+                qD.addVertex(u);
+            }
             seen.add(u);
 
             // get the neighbors of the nodes
             List<Vertex> nu = Graphs.neighborListOf(query, u);
+
             // sort by time appear in processing order
             nu.sort((Vertex v1, Vertex v2) -> Integer.compare(order.indexOf(v1), order.indexOf(v2)));
 
             // iterate through neighbors in that order
-            for (Vertex uP: nu){
-                if(query.containsEdge(u, uP) && !seen.contains(uP)){
-                    if(!qD.containsVertex(uP)){
+            for (Vertex uP : nu) {
+                if (!seen.contains(uP)) {
+                    if (!qD.containsVertex(uP)) {
                         qD.addVertex(uP);
                     }
-                    if(!qD.containsEdge(uP, u)){
+                    if (!qD.containsEdge(uP, u)) {
                         qD.addEdge(u, uP);
                     }
                 }
@@ -1600,20 +1632,21 @@ public class SubgraphIsomorphism {
         }
         else if(i!=0 && algorithmNameB.equals(DAF)){
             // iterate through the parents
-            for(Vertex uP: Graphs.predecessorListOf(queryDAG, u)){
+            for(DefaultEdge e: queryDAG.incomingEdgesOf(u)){
+                Vertex uP = queryDAG.getEdgeSource(e);
                 Set<Vertex> CM = new HashSet<>();
                 // if it is contained within the function
                 if(currentFunction.containsKey(uP)) {
                     // find all of the possible vertices we can map to
                     Vertex vP = currentFunction.get(uP);
-                    for (LabeledEdge e : CS.edgeSet()) {
-                        if (vP == queryDAG.getEdgeSource(e)
-                                && e.getLabel().equals(uP + "-" + u)) {
-                            CM.add(queryDAG.getEdgeTarget(e));
+                    for (LabeledEdge e1 : CS.edgeSet()) {
+                        if (vP == queryDAG.getEdgeSource(e1)
+                                && e1.getLabel().equals(uP + "-" + u)) {
+                            CM.add(queryDAG.getEdgeTarget(e1));
                         }
                     }
+                    possibleVertices.retainAll(CM);
                 }
-                possibleVertices.retainAll(CM);
             }
             // the number we were able to prune
             numBackTracking+=(initialSize-possibleVertices.size());
@@ -2374,9 +2407,6 @@ public class SubgraphIsomorphism {
 
                 File queryGraphFile = new File(queryFolderName+queryGraphName);
                 File targetGraphFile = new File(targetFolderName+targetGraphName);
-                if(queryGraphName.equals("backbones_1QMH.32.sub.grf") && targetGraphName.equals("backbones_1AUJ.grf")){
-                    System.out.println("HERE");
-                }
 
                 // construct the graphs
                 Graph<Vertex, DefaultEdge> query = createProteinGraph(queryGraphFile);
@@ -4097,10 +4127,13 @@ public class SubgraphIsomorphism {
                 if(q1==q2){
                     continue;
                 }
-                if(matching(q1, q2, true, 0.5).size()>=1){
-                    if(!toRemove.contains(q1)) {
-                        toRemove.add(q2);
+                if(!toRemove.contains(q1) && matching(q1, q2, true, 0.5).size()>=1){
+                    // increment the number that are isomorphich
+                    if(!numIsomorphic.containsKey(q1)){
+                        numIsomorphic.put(q1, 0);
                     }
+                    numIsomorphic.put(q1, numIsomorphic.get(q1)+1);
+                    toRemove.add(q2);
                 }
             }
         }
@@ -4205,9 +4238,10 @@ public class SubgraphIsomorphism {
 
             outlier = q3 + 1.5 * iqr;
 
-            System.out.println(outlier +"\n");
-            System.out.println(stats);
-            System.out.println("================");
+            System.out.println(stats.getN());
+            //System.out.println(outlier +"\n");
+            //System.out.println(stats);
+            //System.out.println("================");
 
             // add the outliers as graphs
             for (int estimate : estimationRandomWalk.keySet()) {
@@ -4222,7 +4256,10 @@ public class SubgraphIsomorphism {
             }
         }
         if(foundHardToFind){
+            System.out.println("Found hard-to-find instance\n" +
+                    "================");
             // remove isomorphic graphs
+            numIsomorphic = new HashMap<>();
             removeIsomorphicGraphs(hardToFindGraphs);
             // iterate through the query graphs
             for (Graph<Vertex, DefaultEdge> query : hardToFindGraphs.keySet()) {
@@ -4245,6 +4282,7 @@ public class SubgraphIsomorphism {
                 displayGraphStatistics(queryName, query, targetLocation.getName(), target, writer);
 
                 String output = "\nEstimated Number "+induce+" Matchings: " + estimate+"\n" +
+                        "Number of Isomorphic Graphs Found: "+numIsomorphic.get(query)+"\n"+
                         "Outlier minimum value: " + outlier + "\n"+
                         "\ttau: " +tau+ "\n"+
                         "\tmaxEpoch: " +maxEpoch+"\n"+
@@ -4263,7 +4301,7 @@ public class SubgraphIsomorphism {
         }
         else{
             System.out.println("Could not find any hard-to-find instances.  Returned graphs with maximum number of matchings\n" +
-                    "================================================\n");
+                    "================");
 
             // iterate through the query graphs
             int maxValue = (int) stats.getMax();
@@ -4272,6 +4310,7 @@ public class SubgraphIsomorphism {
             }
 
             // remove isomorphic graphs
+            numIsomorphic = new HashMap<>();
             removeIsomorphicGraphs(hardToFindGraphs);
 
             for(Graph<Vertex, DefaultEdge> query: hardToFindGraphs.keySet()){
@@ -4300,6 +4339,7 @@ public class SubgraphIsomorphism {
                 outlier = q3 + 1.5 * iqr;
 
                 String output = "\nEstimated Number "+induce+" Matchings: " + maxValue+"\n" +
+                        "Number of Isomorphic Graphs Found: "+numIsomorphic.get(query)+"\n"+
                         "Outlier minimum value: " + outlier + "\n"+
                         "\ttau: " +tau+ "\n"+
                         "\tmaxEpoch: " +maxEpoch+"\n"+
@@ -4330,9 +4370,9 @@ public class SubgraphIsomorphism {
             mainMethod = args[0];
         }
         // basic information for isomorphism
-        algorithmNameC = GRAPHQL;
+        algorithmNameC = DAF;
         algorithmNamePO = GRAPHQL;
-        algorithmNameB = GRAPHQL;
+        algorithmNameB = DAF;
 
         // isomorphism
         final boolean isInduced = true;
