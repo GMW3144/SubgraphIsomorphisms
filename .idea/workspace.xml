@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="6d0b8e23-97b2-4b58-991e-87f7b486f404" name="Default Changelist" comment="used different minimum supports (part 2)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/Test/test.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Data/Output/Test/test.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/SubgraphIsomorphism.class" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/target/classes/SubgraphIsomorphism.class" afterDir="false" />
     </list>
@@ -87,13 +86,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1642694530105</updated>
-    </task>
-    <task id="LOCAL-00086" summary="Performed random walk">
-      <created>1645904890232</created>
-      <option name="number" value="00086" />
-      <option name="presentableId" value="LOCAL-00086" />
-      <option name="project" value="LOCAL" />
-      <updated>1645904890232</updated>
     </task>
     <task id="LOCAL-00087" summary="Added graph statistics using math3">
       <created>1646148983380</created>
@@ -431,7 +423,14 @@
       <option name="project" value="LOCAL" />
       <updated>1647962530898</updated>
     </task>
-    <option name="localTasksCounter" value="135" />
+    <task id="LOCAL-00135" summary="Working completely for DAG">
+      <created>1647965920522</created>
+      <option name="number" value="00135" />
+      <option name="presentableId" value="LOCAL-00135" />
+      <option name="project" value="LOCAL" />
+      <updated>1647965920522</updated>
+    </task>
+    <option name="localTasksCounter" value="136" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -483,7 +482,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="First attempt at making the DAG" />
     <MESSAGE value="Fixed some bugs with creating the DAG and order" />
     <MESSAGE value="Attempt to create DAG with order" />
     <MESSAGE value="Made some fixes to constructing DAG given order" />
@@ -508,7 +506,8 @@
     <MESSAGE value="write to files that don't have hard to find instances" />
     <MESSAGE value="Added number of labels in generation info file" />
     <MESSAGE value="Fixed processing order creating a DAG" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed processing order creating a DAG" />
+    <MESSAGE value="Working completely for DAG" />
+    <option name="LAST_COMMIT_MESSAGE" value="Working completely for DAG" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

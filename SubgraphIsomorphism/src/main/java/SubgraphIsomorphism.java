@@ -2303,7 +2303,7 @@ public class SubgraphIsomorphism {
 
         // since we are only changing edges, must check labels first
         double numLabelsActual = numberOfDistinctLabels(query);
-        if (numLabelsActual < numLabels.get(0) || numLabels.get(1) < numLabelsActual) {
+        if (numLabels != null && (numLabelsActual < numLabels.get(0) || numLabels.get(1) < numLabelsActual)) {
             return null;
         }
 
@@ -4297,7 +4297,7 @@ public class SubgraphIsomorphism {
                         "The total number of query graphs found: "+stats.getN()+"\n" +
                         stats.toString()+"\n\n"+
                         "Number of Vertices: "+size+"\n"+
-                        "Average Diameter Range: "+avgD+"\n"+
+                        "Average Degree Range: "+avgD+"\n"+
                         "Diameter Range: "+dia+"\n"+
                         "Density Range: "+den+"\n" +
                         "Number of Distinct Labels: "+numLabels;
@@ -4354,7 +4354,7 @@ public class SubgraphIsomorphism {
                         "The total number of query graphs found: "+stats.getN()+"\n" +
                         stats.toString()+"\n\n"+
                         "Number of Vertices: "+size+"\n"+
-                        "Average Diameter Range: "+avgD+"\n"+
+                        "Average Degree Range: "+avgD+"\n"+
                         "Diameter Range: "+dia+"\n"+
                         "Density Range: "+den+"\n" +
                         "Number of Distinct Labels: "+numLabels;
@@ -4397,15 +4397,15 @@ public class SubgraphIsomorphism {
 
         // create query graph
         int minSize = 5;
-        int maxSize = 25;
+        int maxSize = 5;
         int maxNumQueries = 500;
         int batchSize = 100;
 
         // properties of query graph
         List<Double> avgD = new ArrayList<>(List.of(1.0, 2.0));
-        List<Double> dia = new ArrayList<>(List.of(5.0, 5.0));
+        List<Double> dia = new ArrayList<>(List.of(1.0, 2.0));
         List<Double> den = new ArrayList<>(List.of(0.0, 1.0));
-        List<Double> numLabels = new ArrayList<>(List.of(1.0, 2.0));
+        List<Double> numLabels = null;
 
         // keep track of time
         Date startDate = new Date();
