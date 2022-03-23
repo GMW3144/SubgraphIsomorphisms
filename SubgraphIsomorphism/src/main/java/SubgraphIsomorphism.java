@@ -4150,6 +4150,75 @@ public class SubgraphIsomorphism {
     }
 
     /**
+     * Write the graph information from attempting to find hard to find instance
+     * @param target the query graph
+     * @param hardToFind whether the graph is hard to find or potentially hard to find
+     * @param graphs the set of distinct query graphs
+     * @param outputFolderName the output folder
+     * @param targetLocation the location of the target graph
+     * @param induce if the isomorphism is induced
+     * @param outlier the outlier value
+     * @param tau the tau value for wander joins
+     * @param maxEpoch the max epoche for wander joins
+     * @param zScore the z score for wander joins
+     * @param size the size of the query graph
+     * @param avgD the average degree range of the query graphs
+     * @param dia the diameter range of the query graphs
+     * @param den the density range of the query graphs
+     * @param numLabels the number of label range for the query graphs
+     * @param stats the data set containing other query graph estimates we used to find hard-to-find instances
+     * @throws IOException writing to a file
+     */
+    public static void writeGraphsInformation(Graph<Vertex, DefaultEdge> target, String hardToFind,
+                                             Map<Graph<Vertex, DefaultEdge>, Integer> graphs, String outputFolderName,
+                                             File targetLocation, String induce, double outlier,
+                                             double tau, int maxEpoch, double zScore,
+                                             int size, List<Double> avgD, List<Double> dia, List<Double> den,
+                                             List<Double> numLabels, DescriptiveStatistics stats) throws IOException {
+        // remove isomorphic graphs
+        numIsomorphic = new HashMap<>();
+        removeIsomorphicGraphs(graphs);
+
+        // iterate through the query graphs
+        for (Graph<Vertex, DefaultEdge> query : graphs.keySet()) {
+            int estimate = graphs.get(query);
+
+            // store what the graph looks like
+            File outputGraphFolder = new File(outputFolderName + "Graphs\\");
+            int numGraphs = 0;
+            if (outputGraphFolder.list() != null) {
+                numGraphs = outputGraphFolder.list().length;
+            }
+            String queryName = "graph" + (numGraphs + 1) + ".txt";
+            writeGraph(query, outputFolderName + "Graphs\\", queryName);
+
+            // write statistics of the graph
+            File outputStatsFile = new File(outputFolderName + "GenerationInfo\\" + queryName);
+            BufferedWriter writer = new BufferedWriter(new FileWriter(outputStatsFile));
+
+            // write hard-to-find information first
+            writer.write(hardToFind+"\n");
+            String output = "\nEstimated Number "+induce+" Matchings: " + estimate+"\n" +
+                    "Number of Isomorphic Graphs Found: "+numIsomorphic.get(query)+"\n"+
+                    "Outlier minimum value: " + outlier + "\n"+
+                    "\ttau: " +tau+ "\n"+
+                    "\tmaxEpoch: " +maxEpoch+"\n"+
+                    "\tzAlpha: "+zScore+ "\n\n" +
+                    "The total number of query graphs found: "+stats.getN()+"\n" +
+                    stats.toString()+"\n\n"+
+                    "Number of Vertices: "+size+"\n"+
+                    "Average Degree Range: "+avgD+"\n"+
+                    "Diameter Range: "+dia+"\n"+
+                    "Density Range: "+den+"\n" +
+                    "Number of Distinct Labels: "+numLabels+"\n\n";
+            writer.append(output);
+            displayGraphStatistics(queryName, query, targetLocation.getName(), target, writer);
+
+            writer.close();
+        }
+    }
+
+    /**
      * Finds hard-to-find query graph for the target graph by finding outliers based on the estimation from wander joins
      * @param target the target graph
      * @param targetLocation the location of the target graph
@@ -4158,28 +4227,27 @@ public class SubgraphIsomorphism {
      * @param gamma the gamma for graphQL
      * @param tau the threshold for the confidence interval
      * @param maxEpoch the maximum number of random walks for wander joins
-     * @param zScore the zScore for the confidence interval calculated from wander joins
+     * @param zScore zScore the zScore for the confidence interval calculated from wander joins
      * @param isInduced if the isomorphism is induced
-     * @param maxNumQueryGraphs the maximum number of query graphs we will check
-     * @param batchSize the sample of query graph batch size that we will check outliers
+     * @param maxNumQueryGraphs the size of the sample which we will look for an outlier
+     * @param maxNumAttempts the number of times we will will try to find outlier in a dataset
+     * @param maxNumFailedProp the number of times we will look for a query with given properties
      * @param avgD the range of average degree we want our graph to be
      * @param dia the range of diameter we want our graph to be
-     * @param den the range of density we want our graph to be
+     * @param den den the range of density we want our graph to be
      * @param numLabels the range of number of distinct labels
-     * @throws IOException read/write errors
+     * @param subgraphMethods the methods we will use to construct the graphs
+     * @throws IOException IOException read/write errors
      */
     public static void randomGenerationWithEstimate(Graph<Vertex, DefaultEdge> target, File targetLocation,
                                                     String outputFolderName, int size, double gamma,
                                                     double tau, int maxEpoch, double zScore, boolean isInduced,
-                                                    int maxNumQueryGraphs, int batchSize,  List<Double> avgD,
-                                                    List<Double> dia, List<Double> den, List<Double> numLabels,
-                                                    String subgraphMethod)
+                                                    int maxNumQueryGraphs, int maxNumAttempts, int maxNumFailedProp,
+                                                    List<Double> avgD, List<Double> dia, List<Double> den,
+                                                    List<Double> numLabels, List<String> subgraphMethods)
             throws IOException {
-        // check if proper method
-        if(!subgraphMethod.equals(RANDOM_WALK) && !subgraphMethod.equals(RANDOM_NODE_NEIGHBOR)){
-            System.out.println(noRandomSubgraphMethodFound);
-            return;
-        }
+
+        Random random = new Random();
 
         // if the processing order is dynamic ordering the break
         if(algorithmNamePO.equals(DYNAMIC_ORDER)){
@@ -4188,10 +4256,21 @@ public class SubgraphIsomorphism {
             return;
         }
 
-        // keep track of the random walks and their estimations
+        // check if all the sugraph methods are valid
+        for(String method : subgraphMethods){
+            if(!method.equals(RANDOM_WALK) && !method.equals(RANDOM_NODE_NEIGHBOR)){
+                System.out.println("Cannot use "+method+" for constructing query graphs.");
+                System.out.println(noRandomSubgraphMethodFound);
+                return;
+            }
+        }
+
+        // keep track estimation and the random walks associated with it
         Map<Integer, Set<Graph<Vertex, DefaultEdge>>> estimationRandomWalk = new HashMap<>();
         // keep track of estimate values
         DescriptiveStatistics stats = new DescriptiveStatistics();
+        double outlier = 0;
+        boolean hardToFind = false;
 
         // string value if induced
         String induce = "Non-induce";
@@ -4200,29 +4279,35 @@ public class SubgraphIsomorphism {
         }
 
         // keep track if we found hard-to-find instance
-        boolean foundHardToFind = false;
         Map<Graph<Vertex, DefaultEdge>, Integer> hardToFindGraphs = new HashMap<>();
-        double outlier = 0;
-        // keep track of the failed attempts
-        int failedAttempts = 0;
 
-        while(!foundHardToFind && stats.getN()<maxNumQueryGraphs) {
+
+        for(int i = 0; i < maxNumAttempts; i++) {
+            System.out.println("Attempt "+ (i+1)+". Graphs Created:");
+            // reset values
+            estimationRandomWalk = new HashMap<>();
+            stats = new DescriptiveStatistics();
+
+            // keep track of the failed attempts
+            int failedAttempts = 0;
+
             // construct a 100 random walks
-            for (int i = 0; i < batchSize; i++) {
-                if(failedAttempts >= 1000){
+            for (int j = 0; j < maxNumQueryGraphs; j++) {
+                if(failedAttempts >= maxNumFailedProp){
                     System.out.println("Could not find a graph with the given properties\n================");
-                    return;
+                    j=maxNumQueryGraphs;
+                    continue;
                 }
 
                 // keep track of equivalencies, so know when see a target vertex again
                 Map<Vertex, Vertex> seen = new HashMap<>();
 
-                // create graph of given size from the target
+                // create graph of given size from the target, with a random method
                 Graph<Vertex, DefaultEdge> query = randomGraphWithProperties(target, seen, size, avgD, dia, den,
-                        numLabels, subgraphMethod);
+                        numLabels, subgraphMethods.get(random.nextInt(subgraphMethods.size())));
                 if(query == null){
                     failedAttempts++;
-                    i--;
+                    j--;
                     continue;
                 }
                 failedAttempts = 0;
@@ -4236,8 +4321,13 @@ public class SubgraphIsomorphism {
                 }
                 estimationRandomWalk.get(estimate).add(query);
                 stats.addValue(estimate);
-            }
 
+                if(j%100==0){
+                    System.out.print(j+", ");
+                }
+            }
+            System.out.println(maxNumQueryGraphs);
+            // find if hard-to-find instance
             // calculate outliers:
             double q1 = stats.getPercentile(25);
             double q3 = stats.getPercentile(75);
@@ -4245,68 +4335,29 @@ public class SubgraphIsomorphism {
 
             outlier = q3 + 1.5 * iqr;
 
-            System.out.println(stats.getN());
-            //System.out.println(outlier +"\n");
-            //System.out.println(stats);
-            //System.out.println("================");
+            if(stats.getMax()>outlier){
+                hardToFind = true;
+                break;
+            }
+        }
 
+        if(hardToFind){
             // add the outliers as graphs
             for (int estimate : estimationRandomWalk.keySet()) {
                 if (estimate > outlier) {
-                    foundHardToFind = true;
-
                     // iterate through the query graphs
                     for(Graph<Vertex, DefaultEdge> query : estimationRandomWalk.get(estimate)) {
                         hardToFindGraphs.put(query, estimate);
                     }
                 }
             }
-        }
-        if(foundHardToFind){
+
             System.out.println("Found hard-to-find instance\n" +
                     "================");
-            // remove isomorphic graphs
-            numIsomorphic = new HashMap<>();
-            removeIsomorphicGraphs(hardToFindGraphs);
-            // iterate through the query graphs
-            for (Graph<Vertex, DefaultEdge> query : hardToFindGraphs.keySet()) {
-                int estimate = hardToFindGraphs.get(query);
-                // store important information when using query graph
-                File outputGraphFolder = new File(outputFolderName + "Graphs\\");
-                int numGraphs = 0;
-                if (outputGraphFolder.list() != null) {
-                    numGraphs = outputGraphFolder.list().length;
-                }
-                String queryName = "graph" + (numGraphs + 1) + ".txt";
-
-                // write graph as hard to find
-                writeGraph(query, outputFolderName + "Graphs\\", queryName);
-
-                // write statistics
-                File outputStatsFile = new File(outputFolderName + "GenerationInfo\\" + queryName);
-                BufferedWriter writer = new BufferedWriter(new FileWriter(outputStatsFile));
-
-                displayGraphStatistics(queryName, query, targetLocation.getName(), target, writer);
-
-                String output = "\nEstimated Number "+induce+" Matchings: " + estimate+"\n" +
-                        "Number of Isomorphic Graphs Found: "+numIsomorphic.get(query)+"\n"+
-                        "Outlier minimum value: " + outlier + "\n"+
-                        "\ttau: " +tau+ "\n"+
-                        "\tmaxEpoch: " +maxEpoch+"\n"+
-                        "\tzAlpha: "+zScore+ "\n\n" +
-                        "The total number of query graphs found: "+stats.getN()+"\n" +
-                        stats.toString()+"\n\n"+
-                        "Number of Vertices: "+size+"\n"+
-                        "Average Degree Range: "+avgD+"\n"+
-                        "Diameter Range: "+dia+"\n"+
-                        "Density Range: "+den+"\n" +
-                        "Number of Distinct Labels: "+numLabels;
-
-                writer.append(output);
-                writer.close();
-            }
+            writeGraphsInformation(target, "Hard-to-find", hardToFindGraphs, outputFolderName, targetLocation,
+                    induce, outlier, tau, maxEpoch, zScore, size, avgD, dia,  den, numLabels, stats);
         }
-        else{
+        else if(stats.getN()==maxNumQueryGraphs){
             System.out.println("Could not find any hard-to-find instances.  Returned graphs with maximum number of matchings\n" +
                     "================");
 
@@ -4315,53 +4366,12 @@ public class SubgraphIsomorphism {
             for (Graph<Vertex, DefaultEdge> query : estimationRandomWalk.get(maxValue)) {
                 hardToFindGraphs.put(query, maxValue);
             }
-
-            // remove isomorphic graphs
-            numIsomorphic = new HashMap<>();
-            removeIsomorphicGraphs(hardToFindGraphs);
-
-            for(Graph<Vertex, DefaultEdge> query: hardToFindGraphs.keySet()){
-                // store important information when using query graph
-                File outputGraphFolder = new File(outputFolderName + "Graphs\\");
-                int numGraphs = 0;
-                if (outputGraphFolder.list() != null) {
-                    numGraphs = outputGraphFolder.list().length;
-                }
-                String queryName = "graph" + (numGraphs + 1) + ".txt";
-
-                // write graph as hard to find
-                writeGraph(query, outputFolderName + "Graphs\\", queryName);
-
-                // write statistics
-                File outputStatsFile = new File(outputFolderName + "GenerationInfo\\" + queryName);
-                BufferedWriter writer = new BufferedWriter(new FileWriter(outputStatsFile));
-
-                displayGraphStatistics(queryName, query, targetLocation.getName(), target, writer);
-
-                // calculate outliers:
-                double q1 = stats.getPercentile(25);
-                double q3 = stats.getPercentile(75);
-                double iqr = q3 - q1;
-
-                outlier = q3 + 1.5 * iqr;
-
-                String output = "\nEstimated Number "+induce+" Matchings: " + maxValue+"\n" +
-                        "Number of Isomorphic Graphs Found: "+numIsomorphic.get(query)+"\n"+
-                        "Outlier minimum value: " + outlier + "\n"+
-                        "\ttau: " +tau+ "\n"+
-                        "\tmaxEpoch: " +maxEpoch+"\n"+
-                        "\tzAlpha: "+zScore+ "\n\n" +
-                        "The total number of query graphs found: "+stats.getN()+"\n" +
-                        stats.toString()+"\n\n"+
-                        "Number of Vertices: "+size+"\n"+
-                        "Average Degree Range: "+avgD+"\n"+
-                        "Diameter Range: "+dia+"\n"+
-                        "Density Range: "+den+"\n" +
-                        "Number of Distinct Labels: "+numLabels;
-
-                writer.append(output);
-                writer.close();
-            }
+            writeGraphsInformation( target,  "Possibly Hard-to-find", hardToFindGraphs, outputFolderName,
+                    targetLocation, induce, outlier, tau, maxEpoch, zScore, size, avgD,  dia, den, numLabels, stats);
+        }
+        else{
+            System.out.println("Could not find graphs with property\n" +
+                    "================");
         }
     }
 
@@ -4398,13 +4408,15 @@ public class SubgraphIsomorphism {
         // create query graph
         int minSize = 5;
         int maxSize = 5;
-        int maxNumQueries = 500;
-        int batchSize = 100;
+        int maxNumQueries = 1000;
+        int maxNumAttempts = 1;
+        int maxNumFailedProp = 1000;
+        final List<String> subgraphMethods = new ArrayList<>(List.of(RANDOM_NODE_NEIGHBOR, RANDOM_WALK));
 
         // properties of query graph
         List<Double> avgD = new ArrayList<>(List.of(1.0, 2.0));
         List<Double> dia = new ArrayList<>(List.of(1.0, 2.0));
-        List<Double> den = new ArrayList<>(List.of(0.0, 1.0));
+        List<Double> den = null;
         List<Double> numLabels = null;
 
         // keep track of time
@@ -4496,9 +4508,11 @@ public class SubgraphIsomorphism {
 
             // iterate through the different size of graphs (from min to max)
             for(int size = minSize; size<=maxSize; size++) {
-                System.out.println("Graph Size : "+size);
+                System.out.println("Graph Size : "+size+"\n================");
+
                 randomGenerationWithEstimate(target, targetLocation, outputFolderName, size, gamma, tau, maxEpoch,
-                        zScore, isInduced, maxNumQueries, batchSize, avgD, dia, den, numLabels, subgraphMethod);
+                        zScore, isInduced, maxNumQueries, maxNumAttempts, maxNumFailedProp, avgD, dia, den, numLabels,
+                        subgraphMethods);
             }
         }
 

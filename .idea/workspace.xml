@@ -71,7 +71,7 @@
     <configuration name="SubgraphIsomorphism " type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="SubgraphIsomorphism" />
       <module name="SubgraphIsomorphism" />
-      <option name="PROGRAM_PARAMETERS" value="KnownGraphs C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\backbones_2QRK\Graphs\ C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\backbones_2QRK\Isomorphism\ C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\backbones_2QRK\GenerationInfo\" />
+      <option name="PROGRAM_PARAMETERS" value="RandomWalkEstimation C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_1DLO.grf C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\HeatMap\5\de1_di_1\" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../../ISProject" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -86,13 +86,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1642694530105</updated>
-    </task>
-    <task id="LOCAL-00087" summary="Added graph statistics using math3">
-      <created>1646148983380</created>
-      <option name="number" value="00087" />
-      <option name="presentableId" value="LOCAL-00087" />
-      <option name="project" value="LOCAL" />
-      <updated>1646148983380</updated>
     </task>
     <task id="LOCAL-00088" summary="Rewrote the names so that the files can be moved anywhere and still be referenced as &quot;graph1&quot;">
       <created>1646152635937</created>
@@ -430,7 +423,14 @@
       <option name="project" value="LOCAL" />
       <updated>1647965920522</updated>
     </task>
-    <option name="localTasksCounter" value="136" />
+    <task id="LOCAL-00136" summary="Everything working before big change">
+      <created>1648050617593</created>
+      <option name="number" value="00136" />
+      <option name="presentableId" value="LOCAL-00136" />
+      <option name="project" value="LOCAL" />
+      <updated>1648050617594</updated>
+    </task>
+    <option name="localTasksCounter" value="137" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -482,7 +482,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Fixed some bugs with creating the DAG and order" />
     <MESSAGE value="Attempt to create DAG with order" />
     <MESSAGE value="Made some fixes to constructing DAG given order" />
     <MESSAGE value="Added comments" />
@@ -507,7 +506,8 @@
     <MESSAGE value="Added number of labels in generation info file" />
     <MESSAGE value="Fixed processing order creating a DAG" />
     <MESSAGE value="Working completely for DAG" />
-    <option name="LAST_COMMIT_MESSAGE" value="Working completely for DAG" />
+    <MESSAGE value="Everything working before big change" />
+    <option name="LAST_COMMIT_MESSAGE" value="Everything working before big change" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -589,41 +589,6 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>2285</line>
-          <option name="timeStamp" value="522" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>4290</line>
-          <option name="timeStamp" value="532" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>4288</line>
-          <option name="timeStamp" value="533" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>4268</line>
-          <option name="timeStamp" value="534" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>4320</line>
-          <option name="timeStamp" value="535" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>4347</line>
-          <option name="timeStamp" value="536" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>4128</line>
-          <option name="timeStamp" value="537" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
           <line>1200</line>
           <option name="timeStamp" value="555" />
         </line-breakpoint>
@@ -631,6 +596,11 @@
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
           <line>1232</line>
           <option name="timeStamp" value="556" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
+          <line>4343</line>
+          <option name="timeStamp" value="580" />
         </line-breakpoint>
         <breakpoint enabled="true" type="java-exception">
           <properties class="java.lang.NullPointerException" package="java.lang" />
