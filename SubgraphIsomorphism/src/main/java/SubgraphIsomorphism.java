@@ -936,6 +936,8 @@ public class SubgraphIsomorphism {
      */
     public static QISequence buildSpanningTreeWithOrder(Graph<Vertex, DefaultEdge> query, ArrayList<Vertex> order){
         QISequence SEQq = new QISequence();
+        // make sure for each vertex (beside root), there is a prev vertex connected to it
+        convertOrderBFS(query, order);
 
         // add the first vertex to the tree
         Vertex u0 = order.get(0);
@@ -3737,7 +3739,7 @@ public class SubgraphIsomorphism {
             return -1;
         }
 
-        // compute the spanning tree
+        // compute the spanning tree, must have one root
         QISequence SEQq = buildSpanningTreeWithOrder(query, order);
 
         // keep track of the costs we have seen
