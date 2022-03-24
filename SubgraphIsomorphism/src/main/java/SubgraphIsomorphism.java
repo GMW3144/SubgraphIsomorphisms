@@ -53,6 +53,7 @@ public class SubgraphIsomorphism {
     // creating random subgraphs
     private static final String RANDOM_WALK = "random walk";
     private static final String RANDOM_NODE_NEIGHBOR = "random node neighbor";
+    private static final String FOREST_FIRE = "forest fire";
 
     // error messages
     // error message if didn't find isomorphism algorithm
@@ -75,7 +76,8 @@ public class SubgraphIsomorphism {
     private static final String noRandomSubgraphMethodFound = "Random subgraph creation method is not valid.\n " +
             "Specify one of the following connections methods: \n" +
             "\t "+RANDOM_WALK+": constructs non-induced subgraph using random walk algorithm.\n" +
-            "\t "+RANDOM_NODE_NEIGHBOR+": constructs induced subgraph using random node neighbor algorithm.\n ";
+            "\t "+RANDOM_NODE_NEIGHBOR+": constructs induced subgraph using random node neighbor algorithm.\n "+
+            "\t "+FOREST_FIRE+": constructs tree subgraph using forest fire algorithm.\n ";
     // error message if threshold is too high
     private static final String thresholdToHigh = "Threshold too large for graph or graphs not connectable";
     // error message if minimum support is too high
@@ -2175,6 +2177,67 @@ public class SubgraphIsomorphism {
     }
 
     /**
+     * Finds an induced subgraph of the target graph using forest fire
+     * @param target the target graph
+     * @param sizeQuery the size of the query graph
+     * @param seen the vertices we have seen
+     * @param p the probability we will include a neighbor
+     * @return the induced subgraph
+     */
+    private static Graph<Vertex, DefaultEdge> randomGraphForestFire(Graph<Vertex, DefaultEdge> target, int sizeQuery,
+                                                                            Map<Vertex, Vertex> seen, double p) {
+        Graph<Vertex, DefaultEdge> queryGraph = new SimpleGraph<>(DefaultEdge.class);
+
+        // get a random vertex
+        Vertex firstVertex = randomVertex(target.vertexSet());
+        int currentId = 0;
+
+        // add first vertex to the query graph
+        Vertex firstVertexCopy = copyVertex(firstVertex, currentId);
+        seen.put(firstVertex, firstVertexCopy); // target, query
+        queryGraph.addVertex(firstVertexCopy); currentId++;
+
+        // the set of possible vertices is initially the neighbors list
+        Set<Vertex> lastLayer = new HashSet<>(List.of(firstVertex));
+        // while we have somewhere to go
+        while(true){
+            // construct the next layer
+            Set<Vertex> nextLayer = new HashSet<>();
+
+            // iterate through the neighbors of the last layer
+            for(Vertex v: lastLayer){
+                for(Vertex vP : Graphs.neighborListOf(target, v)) {
+                    // if we have not seen them yet we can continue on with some probability p
+                    double randomDouble = Math.random();
+                    if (randomDouble >= p && !seen.containsKey(vP)) {
+                        // add to the next layer
+                        nextLayer.add(v);
+
+                        // add vertex and edge to the graph
+                        Vertex nextVertexCopy = copyVertex(vP, currentId);
+                        seen.put(vP, nextVertexCopy); // target, query
+                        queryGraph.addVertex(nextVertexCopy); currentId++;
+                        queryGraph.addEdge(seen.get(v), seen.get(vP));
+
+                        // keep track of it in seen
+                        seen.put(vP, nextVertexCopy);
+
+                        // stop when we added enough vertices
+                        if(seen.size() > sizeQuery){
+                            return queryGraph;
+                        }
+                    }
+                }
+            }
+            // now look at the next layer
+            lastLayer = nextLayer;
+            if(lastLayer.isEmpty()){
+                lastLayer.add(randomVertex( seen.keySet()));
+            }
+        }
+    }
+
+    /**
      * Create a new graph by performing a random walk on the target graph
      * @param target target graph
      * @param sizeQuery the maximum number of vertices in the query
@@ -2297,6 +2360,7 @@ public class SubgraphIsomorphism {
         switch (subgraphMethod) {
             case RANDOM_WALK -> query = randomGraphRandomWalk(target, n, seen);
             case RANDOM_NODE_NEIGHBOR -> query = randomGraphRandomNodeNeighbor(target, n, seen);
+            case FOREST_FIRE -> query = randomGraphForestFire(target, n, seen, 0.5);
             default -> {
                 System.out.println(noRandomSubgraphMethodFound);
                 return null;
@@ -3435,6 +3499,7 @@ public class SubgraphIsomorphism {
         switch (subgraphMethod) {
             case RANDOM_WALK -> queryGraph = randomGraphRandomWalk(targetGraph, size, seen);
             case RANDOM_NODE_NEIGHBOR -> queryGraph = randomGraphRandomNodeNeighbor(targetGraph, size, seen);
+            case FOREST_FIRE -> queryGraph = randomGraphForestFire(targetGraph, size, seen, 0.5);
             default -> {
                 System.out.println(noRandomSubgraphMethodFound);
                 return -1;
@@ -4265,7 +4330,7 @@ public class SubgraphIsomorphism {
 
         // check if all the sugraph methods are valid
         for(String method : subgraphMethods){
-            if(!method.equals(RANDOM_WALK) && !method.equals(RANDOM_NODE_NEIGHBOR)){
+            if(!method.equals(RANDOM_WALK) && !method.equals(RANDOM_NODE_NEIGHBOR) && !method.equals(FOREST_FIRE)){
                 System.out.println("Cannot use "+method+" for constructing query graphs.");
                 System.out.println(noRandomSubgraphMethodFound);
                 return;
@@ -4290,7 +4355,7 @@ public class SubgraphIsomorphism {
 
 
         for(int i = 0; i < maxNumAttempts; i++) {
-            System.out.println("Attempt "+ (i+1)+". Graphs Created:");
+            System.out.print("Attempt "+ (i+1)+". Graphs Created: ");
             // reset values
             estimationRandomWalk = new HashMap<>();
             stats = new DescriptiveStatistics();
@@ -4301,9 +4366,8 @@ public class SubgraphIsomorphism {
             // construct a 100 random walks
             for (int j = 0; j < maxNumQueryGraphs; j++) {
                 if(failedAttempts >= maxNumFailedProp){
-                    System.out.println("Could not find a graph with the given properties\n================");
-                    j=maxNumQueryGraphs;
-                    continue;
+                    System.out.println(" - Could not find a graph with the given properties");
+                    break;
                 }
 
                 // keep track of equivalencies, so know when see a target vertex again
@@ -4333,18 +4397,20 @@ public class SubgraphIsomorphism {
                     System.out.print(j+", ");
                 }
             }
-            System.out.println(maxNumQueryGraphs);
-            // find if hard-to-find instance
-            // calculate outliers:
-            double q1 = stats.getPercentile(25);
-            double q3 = stats.getPercentile(75);
-            double iqr = q3 - q1;
+            if(stats.getN() == maxNumQueryGraphs) {
+                System.out.println(stats.getN());
+                // find if hard-to-find instance
+                // calculate outliers:
+                double q1 = stats.getPercentile(25);
+                double q3 = stats.getPercentile(75);
+                double iqr = q3 - q1;
 
-            outlier = q3 + 1.5 * iqr;
+                outlier = q3 + 1.5 * iqr;
 
-            if(stats.getMax()>outlier){
-                hardToFind = true;
-                break;
+                if (stats.getMax() > outlier) {
+                    hardToFind = true;
+                    break;
+                }
             }
         }
 
@@ -4413,12 +4479,12 @@ public class SubgraphIsomorphism {
         double zScore = 1.96; // z-score for 95% confidence
 
         // create query graph
-        int minSize = 13;
+        int minSize = 5;
         int maxSize = 25;
         int maxNumQueries = 1000;
         int maxNumAttempts = 5;
         int maxNumFailedProp = 1000;
-        final List<String> subgraphMethods = new ArrayList<>(List.of(RANDOM_NODE_NEIGHBOR, RANDOM_WALK));
+        final List<String> subgraphMethods = new ArrayList<>(List.of(RANDOM_NODE_NEIGHBOR, RANDOM_WALK, FOREST_FIRE));
 
         // keep track of time
         Date startDate = new Date();
@@ -4510,8 +4576,8 @@ public class SubgraphIsomorphism {
             for(int size = minSize; size<=maxSize; size++) {
                 System.out.println("Graph Size : "+size+"\n================================");
 
-                for(double de = 1; de<=5; de++) {
-                    for(double di = 1; di<=5; di++) {
+                for(double de = 1; de<=10; de++) {
+                    for(double di = 1; di<=10; di++) {
                         System.out.println("Degree: "+de+", Diameter: "+di+"\n================");
 
                         String outputFolderNameDeDi = outputFolderName+size+"\\"+"de"+(int)de+"_di"+(int)di+"\\";

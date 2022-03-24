@@ -71,7 +71,7 @@
     <configuration name="SubgraphIsomorphism " type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="SubgraphIsomorphism" />
       <module name="SubgraphIsomorphism" />
-      <option name="PROGRAM_PARAMETERS" value="RandomWalkEstimation C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_1DLO.grf C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\HeatMap\" />
+      <option name="PROGRAM_PARAMETERS" value="RandomWalkEstimation C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_1DLO.grf C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\HeatMap\SecondAttempt\" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../../ISProject" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -86,13 +86,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1642694530105</updated>
-    </task>
-    <task id="LOCAL-00089" summary="Now it will only write the query graph name, the corresponding query graph will be in the graph folder of the same directory">
-      <created>1646153274364</created>
-      <option name="number" value="00089" />
-      <option name="presentableId" value="LOCAL-00089" />
-      <option name="project" value="LOCAL" />
-      <updated>1646153274364</updated>
     </task>
     <task id="LOCAL-00090" summary="Tried to find hard-to-find instances with estimation">
       <created>1646231299607</created>
@@ -430,7 +423,14 @@
       <option name="project" value="LOCAL" />
       <updated>1648055941756</updated>
     </task>
-    <option name="localTasksCounter" value="138" />
+    <task id="LOCAL-00138" summary="fixed parents is no longer ancestors...">
+      <created>1648131410119</created>
+      <option name="number" value="00138" />
+      <option name="presentableId" value="LOCAL-00138" />
+      <option name="project" value="LOCAL" />
+      <updated>1648131410119</updated>
+    </task>
+    <option name="localTasksCounter" value="139" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -482,7 +482,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Made some fixes to constructing DAG given order" />
     <MESSAGE value="Added comments" />
     <MESSAGE value="Attempt to refineCS" />
     <MESSAGE value="Created an edge class with a label" />
@@ -507,7 +506,8 @@
     <MESSAGE value="Working completely for DAG" />
     <MESSAGE value="Everything working before big change" />
     <MESSAGE value="Now will find hard-to-find instance in set number of graphs, and attempts multiple times" />
-    <option name="LAST_COMMIT_MESSAGE" value="Now will find hard-to-find instance in set number of graphs, and attempts multiple times" />
+    <MESSAGE value="fixed parents is no longer ancestors..." />
+    <option name="LAST_COMMIT_MESSAGE" value="fixed parents is no longer ancestors..." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -534,83 +534,83 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>2748</line>
+          <line>2812</line>
           <option name="timeStamp" value="118" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>2933</line>
+          <line>2997</line>
           <option name="timeStamp" value="249" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>3137</line>
+          <line>3201</line>
           <option name="timeStamp" value="267" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>2709</line>
+          <line>2773</line>
           <option name="timeStamp" value="268" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>3831</line>
+          <line>3896</line>
           <option name="timeStamp" value="341" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>4048</line>
+          <line>4113</line>
           <option name="timeStamp" value="401" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1524</line>
+          <line>1526</line>
           <option name="timeStamp" value="430" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1579</line>
+          <line>1581</line>
           <option name="timeStamp" value="432" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1705</line>
+          <line>1707</line>
           <option name="timeStamp" value="433" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>2457</line>
+          <line>2521</line>
           <option name="timeStamp" value="505" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>2450</line>
+          <line>2514</line>
           <option name="timeStamp" value="506" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1200</line>
+          <line>1202</line>
           <option name="timeStamp" value="555" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1232</line>
+          <line>1234</line>
           <option name="timeStamp" value="556" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>4350</line>
+          <line>4416</line>
           <option name="timeStamp" value="580" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>4500</line>
-          <option name="timeStamp" value="582" />
+          <line>2188</line>
+          <option name="timeStamp" value="588" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>4521</line>
-          <option name="timeStamp" value="583" />
+          <line>2211</line>
+          <option name="timeStamp" value="589" />
         </line-breakpoint>
         <breakpoint enabled="true" type="java-exception">
           <properties class="java.lang.NullPointerException" package="java.lang" />
