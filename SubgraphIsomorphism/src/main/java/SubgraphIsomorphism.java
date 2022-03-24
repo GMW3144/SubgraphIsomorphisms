@@ -4276,6 +4276,12 @@ public class SubgraphIsomorphism {
         Map<Integer, Set<Graph<Vertex, DefaultEdge>>> estimationRandomWalk = new HashMap<>();
         // keep track of estimate values
         DescriptiveStatistics stats = new DescriptiveStatistics();
+
+        // keep track estimation and the random walks associated with it
+        Map<Integer, Set<Graph<Vertex, DefaultEdge>>> lastEstimateFound = null;
+        // keep track of estimate values
+        DescriptiveStatistics lastStatsFound = null;
+
         double outlier = 0;
         boolean hardToFind = false;
 
@@ -4333,6 +4339,9 @@ public class SubgraphIsomorphism {
                 }
             }
             if(stats.getN() == maxNumQueryGraphs) {
+                lastEstimateFound = new HashMap<>(estimationRandomWalk);
+                lastStatsFound = stats;
+
                 System.out.println(stats.getN());
                 // find if hard-to-find instance
                 // calculate outliers:
@@ -4365,7 +4374,12 @@ public class SubgraphIsomorphism {
             writeGraphsInformation(target, "Hard-to-find", hardToFindGraphs, outputFolderName, targetLocation,
                     induce, outlier, tau, maxEpoch, zScore, size, avgD, dia,  den, numLabels, stats);
         }
-        else if(stats.getN()==maxNumQueryGraphs){
+        else if(stats.getN()==maxNumQueryGraphs || lastEstimateFound != null){
+            if(stats.getN()!=maxNumQueryGraphs){
+                estimationRandomWalk = lastEstimateFound;
+                stats = lastStatsFound;
+            }
+
             System.out.println("Could not find any hard-to-find instances.  Returned graphs with maximum number of matchings\n" +
                     "================");
 
