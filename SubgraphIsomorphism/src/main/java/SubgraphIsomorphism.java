@@ -1261,10 +1261,16 @@ public class SubgraphIsomorphism {
             // add the parents/children
             for(Vertex u: queryDAG.vertexSet()){
                 if(reverse){
-                    toCheck.get(u).addAll(Graphs.predecessorListOf(queryDAG, u));
+                    for(DefaultEdge e:queryDAG.incomingEdgesOf(u)){
+                        Vertex uP = queryDAG.getEdgeSource(e);
+                        toCheck.get(u).add(uP);
+                    }
                 }
                 else{
-                    toCheck.get(u).addAll(Graphs.successorListOf(queryDAG, u));
+                    for(DefaultEdge e:queryDAG.outgoingEdgesOf(u)){
+                        Vertex uP = queryDAG.getEdgeTarget(e);
+                        toCheck.get(u).add(uP);
+                    }
                 }
             }
 
@@ -1343,7 +1349,8 @@ public class SubgraphIsomorphism {
         // iterate through the vertices
         for(Vertex u: queryDAG.vertexSet()){
             // and their parents
-            for(Vertex uP: Graphs.predecessorListOf(queryDAG, u)){
+            for(DefaultEdge e: queryDAG.incomingEdgesOf(u)){
+                Vertex uP = queryDAG.getEdgeSource(e);
                 // iterate through their candidates
                 for(Vertex vP : candidates.get(uP)){
                     for(Vertex v: candidates.get(u)){
@@ -4387,9 +4394,9 @@ public class SubgraphIsomorphism {
             mainMethod = args[0];
         }
         // basic information for isomorphism
-        algorithmNameC = DAF;
-        algorithmNamePO = DAF;
-        algorithmNameB = DAF;
+        algorithmNameC = GRAPHQL;
+        algorithmNamePO = GRAPHQL;
+        algorithmNameB = GRAPHQL;
 
         // isomorphism
         final boolean isInduced = true;
@@ -4406,18 +4413,12 @@ public class SubgraphIsomorphism {
         double zScore = 1.96; // z-score for 95% confidence
 
         // create query graph
-        int minSize = 5;
-        int maxSize = 5;
+        int minSize = 13;
+        int maxSize = 25;
         int maxNumQueries = 1000;
-        int maxNumAttempts = 1;
+        int maxNumAttempts = 5;
         int maxNumFailedProp = 1000;
         final List<String> subgraphMethods = new ArrayList<>(List.of(RANDOM_NODE_NEIGHBOR, RANDOM_WALK));
-
-        // properties of query graph
-        List<Double> avgD = new ArrayList<>(List.of(1.0, 2.0));
-        List<Double> dia = new ArrayList<>(List.of(1.0, 2.0));
-        List<Double> den = null;
-        List<Double> numLabels = null;
 
         // keep track of time
         Date startDate = new Date();
@@ -4498,21 +4499,34 @@ public class SubgraphIsomorphism {
         // find graphs that are outliers when comparing number of matchings
         else if(mainMethod.equals("RandomWalkEstimation") && args.length == 3){
             final String targetLocationName = args[1];
-            final String outputFolderName = args[2];
+            String outputFolderName = args[2];
 
             // create the target graph and random query graph
             File targetLocation = new File(targetLocationName);
             Graph<Vertex, DefaultEdge> target = createProteinGraph(targetLocation);
             calculateStatistics(target);
 
-
             // iterate through the different size of graphs (from min to max)
             for(int size = minSize; size<=maxSize; size++) {
-                System.out.println("Graph Size : "+size+"\n================");
+                System.out.println("Graph Size : "+size+"\n================================");
 
-                randomGenerationWithEstimate(target, targetLocation, outputFolderName, size, gamma, tau, maxEpoch,
-                        zScore, isInduced, maxNumQueries, maxNumAttempts, maxNumFailedProp, avgD, dia, den, numLabels,
-                        subgraphMethods);
+                for(double de = 1; de<=5; de++) {
+                    for(double di = 1; di<=5; di++) {
+                        System.out.println("Degree: "+de+", Diameter: "+di+"\n================");
+
+                        String outputFolderNameDeDi = outputFolderName+size+"\\"+"de"+(int)de+"_di"+(int)di+"\\";
+
+                        // properties of query graph
+                        List<Double> avgD = new ArrayList<>(List.of(de, de+1));
+                        List<Double> dia = new ArrayList<>(List.of(di, di+1));
+                        List<Double> den = null;
+                        List<Double> numLabels = null;
+
+                        randomGenerationWithEstimate(target, targetLocation, outputFolderNameDeDi, size, gamma, tau, maxEpoch,
+                                zScore, isInduced, maxNumQueries, maxNumAttempts, maxNumFailedProp, avgD, dia, den, numLabels,
+                                subgraphMethods);
+                    }
+                }
             }
         }
 
