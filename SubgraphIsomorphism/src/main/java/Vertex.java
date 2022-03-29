@@ -78,7 +78,7 @@ public class Vertex {
             Collections.sort(otherLabel);
 
             // if any of the attributes differ, then not equal
-            if(!listContainsAll(thisLabel, otherLabel)){
+            if(!listContainsAll(otherLabel, thisLabel)){
                 return false;
             }
             // all desired attributes equal
