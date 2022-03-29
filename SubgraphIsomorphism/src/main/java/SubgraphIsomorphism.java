@@ -4430,7 +4430,7 @@ public class SubgraphIsomorphism {
         double zScore = 1.96; // z-score for 95% confidence
 
         // create query graph
-        int minSize = 5;
+        int minSize = 9;
         int maxSize = 25;
         int maxNumQueries = 1000;
         int maxNumAttempts = 5;

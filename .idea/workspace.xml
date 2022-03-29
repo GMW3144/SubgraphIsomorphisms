@@ -86,13 +86,6 @@
       <option name="presentableId" value="Default" />
       <updated>1642694530105</updated>
     </task>
-    <task id="LOCAL-00093" summary="Made it so not copying the same array list each time">
-      <created>1646246797135</created>
-      <option name="number" value="00093" />
-      <option name="presentableId" value="LOCAL-00093" />
-      <option name="project" value="LOCAL" />
-      <updated>1646246797135</updated>
-    </task>
     <task id="LOCAL-00094" summary="Create a copy of the candidates to keep track of the local candidates recursively">
       <created>1646248891918</created>
       <option name="number" value="00094" />
@@ -429,7 +422,14 @@
       <option name="project" value="LOCAL" />
       <updated>1648153001057</updated>
     </task>
-    <option name="localTasksCounter" value="142" />
+    <task id="LOCAL-00142" summary="Fixed so must be BFS order before constructing QuickSI sequence (one root as well)">
+      <created>1648161197084</created>
+      <option name="number" value="00142" />
+      <option name="presentableId" value="LOCAL-00142" />
+      <option name="project" value="LOCAL" />
+      <updated>1648161197084</updated>
+    </task>
+    <option name="localTasksCounter" value="143" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -481,7 +481,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Attempt MaterializeCS" />
     <MESSAGE value="Fixed direction of the edge" />
     <MESSAGE value="First attempt at backtracking" />
     <MESSAGE value="count backtracking when pruning candidates" />
@@ -506,7 +505,8 @@
     <MESSAGE value="Attempt at forest fire" />
     <MESSAGE value="Removed at forest fire" />
     <MESSAGE value="Fixed so only has to find one useful attempt" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed so only has to find one useful attempt" />
+    <MESSAGE value="Fixed so must be BFS order before constructing QuickSI sequence (one root as well)" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed so must be BFS order before constructing QuickSI sequence (one root as well)" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
