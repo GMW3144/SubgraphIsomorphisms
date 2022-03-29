@@ -1,0 +1,29 @@
+# vertex information 
+7
+0 C
+1 C
+2 H
+3 C
+4 C
+5 H
+6 H
+# edge information 
+3
+0 1
+0 3
+0 4
+2
+1 0
+1 2
+1
+2 1
+2
+3 0
+3 6
+2
+4 0
+4 5
+1
+5 4
+1
+6 3

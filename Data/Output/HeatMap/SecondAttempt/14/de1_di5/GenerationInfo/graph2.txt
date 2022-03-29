@@ -1,0 +1,55 @@
+Hard-to-find
+
+Estimated Number Induce Matchings: 6912
+Number of Isomorphic Graphs Found: 7
+Outlier minimum value: 6849.0
+	tau: 100.0
+	maxEpoch: 100
+	zAlpha: 1.96
+
+The total number of query graphs found: 1000
+DescriptiveStatistics:
+n: 1000
+min: 0.0
+max: 10526.0
+mean: 1607.535
+std dev: 1937.156676359392
+median: 692.0
+skewness: 1.6990715136035952
+kurtosis: 2.7752138083316598
+
+
+Number of Vertices: 14
+Average Degree Range: [1.0, 2.0]
+Diameter Range: [5.0, 6.0]
+Density Range: null
+Number of Distinct Labels: null
+
+Graph Statistics: 
+Query: graph2.txt
+Target: backbones_1DLO.grf
+
+Distribution: (number_profiles:frequency) 
+Query Graph:
+	1:14
+Target Graph:
+	4:5347
+	5:73
+	6:6
+	8:412
+	9:72
+	10:128
+	12:2274
+	16:627
+	18:175
+
+Used candidate algorithm: graphQL
+Used processing order algorithm: graphQL
+Used backtracking algorithm: graphQL
+Number backtracking calls: 0
+
+Total number of possible matchings: 127596
+Number pruned from local pruning: 106
+Number pruned from global pruning: 90
+
+Cost of order found by graphQL: 0.0
