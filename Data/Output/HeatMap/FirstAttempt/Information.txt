@@ -1,0 +1,7 @@
+Target: backbones_1DLO.grf
+
+maxNumQueries = 1000
+maxNumAttempts = 5
+maxNumFailedProp = 1000
+
+subgraphMethods = {RANDOM_NODE_NEIGHBOR, RANDOM_WALK}
