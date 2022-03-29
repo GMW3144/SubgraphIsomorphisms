@@ -53,6 +53,11 @@ public class SubgraphIsomorphism {
     // creating random subgraphs
     private static final String RANDOM_WALK = "random walk";
     private static final String RANDOM_NODE_NEIGHBOR = "random node neighbor";
+    // the format of the graph were reading
+    private static final String PROTEINS = "proteins graph format";
+    private static final String IGRAPH = "iGraph format";
+    private static String formatTarget;
+    private static String formatQuery;
 
     // error messages
     // error message if didn't find isomorphism algorithm
@@ -80,14 +85,23 @@ public class SubgraphIsomorphism {
     private static final String thresholdToHigh = "Threshold too large for graph or graphs not connectable";
     // error message if minimum support is too high
     private static final String minSupToHigh = "Minimum support too large for graph";
-    // the format for the graph files
-    private static final String graphFileFormat = "Graph: <graphLocation> " +
+    // the format for the graphProteins files
+    private static final String graphProteinsFileFormat = "Graph: <graphLocation> " +
             "\n Number of Nodes: <numberNodesInGraph> " +
             "\n Minsup (integer): <integerMinsup> " +
             "\n Minsup (percentage): <percentMinsup> " +
             "\n Attribute Label " +
             "\n <largeProfile> appears in <numAppearances> vertex profiles: " +
             "\n <listVerticesIds>";
+    private static final String graphIGraphFileFormat = "v {id} {labels seperated by space}\n" +
+            "     *                  e {incoming vertex} {outgoing vertex} {label}";
+    // no correct format was listed
+    private static final String noGraphFormat ="Format of graph files specified is not valid.\n " +
+            "Specify one of the following connections methods: \n" +
+            "\t "+ PROTEINS +": uses the proteins format.\n" +
+            "\t\t" + graphProteinsFileFormat +
+            "\t "+IGRAPH+": uses the iGraph format.\n " +
+            "\t\t" +graphIGraphFileFormat;
 
     // keep track of axillary structures
     private static QISequence SEQq; //QI-Sequence
@@ -152,7 +166,7 @@ public class SubgraphIsomorphism {
      * @return associated graph
      * @throws IOException for file reader
      */
-    private static Graph<Vertex, DefaultEdge> createProteinGraph(File graphFile) throws IOException {
+    private static Graph<Vertex, DefaultEdge> readProteinsGraph(File graphFile) throws IOException {
         // keep track of the vertices for easy access
         Map<Integer, Vertex> idToVertex = new LinkedHashMap<>();
 
@@ -231,6 +245,102 @@ public class SubgraphIsomorphism {
         }
         br.close();
 
+        return g;
+    }
+
+    /**
+     * Reads the graphs from a iGraph format
+     * @param inputFile the file which contains the vertex and edge information
+     *                  Formatted :
+     *                  v {id} {labels seperated by space}
+     *                  e {incoming vertex} {outgoing vertex} {label}
+     * @return associated graph
+     * @throws IOException for file reader
+     */
+    public static Graph<Vertex, DefaultEdge> readIGraph(File inputFile) throws IOException {
+        // keep track of the vertices for easy access
+        Map<Integer, Vertex> idToVertex = new LinkedHashMap<>();
+        // create a new graph
+        Graph<Vertex, DefaultEdge> g = new SimpleGraph<>(DefaultEdge.class);
+
+
+        // read through input file
+        BufferedReader br = new BufferedReader(new FileReader(inputFile));
+        String line = br.readLine().strip();
+        // first read in the vertices
+        while(line!=null){
+            String[] info = line.split(" ");
+            if(info[0].equals("v")){
+                int id = Integer.parseInt(info[1]);
+                // add the id
+                StringBuilder labels = new StringBuilder();
+                for(int i = 2; i<info.length; i++){
+                    String label = info[i];
+                    labels.append(label);
+                    if(i<info.length-1){
+                        labels.append(",");
+                    }
+                }
+                // add the vertex
+                String stringLabels = new String(labels);
+                Vertex v = new Vertex(id, stringLabels);
+                g.addVertex(v);
+
+                // keep track of vertex and id
+                idToVertex.put(id, v);
+                // build the profile to include own label
+                v.addToProfile(v);
+            }
+            else{
+                break;
+            }
+
+            line = br.readLine().strip();
+        }
+
+        // add the edges
+        while(line!=null){
+            String[] info = line.split(" ");
+            if(info[0].equals("e")){
+                int vID1 = Integer.parseInt(info[1]);
+                int vID2 = Integer.parseInt(info[2]);
+
+                // undirected edge so only add once
+                if(vID1 < vID2){
+                    Vertex v1 = idToVertex.get(vID1);
+                    Vertex v2 = idToVertex.get(vID2);
+                    g.addEdge(v1, v2);
+
+                    // build the profile of each
+                    v1.addToProfile(v2);
+                    v2.addToProfile(v1);
+                }
+            }
+            line = br.readLine().strip();
+        }
+        br.close();
+
+        return g;
+    }
+
+    /**
+     * Reads the graph depending on the format given
+     * @param inputFile the input file containing the graph
+     * @return the corresponding graph
+     * @throws IOException for reading the file
+     */
+    private static Graph<Vertex, DefaultEdge> readGraph(File inputFile) throws IOException {
+        // create the graphs
+        Graph<Vertex, DefaultEdge> g;
+        if(formatQuery.equals(PROTEINS)) {
+            g = readProteinsGraph(inputFile);
+        }
+        else if(formatQuery.equals(IGRAPH)){
+            g = readIGraph(inputFile);
+        }
+        else{
+            return null;
+        }
         return g;
     }
 
@@ -2080,8 +2190,18 @@ public class SubgraphIsomorphism {
         String targetName = targetFile.getName();
 
         // create the graphs
-        Graph<Vertex, DefaultEdge> queryGraph = createProteinGraph(queryFile);
-        Graph<Vertex, DefaultEdge> targetGraph = createProteinGraph(targetFile);
+        Graph<Vertex, DefaultEdge> queryGraph = readGraph(queryFile);
+        if(queryGraph == null){
+            System.out.println("Query File: ");
+            System.out.println(noGraphFormat);
+            return;
+        }
+        Graph<Vertex, DefaultEdge> targetGraph = readGraph(targetFile);
+        if(targetGraph == null){
+            System.out.println("Target File: ");
+            System.out.println(noGraphFormat);
+            return;
+        }
 
         // find and display the isomorphisms
         List<Map<Vertex, Vertex>> subgraphIsomorphism = matching(queryGraph, targetGraph, isInduced, gamma);
@@ -2425,8 +2545,18 @@ public class SubgraphIsomorphism {
                 File targetGraphFile = new File(targetFolderName+targetGraphName);
 
                 // construct the graphs
-                Graph<Vertex, DefaultEdge> query = createProteinGraph(queryGraphFile);
-                Graph<Vertex, DefaultEdge> target = createProteinGraph(targetGraphFile);
+                Graph<Vertex, DefaultEdge> query = readGraph(queryGraphFile);
+                if(query == null){
+                    System.out.println("Query File: ");
+                    System.out.println(noGraphFormat);
+                    return;
+                }
+                Graph<Vertex, DefaultEdge> target = readGraph(targetGraphFile);
+                if(target == null){
+                    System.out.println("Target File: ");
+                    System.out.println(noGraphFormat);
+                    return;
+                }
 
 
                 // find if induced
@@ -2680,7 +2810,12 @@ public class SubgraphIsomorphism {
         writer.write("");
 
         // create the graphs
-        Graph<Vertex, DefaultEdge> targetGraph = createProteinGraph(targetFile);
+        Graph<Vertex, DefaultEdge> targetGraph = readGraph(targetFile);
+        if(targetGraph == null){
+            System.out.println("Target File: ");
+            System.out.println(noGraphFormat);
+            return;
+        }
 
         // retrieve the profile information from the target graph
         // vertex and profile - transaction
@@ -3138,7 +3273,12 @@ public class SubgraphIsomorphism {
             else if(line.toLowerCase(Locale.ROOT).contains("graph:")){
                 String graphInfo = line.split(" ")[1];
                 graphLocation = graphInfo.split("\\(")[1].replace(")", "");
-                target = createProteinGraph(new File(graphLocation));
+                target = readGraph(new File(graphLocation));
+                if(target == null){
+                    System.out.println("Target File: ");
+                    System.out.println(noGraphFormat);
+                    return;
+                }
             }
 
             // information on the maximum support
@@ -3194,7 +3334,7 @@ public class SubgraphIsomorphism {
 
         // check if found a target
         if(target == null){
-            System.out.println("No target graph found.  Format as follows:\n" +graphFileFormat);
+            System.out.println("No target graph found.  Format as follows:\n" +graphProteinsFileFormat);
             return;
         }
 
@@ -3835,8 +3975,18 @@ public class SubgraphIsomorphism {
         File targetFile = new File(targetFileLocation);
 
         // create the graphs
-        Graph<Vertex, DefaultEdge> queryGraph = createProteinGraph(queryFile);
-        Graph<Vertex, DefaultEdge> targetGraph = createProteinGraph(targetFile);
+        Graph<Vertex, DefaultEdge> queryGraph = readGraph(queryFile);
+        if(queryGraph == null){
+            System.out.println("Query File: ");
+            System.out.println(noGraphFormat);
+            return -1;
+        }
+        Graph<Vertex, DefaultEdge> targetGraph = readGraph(targetFile);
+        if(targetGraph == null){
+            System.out.println("Target File: ");
+            System.out.println(noGraphFormat);
+            return -1;
+        }
 
         // compute the estimation
         int estimation =  wanderJoins(queryGraph, targetGraph, gamma, tau, maxEpoch, zAlpha, isInduced);
@@ -3942,8 +4092,18 @@ public class SubgraphIsomorphism {
 
             File queryFile = new File(queryFileName);
             File targetFile = new File(targetFileName);
-            Graph<Vertex, DefaultEdge> query = createProteinGraph(queryFile);
-            Graph<Vertex, DefaultEdge> target = createProteinGraph(targetFile);
+            Graph<Vertex, DefaultEdge> query = readGraph(queryFile);
+            if(query == null){
+                System.out.println("Query File: ");
+                System.out.println(noGraphFormat);
+                return;
+            }
+            Graph<Vertex, DefaultEdge> target = readGraph(targetFile);
+            if(target == null){
+                System.out.println("Target File: ");
+                System.out.println(noGraphFormat);
+                return;
+            }
 
             if(induceString==null){
                 System.out.println("Problem with knowing if induced");
@@ -4111,7 +4271,12 @@ public class SubgraphIsomorphism {
                                         boolean isInduced, int maxNumQueryGraphs, String subgraphMethod)
             throws IOException {
         // create the target graph and random query graph
-        Graph<Vertex, DefaultEdge> targetGraph = createProteinGraph(new File(targetLocation));
+        Graph<Vertex, DefaultEdge> targetGraph = readGraph(new File(targetLocation));
+        if(targetGraph == null){
+            System.out.println("Target File: ");
+            System.out.println(noGraphFormat);
+            return;
+        }
         calculateStatistics(targetGraph);
 
         for(int i = 1; i<=maxNumQueryGraphs; i++) {
@@ -4520,7 +4685,12 @@ public class SubgraphIsomorphism {
 
             // create the target graph and random query graph
             File targetLocation = new File(targetLocationName);
-            Graph<Vertex, DefaultEdge> target = createProteinGraph(targetLocation);
+            Graph<Vertex, DefaultEdge> target = readGraph(targetLocation);
+            if(target == null){
+                System.out.println("Target File: ");
+                System.out.println(noGraphFormat);
+                return;
+            }
             calculateStatistics(target);
 
             // iterate through the different size of graphs (from min to max)

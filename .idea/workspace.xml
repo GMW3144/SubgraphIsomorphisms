@@ -70,7 +70,6 @@
     <configuration name="SubgraphIsomorphism " type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="SubgraphIsomorphism" />
       <module name="SubgraphIsomorphism" />
-      <option name="PROGRAM_PARAMETERS" value="RandomWalkEstimation C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_1DLO.grf C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\HeatMap\SecondAttempt\" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../../ISProject" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -85,34 +84,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1642694530105</updated>
-    </task>
-    <task id="LOCAL-00094" summary="Create a copy of the candidates to keep track of the local candidates recursively">
-      <created>1646248891918</created>
-      <option name="number" value="00094" />
-      <option name="presentableId" value="LOCAL-00094" />
-      <option name="project" value="LOCAL" />
-      <updated>1646248891918</updated>
-    </task>
-    <task id="LOCAL-00095" summary="Only look at the last vertex added, since already checked for previous orders">
-      <created>1646252324019</created>
-      <option name="number" value="00095" />
-      <option name="presentableId" value="LOCAL-00095" />
-      <option name="project" value="LOCAL" />
-      <updated>1646252324019</updated>
-    </task>
-    <task id="LOCAL-00096" summary="Fixed typos">
-      <created>1646252382122</created>
-      <option name="number" value="00096" />
-      <option name="presentableId" value="LOCAL-00096" />
-      <option name="project" value="LOCAL" />
-      <updated>1646252382122</updated>
-    </task>
-    <task id="LOCAL-00097" summary="All ground truth isomorphisms pass">
-      <created>1646253402569</created>
-      <option name="number" value="00097" />
-      <option name="presentableId" value="LOCAL-00097" />
-      <option name="project" value="LOCAL" />
-      <updated>1646253402569</updated>
     </task>
     <task id="LOCAL-00098" summary="Took out not helpful checks">
       <created>1646255024625</created>
@@ -429,7 +400,35 @@
       <option name="project" value="LOCAL" />
       <updated>1648161197084</updated>
     </task>
-    <option name="localTasksCounter" value="143" />
+    <task id="LOCAL-00143" summary="Heat map construction">
+      <created>1648573297015</created>
+      <option name="number" value="00143" />
+      <option name="presentableId" value="LOCAL-00143" />
+      <option name="project" value="LOCAL" />
+      <updated>1648573297016</updated>
+    </task>
+    <task id="LOCAL-00144" summary="Constructing heat map using data">
+      <created>1648573337257</created>
+      <option name="number" value="00144" />
+      <option name="presentableId" value="LOCAL-00144" />
+      <option name="project" value="LOCAL" />
+      <updated>1648573337257</updated>
+    </task>
+    <task id="LOCAL-00145" summary="First attempt at heat map (there were some issues with the algorithm)">
+      <created>1648573402310</created>
+      <option name="number" value="00145" />
+      <option name="presentableId" value="LOCAL-00145" />
+      <option name="project" value="LOCAL" />
+      <updated>1648573402310</updated>
+    </task>
+    <task id="LOCAL-00146" summary="Second attempt, more values and after fix">
+      <created>1648573642890</created>
+      <option name="number" value="00146" />
+      <option name="presentableId" value="LOCAL-00146" />
+      <option name="project" value="LOCAL" />
+      <updated>1648573642891</updated>
+    </task>
+    <option name="localTasksCounter" value="147" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -481,10 +480,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Fixed direction of the edge" />
-    <MESSAGE value="First attempt at backtracking" />
-    <MESSAGE value="count backtracking when pruning candidates" />
-    <MESSAGE value="Added commentation" />
     <MESSAGE value="Fixed problem with biparitite graph" />
     <MESSAGE value="Fixed direction of arrow for creating a DAG without prior order" />
     <MESSAGE value="Fixed the order problem for some of the ground truth graphs" />
@@ -506,7 +501,11 @@
     <MESSAGE value="Removed at forest fire" />
     <MESSAGE value="Fixed so only has to find one useful attempt" />
     <MESSAGE value="Fixed so must be BFS order before constructing QuickSI sequence (one root as well)" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed so must be BFS order before constructing QuickSI sequence (one root as well)" />
+    <MESSAGE value="Heat map construction" />
+    <MESSAGE value="Constructing heat map using data" />
+    <MESSAGE value="First attempt at heat map (there were some issues with the algorithm)" />
+    <MESSAGE value="Second attempt, more values and after fix" />
+    <option name="LAST_COMMIT_MESSAGE" value="Second attempt, more values and after fix" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -533,67 +532,67 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>2750</line>
+          <line>2885</line>
           <option name="timeStamp" value="118" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>2935</line>
+          <line>3070</line>
           <option name="timeStamp" value="249" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>3139</line>
+          <line>3274</line>
           <option name="timeStamp" value="267" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>2711</line>
+          <line>2846</line>
           <option name="timeStamp" value="268" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>3833</line>
+          <line>3973</line>
           <option name="timeStamp" value="341" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>4050</line>
+          <line>4210</line>
           <option name="timeStamp" value="401" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1526</line>
+          <line>1636</line>
           <option name="timeStamp" value="430" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1581</line>
+          <line>1691</line>
           <option name="timeStamp" value="432" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1707</line>
+          <line>1817</line>
           <option name="timeStamp" value="433" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1202</line>
+          <line>1312</line>
           <option name="timeStamp" value="555" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1234</line>
+          <line>1344</line>
           <option name="timeStamp" value="556" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>4378</line>
+          <line>4538</line>
           <option name="timeStamp" value="593" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>4362</line>
+          <line>4522</line>
           <option name="timeStamp" value="594" />
         </line-breakpoint>
         <breakpoint enabled="true" type="java-exception">
