@@ -26,7 +26,7 @@ public class SubgraphIsomorphism {
     private static double falseMatchingParents = -1; // keep track of the vertices removed from parent in SEQq
     private static double falseMatchingExtraEdge = -1; // keep track of the vertices removed from extra edge in SEQq
     private static Map<Graph<Vertex, DefaultEdge>, Integer> numIsomorphic = null; // the number of graphs that are isomorphic and removed
-    // when finding hard-to-find graps
+    // when finding hard-to-find graphs
     private static Map<List<Vertex>, Integer> numCombined = null; // keep track of the statistics when combine graphs
     private static String algorithmNameC = ""; // algorithm in use for candidates
     private static String algorithmNamePO = ""; // algorithm in use for processing order
@@ -58,6 +58,10 @@ public class SubgraphIsomorphism {
     private static final String IGRAPH = "iGraph format";
     private static String formatTarget;
     private static String formatQuery;
+    // if we are considering subsets or whole label
+    private static final String SUBSETS = "subsets";
+    private static final String COMPLETE = "complete";
+    private static String labelCheck;
 
     // error messages
     // error message if didn't find isomorphism algorithm
@@ -93,7 +97,7 @@ public class SubgraphIsomorphism {
             "\n Attribute Label " +
             "\n <largeProfile> appears in <numAppearances> vertex profiles: " +
             "\n <listVerticesIds>";
-    private static final String graphIGraphFileFormat = "v {id} {labels seperated by space}\n" +
+    private static final String graphIGraphFileFormat = "v {id} {labels separated by space}\n" +
             "     *                  e {incoming vertex} {outgoing vertex} {label}";
     // no correct format was listed
     private static final String noGraphFormat ="Format of graph files specified is not valid.\n " +
@@ -252,7 +256,7 @@ public class SubgraphIsomorphism {
      * Reads the graphs from a iGraph format
      * @param inputFile the file which contains the vertex and edge information
      *                  Formatted :
-     *                  v {id} {labels seperated by space}
+     *                  v {id} {labels separated by space}
      *                  e {incoming vertex} {outgoing vertex} {label}
      * @return associated graph
      * @throws IOException for file reader
@@ -267,6 +271,7 @@ public class SubgraphIsomorphism {
         // read through input file
         BufferedReader br = new BufferedReader(new FileReader(inputFile));
         String line = br.readLine().strip();
+        line = br.readLine().strip();
         // first read in the vertices
         while(line!=null){
             String[] info = line.split(" ");
@@ -300,6 +305,7 @@ public class SubgraphIsomorphism {
 
         // add the edges
         while(line!=null){
+            line = line.strip();
             String[] info = line.split(" ");
             if(info[0].equals("e")){
                 int vID1 = Integer.parseInt(info[1]);
@@ -316,7 +322,7 @@ public class SubgraphIsomorphism {
                     v2.addToProfile(v1);
                 }
             }
-            line = br.readLine().strip();
+            line = br.readLine();
         }
         br.close();
 
@@ -326,16 +332,17 @@ public class SubgraphIsomorphism {
     /**
      * Reads the graph depending on the format given
      * @param inputFile the input file containing the graph
+     * @param method the method we will be using
      * @return the corresponding graph
      * @throws IOException for reading the file
      */
-    private static Graph<Vertex, DefaultEdge> readGraph(File inputFile) throws IOException {
+    private static Graph<Vertex, DefaultEdge> readGraph(File inputFile, String method) throws IOException {
         // create the graphs
         Graph<Vertex, DefaultEdge> g;
-        if(formatQuery.equals(PROTEINS)) {
+        if(method.equals(PROTEINS)) {
             g = readProteinsGraph(inputFile);
         }
-        else if(formatQuery.equals(IGRAPH)){
+        else if(method.equals(IGRAPH)){
             g = readIGraph(inputFile);
         }
         else{
@@ -429,7 +436,10 @@ public class SubgraphIsomorphism {
                                                 Vertex u, Vertex v){
         int vDegree = target.degreeOf(v);
         int uDegree = query.degreeOf(u);
-        return vDegree>=uDegree && u.sameLabel(v);
+        if(labelCheck.equals(SUBSETS)){
+            return vDegree >= uDegree && u.subLabel(v);
+        }
+        return vDegree >= uDegree && u.sameLabel(v);
     }
 
     /**
@@ -440,6 +450,9 @@ public class SubgraphIsomorphism {
      * @return true if v is a candidate of u
      */
     private static boolean localPruning(Vertex u, Vertex v){
+        if(labelCheck.equals(SUBSETS)){
+            return u.profileSubsetLabelSubset(v);
+        }
         return u.profileSubset(v);
     }
 
@@ -2190,13 +2203,13 @@ public class SubgraphIsomorphism {
         String targetName = targetFile.getName();
 
         // create the graphs
-        Graph<Vertex, DefaultEdge> queryGraph = readGraph(queryFile);
+        Graph<Vertex, DefaultEdge> queryGraph = readGraph(queryFile, formatQuery);
         if(queryGraph == null){
             System.out.println("Query File: ");
             System.out.println(noGraphFormat);
             return;
         }
-        Graph<Vertex, DefaultEdge> targetGraph = readGraph(targetFile);
+        Graph<Vertex, DefaultEdge> targetGraph = readGraph(targetFile, formatTarget);
         if(targetGraph == null){
             System.out.println("Target File: ");
             System.out.println(noGraphFormat);
@@ -2545,13 +2558,13 @@ public class SubgraphIsomorphism {
                 File targetGraphFile = new File(targetFolderName+targetGraphName);
 
                 // construct the graphs
-                Graph<Vertex, DefaultEdge> query = readGraph(queryGraphFile);
+                Graph<Vertex, DefaultEdge> query = readGraph(queryGraphFile, formatQuery);
                 if(query == null){
                     System.out.println("Query File: ");
                     System.out.println(noGraphFormat);
                     return;
                 }
-                Graph<Vertex, DefaultEdge> target = readGraph(targetGraphFile);
+                Graph<Vertex, DefaultEdge> target = readGraph(targetGraphFile, formatTarget);
                 if(target == null){
                     System.out.println("Target File: ");
                     System.out.println(noGraphFormat);
@@ -2810,7 +2823,7 @@ public class SubgraphIsomorphism {
         writer.write("");
 
         // create the graphs
-        Graph<Vertex, DefaultEdge> targetGraph = readGraph(targetFile);
+        Graph<Vertex, DefaultEdge> targetGraph = readGraph(targetFile, formatTarget);
         if(targetGraph == null){
             System.out.println("Target File: ");
             System.out.println(noGraphFormat);
@@ -3273,7 +3286,7 @@ public class SubgraphIsomorphism {
             else if(line.toLowerCase(Locale.ROOT).contains("graph:")){
                 String graphInfo = line.split(" ")[1];
                 graphLocation = graphInfo.split("\\(")[1].replace(")", "");
-                target = readGraph(new File(graphLocation));
+                target = readGraph(new File(graphLocation), formatTarget);
                 if(target == null){
                     System.out.println("Target File: ");
                     System.out.println(noGraphFormat);
@@ -3603,7 +3616,6 @@ public class SubgraphIsomorphism {
         displayGraphStatistics(queryName, queryGraph, targetName, targetGraph, writer);
         writer.close();
 
-
         // find and display the isomorphisms
         List<Map<Vertex, Vertex>> subgraphIsomorphism = matching(queryGraph, targetGraph, isInduced, gamma);
         if(subgraphIsomorphism == null){
@@ -3646,6 +3658,7 @@ public class SubgraphIsomorphism {
                 "Target: " + targetName + "\n\n");
 
         // distribution of num subsets for each vertex
+        /*
         Map<Integer, Integer> distributionTarget = new HashMap<>();
         for(Vertex v: target.vertexSet()){
             int numSubsets = v.calculateNumberProfileSubsets().size();
@@ -3664,6 +3677,7 @@ public class SubgraphIsomorphism {
             distributionQuery.put(numSubsets, distributionQuery.get(numSubsets)+1);
         }
 
+
         // print out the distribution
         writer.append("Distribution: (number_profiles:frequency) \n");
         writer.append("Query Graph:\n");
@@ -3678,6 +3692,7 @@ public class SubgraphIsomorphism {
                     .append(String.valueOf(distributionTarget.get(d))).append("\n");
         }
         writer.append("\n");
+         */
 
         String algorithmOutput = "Used candidate algorithm: " +algorithmNameC+"\n" +
                 "Used processing order algorithm: " +algorithmNamePO+"\n" +
@@ -3975,13 +3990,13 @@ public class SubgraphIsomorphism {
         File targetFile = new File(targetFileLocation);
 
         // create the graphs
-        Graph<Vertex, DefaultEdge> queryGraph = readGraph(queryFile);
+        Graph<Vertex, DefaultEdge> queryGraph = readGraph(queryFile, formatQuery);
         if(queryGraph == null){
             System.out.println("Query File: ");
             System.out.println(noGraphFormat);
             return -1;
         }
-        Graph<Vertex, DefaultEdge> targetGraph = readGraph(targetFile);
+        Graph<Vertex, DefaultEdge> targetGraph = readGraph(targetFile, formatTarget);
         if(targetGraph == null){
             System.out.println("Target File: ");
             System.out.println(noGraphFormat);
@@ -4092,13 +4107,13 @@ public class SubgraphIsomorphism {
 
             File queryFile = new File(queryFileName);
             File targetFile = new File(targetFileName);
-            Graph<Vertex, DefaultEdge> query = readGraph(queryFile);
+            Graph<Vertex, DefaultEdge> query = readGraph(queryFile, formatQuery);
             if(query == null){
                 System.out.println("Query File: ");
                 System.out.println(noGraphFormat);
                 return;
             }
-            Graph<Vertex, DefaultEdge> target = readGraph(targetFile);
+            Graph<Vertex, DefaultEdge> target = readGraph(targetFile, formatTarget);
             if(target == null){
                 System.out.println("Target File: ");
                 System.out.println(noGraphFormat);
@@ -4271,13 +4286,13 @@ public class SubgraphIsomorphism {
                                         boolean isInduced, int maxNumQueryGraphs, String subgraphMethod)
             throws IOException {
         // create the target graph and random query graph
-        Graph<Vertex, DefaultEdge> targetGraph = readGraph(new File(targetLocation));
+        Graph<Vertex, DefaultEdge> targetGraph = readGraph(new File(targetLocation), formatTarget);
         if(targetGraph == null){
             System.out.println("Target File: ");
             System.out.println(noGraphFormat);
             return;
         }
-        calculateStatistics(targetGraph);
+        //calculateStatistics(targetGraph);
 
         for(int i = 1; i<=maxNumQueryGraphs; i++) {
             File outputGraphFolder = new File(outputFolderName + "Graphs\\");
@@ -4309,7 +4324,7 @@ public class SubgraphIsomorphism {
                     continue;
                 }
                 if(!toRemove.contains(q1) && matching(q1, q2, true, 0.5).size()>=1){
-                    // increment the number that are isomorphich
+                    // increment the number that are isomorphic
                     if(!numIsomorphic.containsKey(q1)){
                         numIsomorphic.put(q1, 0);
                     }
@@ -4333,7 +4348,7 @@ public class SubgraphIsomorphism {
      * @param induce if the isomorphism is induced
      * @param outlier the outlier value
      * @param tau the tau value for wander joins
-     * @param maxEpoch the max epoche for wander joins
+     * @param maxEpoch the max epoch for wander joins
      * @param zScore the z score for wander joins
      * @param size the size of the query graph
      * @param avgD the average degree range of the query graphs
@@ -4430,7 +4445,7 @@ public class SubgraphIsomorphism {
             return;
         }
 
-        // check if all the sugraph methods are valid
+        // check if all the subgraph methods are valid
         for(String method : subgraphMethods){
             if(!method.equals(RANDOM_WALK) && !method.equals(RANDOM_NODE_NEIGHBOR)){
                 System.out.println("Cannot use "+method+" for constructing query graphs.");
@@ -4602,6 +4617,13 @@ public class SubgraphIsomorphism {
         int maxNumFailedProp = 1000;
         final List<String> subgraphMethods = new ArrayList<>(List.of(RANDOM_NODE_NEIGHBOR, RANDOM_WALK));
 
+        // format of the graphs
+        formatTarget = IGRAPH;
+        formatQuery = PROTEINS;
+
+        // if we are going to check if the labels are equivalent or subsets
+        labelCheck = SUBSETS;
+
         // keep track of time
         Date startDate = new Date();
 
@@ -4685,7 +4707,7 @@ public class SubgraphIsomorphism {
 
             // create the target graph and random query graph
             File targetLocation = new File(targetLocationName);
-            Graph<Vertex, DefaultEdge> target = readGraph(targetLocation);
+            Graph<Vertex, DefaultEdge> target = readGraph(targetLocation, formatTarget);
             if(target == null){
                 System.out.println("Target File: ");
                 System.out.println(noGraphFormat);

@@ -63,7 +63,33 @@ public class Vertex {
     }
 
     /**
+     * Checks to see if the given value labels are contained within this vertex
+     * @param o the other vertex
+     * @return if this label is a subset of the given (other) label
+     */
+    public boolean subLabel(Object o){
+        // check both are vertices
+        if(o instanceof Vertex){
+            List<String> thisLabel = Arrays.asList(label.split(","));
+            List<String> otherLabel = Arrays.asList(((Vertex) o).getLabel().split(","));
+
+            // sort first
+            Collections.sort(thisLabel);
+            Collections.sort(otherLabel);
+
+            // if any of the attributes differ, then not equal
+            if(!listContainsAll(thisLabel, otherLabel)){
+                return false;
+            }
+            // all desired attributes equal
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Check if the desired attributes are equivalent
+     * @param o the other vertex
      * @return if all of the attributes are equal
      */
     public boolean sameLabel(Object o){
@@ -198,6 +224,37 @@ public class Vertex {
             return true;
         }
         return false;
+    }
+
+    /**
+     * Checks if the given vertex profile is a subset of the current vertex profile, given some attributes
+     * @param neighbor the vertex who's being compared to the current vertex profile
+     * @return if it is a subset
+     */
+    public boolean profileSubsetLabelSubset(Vertex neighbor){
+        // build up individual profiles for current attribute
+        ArrayList<String> attributeProfileCurrent = profile;
+        ArrayList<String> attributeProfileNeighbor = neighbor.getProfile();
+
+        List<String> superCurrentProfile = new ArrayList<>();
+        for(String l: profile){
+            superCurrentProfile.addAll(Arrays.asList(l.split(",")));
+        }
+        List<String> superNeighborProfile = new ArrayList<>();
+        for(String l: attributeProfileNeighbor){
+            superNeighborProfile.addAll(Arrays.asList(l.split(",")));
+        }
+
+        // sort first
+        Collections.sort(superCurrentProfile);
+        Collections.sort(superNeighborProfile);
+
+        if(!listContainsAll(superNeighborProfile, superCurrentProfile)){
+            return false;
+        }
+
+        // all desired attributes equal
+        return true;
     }
 
     /**

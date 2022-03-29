@@ -1,8 +1,0 @@
-Query Graph: graph51.txt, Target Graph: backbones_1DLO.grf
-Number Backtracking: 95480
-Induced isomorphisms. Total number subgraph isomorphisms: 0
-# candidates algorithm: graphQL
-# processing order algorithm: graphQL
-# backtracking algorithm: graphQL
-
-============================
