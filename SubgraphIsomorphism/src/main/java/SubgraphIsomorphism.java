@@ -4737,7 +4737,7 @@ public class SubgraphIsomorphism {
                 }
             }
         }
-        else if (mainMethod.equals("PropRandomWalkEstimation")){
+        else if (mainMethod.equals("PropRandomWalkEstimation")  && args.length == 4){
             final String targetLocationName = args[1];
             String outputFolderName = args[2];
             int x = Integer.parseInt(args[3]); //give a value between 0 and 299
