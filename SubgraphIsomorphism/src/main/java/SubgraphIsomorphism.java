@@ -32,11 +32,7 @@ public class SubgraphIsomorphism {
     private static String algorithmNamePO = ""; // algorithm in use for processing order
     private static String algorithmNameB = ""; // algorithm in use for backtracking
     // failing sets
-    private static int fullSolutions = 0,
-            partialSolutions = 0,
-            emptyCandidates = 0,
-            conflicts = 0,
-            numRefined = 0;
+    private static int fullSolutions = 0, partialSolutions = 0, emptyCandidates = 0, conflicts = 0, numRefined = 0;
 
 
     // algorithms
@@ -4599,23 +4595,17 @@ public class SubgraphIsomorphism {
         final boolean isInduced = true;
         double gamma = 0.5;
 
-        // connecting star graphs
-        final String connectionMethod = MERGE;
-        // random subgraph generator
-        final String subgraphMethod = RANDOM_NODE_NEIGHBOR;
-
         // estimation
         double tau = 100;
         int maxEpoch = 100;
         double zScore = 1.96; // z-score for 95% confidence
 
         // create query graph
-        int minSize = 9;
-        int maxSize = 25;
+        int minSize = 5;
+        int maxSize = 5;
         int maxNumQueries = 1000;
         int maxNumAttempts = 5;
         int maxNumFailedProp = 1000;
-        final List<String> subgraphMethods = new ArrayList<>(List.of(RANDOM_NODE_NEIGHBOR, RANDOM_WALK));
 
         // format of the graphs
         formatTarget = IGRAPH;
@@ -4680,6 +4670,10 @@ public class SubgraphIsomorphism {
         }
         // create a query graph from frequent profiles
         else if(mainMethod.equals("FDMQuery") && args.length == 4){
+            // connecting star graphs
+            final String connectionMethod = MERGE;
+
+
             final String fdmFile = args[1];
             final String outputFolderName = args[2];
             // keep track of the minimum profile size while creating graph
@@ -4690,6 +4684,9 @@ public class SubgraphIsomorphism {
         }
         // create query graph from random walk
         else if(mainMethod.equals("RandomWalk")  && args.length == 3) {
+            // random subgraph generator
+            final String subgraphMethod = RANDOM_NODE_NEIGHBOR;
+
             final String targetLocation = args[1];
             final String outputFolderName = args[2];
 
@@ -4702,6 +4699,8 @@ public class SubgraphIsomorphism {
         }
         // find graphs that are outliers when comparing number of matchings
         else if(mainMethod.equals("RandomWalkEstimation") && args.length == 3){
+            final List<String> subgraphMethods = new ArrayList<>(List.of(RANDOM_NODE_NEIGHBOR, RANDOM_WALK));
+
             final String targetLocationName = args[1];
             String outputFolderName = args[2];
 
@@ -4713,13 +4712,13 @@ public class SubgraphIsomorphism {
                 System.out.println(noGraphFormat);
                 return;
             }
-            calculateStatistics(target);
+            //calculateStatistics(target);
 
             // iterate through the different size of graphs (from min to max)
             for(int size = minSize; size<=maxSize; size++) {
                 System.out.println("Graph Size : "+size+"\n================================");
 
-                for(double de = 1; de<=10; de++) {
+                for(double de = 1; de<=6; de++) {
                     for(double di = 1; di<=10; di++) {
                         System.out.println("Degree: "+de+", Diameter: "+di+"\n================");
 
@@ -4738,6 +4737,50 @@ public class SubgraphIsomorphism {
                 }
             }
         }
+        else if (mainMethod.equals("PropRandomWalkEstimation")){
+            final String targetLocationName = args[1];
+            String outputFolderName = args[2];
+            int x = Integer.parseInt(args[3]); //give a value between 0 and 299
+
+            // the number of nodes between 10 and 50, with 10 increments (total 5)
+            int size = 50;
+            if (x < 60) { size = 10; }
+            else if (x < 120) { size = 20; }
+            else if (x < 180) { size = 30; }
+            else if (x < 240) { size = 40; }
+            // the average degree between 1 and 6
+            double de = 6;
+            if (x % 60 < 10) { de = 1; }
+            else if (x % 60 < 20) { de = 2; }
+            else if (x % 60 < 30) { de = 3; }
+            else if (x % 60 < 40) { de = 4; }
+            else if (x % 60 < 50) { de = 5; }
+            // the diameter between 1 and 10
+            double di = x % 10 + 1;
+
+            File targetLocation = new File(targetLocationName);
+            Graph<Vertex, DefaultEdge> target = readGraph(targetLocation, formatTarget);
+            if(target == null){
+                System.out.println("Target File: ");
+                System.out.println(noGraphFormat);
+                return;
+            }
+
+            String outputFolderNameDeDi = outputFolderName+size+"\\"+"de"+de+"_di"+di+"\\";
+
+            // properties of query graph
+            List<Double> avgD = new ArrayList<>(List.of(de, de+1));
+            List<Double> dia = new ArrayList<>(List.of(di, di+1));
+            List<Double> den = null;
+            List<Double> numLabels = null;
+
+            final List<String> subgraphMethods = new ArrayList<>(List.of(RANDOM_NODE_NEIGHBOR, RANDOM_WALK));
+
+            randomGenerationWithEstimate(target, targetLocation, outputFolderNameDeDi, size, gamma, tau, maxEpoch,
+                    zScore, isInduced, maxNumQueries, maxNumAttempts, maxNumFailedProp, avgD, dia, den, numLabels,
+                    subgraphMethods);
+        }
+
 
         // test against ground truth
         else if(mainMethod.equals("TestIsomorphism")  && args.length == 5){

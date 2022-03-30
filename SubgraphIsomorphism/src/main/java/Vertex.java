@@ -237,7 +237,7 @@ public class Vertex {
         ArrayList<String> attributeProfileNeighbor = neighbor.getProfile();
 
         List<String> superCurrentProfile = new ArrayList<>();
-        for(String l: profile){
+        for(String l: attributeProfileCurrent){
             superCurrentProfile.addAll(Arrays.asList(l.split(",")));
         }
         List<String> superNeighborProfile = new ArrayList<>();
