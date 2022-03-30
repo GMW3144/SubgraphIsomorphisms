@@ -4766,7 +4766,7 @@ public class SubgraphIsomorphism {
                 return;
             }
 
-            String outputFolderNameDeDi = outputFolderName+size+"\\"+"de"+de+"_di"+di+"\\";
+            String outputFolderNameDeDi = outputFolderName+size+"\\"+"de"+(int) de+"_di"+(int) di+"\\";
 
             // properties of query graph
             List<Double> avgD = new ArrayList<>(List.of(de, de+1));

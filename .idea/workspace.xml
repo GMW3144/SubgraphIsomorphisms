@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6d0b8e23-97b2-4b58-991e-87f7b486f404" name="Default Changelist" comment="used different minimum supports (part 2)">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="6d0b8e23-97b2-4b58-991e-87f7b486f404" name="Default Changelist" comment="used different minimum supports (part 2)" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -69,7 +67,7 @@
     <configuration name="SubgraphIsomorphism " type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="SubgraphIsomorphism" />
       <module name="SubgraphIsomorphism" />
-      <option name="PROGRAM_PARAMETERS" value="PropRandomWalkEstimation" />
+      <option name="PROGRAM_PARAMETERS" value="PropRandomWalkEstimation C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Yeast\yeast.igraph C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\HeatMap\Yeast\ 0" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../../ISProject" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -84,13 +82,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1642694530105</updated>
-    </task>
-    <task id="LOCAL-00102" summary="Adding files">
-      <created>1646317264114</created>
-      <option name="number" value="00102" />
-      <option name="presentableId" value="LOCAL-00102" />
-      <option name="project" value="LOCAL" />
-      <updated>1646317264114</updated>
     </task>
     <task id="LOCAL-00103" summary="Performed random walks, fixed so create maxNumQuries instead of one less">
       <created>1646328955409</created>
@@ -428,7 +419,14 @@
       <option name="project" value="LOCAL" />
       <updated>1648659329901</updated>
     </task>
-    <option name="localTasksCounter" value="151" />
+    <task id="LOCAL-00151" summary="Added restriction to how many parameters there can be">
+      <created>1648660978012</created>
+      <option name="number" value="00151" />
+      <option name="presentableId" value="LOCAL-00151" />
+      <option name="project" value="LOCAL" />
+      <updated>1648660978012</updated>
+    </task>
+    <option name="localTasksCounter" value="152" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -480,7 +478,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Fixed issue with not using graphQL candidates, since it seems redundant with DAF refineCS" />
     <MESSAGE value="Have it try a new random graph if it does not reach the desired number of nodes" />
     <MESSAGE value="Added number of distinct labels as a property" />
     <MESSAGE value="Attempted random node neighbor algorithm" />
@@ -505,7 +502,8 @@
     <MESSAGE value="Attempted to change, so the query label should be a subset of the target label" />
     <MESSAGE value="Fixed some bugs" />
     <MESSAGE value="Created method that finds hard-to-find instances based on a x value given.  The size, diameter, and degree and determined by this x value" />
-    <option name="LAST_COMMIT_MESSAGE" value="Created method that finds hard-to-find instances based on a x value given.  The size, diameter, and degree and determined by this x value" />
+    <MESSAGE value="Added restriction to how many parameters there can be" />
+    <option name="LAST_COMMIT_MESSAGE" value="Added restriction to how many parameters there can be" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
