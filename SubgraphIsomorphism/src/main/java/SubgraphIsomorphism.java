@@ -3896,7 +3896,7 @@ public class SubgraphIsomorphism {
         // keep track of the costs we have seen
         SummaryStatistics stats = new SummaryStatistics();
 
-        while (stats.getN()<maxEpoch){
+        while (stats.getN()<maxEpoch*5){
             // the walk is originally empty
             List<Vertex> walk = new ArrayList<>();
             // get the cost of the walk
@@ -3950,7 +3950,7 @@ public class SubgraphIsomorphism {
             stats.addValue(cost);
 
             // every 20 check the confidence value
-            if(stats.getN()%25 == 0){
+            if(stats.getN()%maxEpoch == 0){
                 double conf = computeConfidenceInterval(stats, zScore);
                 if(conf<tau) {
                     break;

@@ -4,10 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6d0b8e23-97b2-4b58-991e-87f7b486f404" name="Default Changelist" comment="used different minimum supports (part 2)">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" afterDir="false" />
-    </list>
+    <list default="true" id="6d0b8e23-97b2-4b58-991e-87f7b486f404" name="Default Changelist" comment="used different minimum supports (part 2)" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -85,13 +82,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1642694530105</updated>
-    </task>
-    <task id="LOCAL-00104" summary="First try at making graphs with given properties">
-      <created>1647527557850</created>
-      <option name="number" value="00104" />
-      <option name="presentableId" value="LOCAL-00104" />
-      <option name="project" value="LOCAL" />
-      <updated>1647527557850</updated>
     </task>
     <task id="LOCAL-00105" summary="Working with intervals instead of doubles">
       <created>1647531811875</created>
@@ -429,7 +419,14 @@
       <option name="project" value="LOCAL" />
       <updated>1648661321672</updated>
     </task>
-    <option name="localTasksCounter" value="153" />
+    <task id="LOCAL-00153" summary="Now uses double instead of int, because too large of values.  Also increased the max epoch for the wander joins">
+      <created>1648756995597</created>
+      <option name="number" value="00153" />
+      <option name="presentableId" value="LOCAL-00153" />
+      <option name="project" value="LOCAL" />
+      <updated>1648756995597</updated>
+    </task>
+    <option name="localTasksCounter" value="154" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -481,7 +478,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added number of distinct labels as a property" />
     <MESSAGE value="Attempted random node neighbor algorithm" />
     <MESSAGE value="Fixed comment errors" />
     <MESSAGE value="fixed random node neighbor" />
@@ -506,7 +502,8 @@
     <MESSAGE value="Created method that finds hard-to-find instances based on a x value given.  The size, diameter, and degree and determined by this x value" />
     <MESSAGE value="Added restriction to how many parameters there can be" />
     <MESSAGE value="Must convert name to int when creating path to output folder" />
-    <option name="LAST_COMMIT_MESSAGE" value="Must convert name to int when creating path to output folder" />
+    <MESSAGE value="Now uses double instead of int, because too large of values.  Also increased the max epoch for the wander joins" />
+    <option name="LAST_COMMIT_MESSAGE" value="Now uses double instead of int, because too large of values.  Also increased the max epoch for the wander joins" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
