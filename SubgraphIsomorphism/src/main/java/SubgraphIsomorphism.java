@@ -3871,7 +3871,7 @@ public class SubgraphIsomorphism {
      * @param isInduced if the isomorphism is induced
      * @return the overall estimation for the subgraph isomorphism
      */
-    public static int wanderJoins(Graph<Vertex, DefaultEdge> query, Graph<Vertex, DefaultEdge> target, double gamma,
+    public static double wanderJoins(Graph<Vertex, DefaultEdge> query, Graph<Vertex, DefaultEdge> target, double gamma,
                                   double tau, int maxEpoch, double zScore, boolean isInduced){
         // compute candidates
         Map<Vertex, Set<Vertex>> candidates = computeCandidates(query, target);
@@ -3962,7 +3962,7 @@ public class SubgraphIsomorphism {
         double avgCost = stats.getMean();
 
         // round to nearest integer
-        return (int) Math.round(avgCost);
+        return Math.round(avgCost);
     }
 
     /**
@@ -3978,7 +3978,7 @@ public class SubgraphIsomorphism {
      * @return an estimation for the number of matchings between a query and target graph
      * @throws IOException read/write to file
      */
-    public static int estimateCardinality(String queryFileLocation, String targetFileLocation, double gamma, double tau,
+    public static double estimateCardinality(String queryFileLocation, String targetFileLocation, double gamma, double tau,
                                           int maxEpoch, double zAlpha, String outputFileName, boolean isInduced)
             throws IOException {
         // read the info from the file
@@ -4000,7 +4000,10 @@ public class SubgraphIsomorphism {
         }
 
         // compute the estimation
-        int estimation =  wanderJoins(queryGraph, targetGraph, gamma, tau, maxEpoch, zAlpha, isInduced);
+        double estimation =  wanderJoins(queryGraph, targetGraph, gamma, tau, maxEpoch, zAlpha, isInduced);
+        if(estimation<0){
+            System.out.println("HERE");
+        }
         if(estimation == -1){
             BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName));
             writer.write("Something went wrong");
@@ -4122,7 +4125,7 @@ public class SubgraphIsomorphism {
             }
             boolean isInduced = induceString.equals("induced");
 
-            int estimatedNumber = wanderJoins(query, target, gamma, tau, maxEpoch, zScore, isInduced);
+            double estimatedNumber = wanderJoins(query, target, gamma, tau, maxEpoch, zScore, isInduced);
             if(estimatedNumber == -1){
                 writer.append("Something went wrong!");
                 return;
@@ -4310,11 +4313,13 @@ public class SubgraphIsomorphism {
      * isomorphism so it is induced and the gamma value will just be set to 0.5
      * @param graphs the set of graphs
      */
-    public static void removeIsomorphicGraphs(Map<Graph<Vertex, DefaultEdge>, Integer> graphs){
+    public static void removeIsomorphicGraphs(Map<Graph<Vertex, DefaultEdge>, Double> graphs){
         Set<Graph<Vertex, DefaultEdge>> toRemove = new HashSet<>();
+        Set<Graph<Vertex, DefaultEdge>> q2Values = new HashSet<>(graphs.keySet());
         // combine query graphs that are equivalent
         for (Graph<Vertex, DefaultEdge>q1: graphs.keySet()){
-            for(Graph<Vertex, DefaultEdge>q2: graphs.keySet()){
+            q2Values.remove(q1);
+            for(Graph<Vertex, DefaultEdge>q2: q2Values){
                 // same instance
                 if(q1==q2){
                     continue;
@@ -4325,6 +4330,11 @@ public class SubgraphIsomorphism {
                         numIsomorphic.put(q1, 0);
                     }
                     numIsomorphic.put(q1, numIsomorphic.get(q1)+1);
+                    double m1 = graphs.get(q1);
+                    double m2 = graphs.get(q2);
+                    int i = numIsomorphic.get(q1);
+                    double averageNumberMatchings = (m1*i+m2)/(i+1);
+                    graphs.put(q1, averageNumberMatchings);
                     toRemove.add(q2);
                 }
             }
@@ -4355,7 +4365,7 @@ public class SubgraphIsomorphism {
      * @throws IOException writing to a file
      */
     public static void writeGraphsInformation(Graph<Vertex, DefaultEdge> target, String hardToFind,
-                                             Map<Graph<Vertex, DefaultEdge>, Integer> graphs, String outputFolderName,
+                                             Map<Graph<Vertex, DefaultEdge>, Double> graphs, String outputFolderName,
                                              File targetLocation, String induce, double outlier,
                                              double tau, int maxEpoch, double zScore,
                                              int size, List<Double> avgD, List<Double> dia, List<Double> den,
@@ -4366,7 +4376,7 @@ public class SubgraphIsomorphism {
 
         // iterate through the query graphs
         for (Graph<Vertex, DefaultEdge> query : graphs.keySet()) {
-            int estimate = graphs.get(query);
+            double estimate = graphs.get(query);
 
             // store what the graph looks like
             File outputGraphFolder = new File(outputFolderName + "Graphs\\");
@@ -4451,12 +4461,12 @@ public class SubgraphIsomorphism {
         }
 
         // keep track estimation and the random walks associated with it
-        Map<Integer, Set<Graph<Vertex, DefaultEdge>>> estimationRandomWalk = new HashMap<>();
+        Map<Double, Set<Graph<Vertex, DefaultEdge>>> estimationRandomWalk = new HashMap<>();
         // keep track of estimate values
         DescriptiveStatistics stats = new DescriptiveStatistics();
 
         // keep track estimation and the random walks associated with it
-        Map<Integer, Set<Graph<Vertex, DefaultEdge>>> lastEstimateFound = null;
+        Map<Double, Set<Graph<Vertex, DefaultEdge>>> lastEstimateFound = null;
         // keep track of estimate values
         DescriptiveStatistics lastStatsFound = null;
 
@@ -4470,7 +4480,7 @@ public class SubgraphIsomorphism {
         }
 
         // keep track if we found hard-to-find instance
-        Map<Graph<Vertex, DefaultEdge>, Integer> hardToFindGraphs = new HashMap<>();
+        Map<Graph<Vertex, DefaultEdge>, Double> hardToFindGraphs = new HashMap<>();
 
 
         for(int i = 0; i < maxNumAttempts; i++) {
@@ -4503,7 +4513,10 @@ public class SubgraphIsomorphism {
                 failedAttempts = 0;
 
                 // estimate the number of matchings
-                int estimate = wanderJoins(query, target, gamma, tau, maxEpoch, zScore, isInduced);
+                double estimate = wanderJoins(query, target, gamma, tau, maxEpoch, zScore, isInduced);
+                if(estimate<0){
+                    System.out.println("HERE");
+                }
 
                 // add to estimate random walks map
                 if (!estimationRandomWalk.containsKey(estimate)) {
@@ -4538,7 +4551,7 @@ public class SubgraphIsomorphism {
 
         if(hardToFind){
             // add the outliers as graphs
-            for (int estimate : estimationRandomWalk.keySet()) {
+            for (double estimate : estimationRandomWalk.keySet()) {
                 if (estimate > outlier) {
                     // iterate through the query graphs
                     for(Graph<Vertex, DefaultEdge> query : estimationRandomWalk.get(estimate)) {
@@ -4562,7 +4575,7 @@ public class SubgraphIsomorphism {
                     "================");
 
             // iterate through the query graphs
-            int maxValue = (int) stats.getMax();
+            double maxValue = stats.getMax();
             for (Graph<Vertex, DefaultEdge> query : estimationRandomWalk.get(maxValue)) {
                 hardToFindGraphs.put(query, maxValue);
             }
@@ -4597,12 +4610,12 @@ public class SubgraphIsomorphism {
 
         // estimation
         double tau = 100;
-        int maxEpoch = 100;
+        int maxEpoch = 1000;
         double zScore = 1.96; // z-score for 95% confidence
 
         // create query graph
-        int minSize = 5;
-        int maxSize = 5;
+        int minSize = 10;
+        int maxSize = 50;
         int maxNumQueries = 1000;
         int maxNumAttempts = 5;
         int maxNumFailedProp = 1000;
@@ -4715,7 +4728,7 @@ public class SubgraphIsomorphism {
             //calculateStatistics(target);
 
             // iterate through the different size of graphs (from min to max)
-            for(int size = minSize; size<=maxSize; size++) {
+            for(int size = minSize; size<=maxSize; size+=10) {
                 System.out.println("Graph Size : "+size+"\n================================");
 
                 for(double de = 1; de<=6; de++) {
