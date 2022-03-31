@@ -4,7 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6d0b8e23-97b2-4b58-991e-87f7b486f404" name="Default Changelist" comment="used different minimum supports (part 2)" />
+    <list default="true" id="6d0b8e23-97b2-4b58-991e-87f7b486f404" name="Default Changelist" comment="used different minimum supports (part 2)">
+      <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -82,13 +84,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1642694530105</updated>
-    </task>
-    <task id="LOCAL-00106" summary="Fixed some small issues">
-      <created>1647535089216</created>
-      <option name="number" value="00106" />
-      <option name="presentableId" value="LOCAL-00106" />
-      <option name="project" value="LOCAL" />
-      <updated>1647535089216</updated>
     </task>
     <task id="LOCAL-00107" summary="Got rid of isomorphic graphs at the end">
       <created>1647537449350</created>
@@ -426,7 +421,14 @@
       <option name="project" value="LOCAL" />
       <updated>1648757425789</updated>
     </task>
-    <option name="localTasksCounter" value="155" />
+    <task id="LOCAL-00155" summary="Made closer to original">
+      <created>1648757589933</created>
+      <option name="number" value="00155" />
+      <option name="presentableId" value="LOCAL-00155" />
+      <option name="project" value="LOCAL" />
+      <updated>1648757589934</updated>
+    </task>
+    <option name="localTasksCounter" value="156" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -478,7 +480,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Fixed comment errors" />
     <MESSAGE value="fixed random node neighbor" />
     <MESSAGE value="write to files that don't have hard to find instances" />
     <MESSAGE value="Added number of labels in generation info file" />
@@ -503,7 +504,8 @@
     <MESSAGE value="Must convert name to int when creating path to output folder" />
     <MESSAGE value="Now uses double instead of int, because too large of values.  Also increased the max epoch for the wander joins" />
     <MESSAGE value="Updated the information about convergence for wander joins" />
-    <option name="LAST_COMMIT_MESSAGE" value="Updated the information about convergence for wander joins" />
+    <MESSAGE value="Made closer to original" />
+    <option name="LAST_COMMIT_MESSAGE" value="Made closer to original" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

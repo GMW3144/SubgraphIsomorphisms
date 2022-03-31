@@ -3896,7 +3896,7 @@ public class SubgraphIsomorphism {
         // keep track of the costs we have seen
         SummaryStatistics stats = new SummaryStatistics();
 
-        while (stats.getN()<maxEpoch*5){
+        while (stats.getN()<maxEpoch){
             // the walk is originally empty
             List<Vertex> walk = new ArrayList<>();
             // get the cost of the walk
@@ -4610,7 +4610,7 @@ public class SubgraphIsomorphism {
 
         // estimation
         double tau = 100;
-        int maxEpoch = 5000;
+        int maxEpoch = 10000;
         double zScore = 1.96; // z-score for 95% confidence
 
         // create query graph
