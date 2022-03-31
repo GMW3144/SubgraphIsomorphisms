@@ -83,13 +83,6 @@
       <option name="presentableId" value="Default" />
       <updated>1642694530105</updated>
     </task>
-    <task id="LOCAL-00105" summary="Working with intervals instead of doubles">
-      <created>1647531811875</created>
-      <option name="number" value="00105" />
-      <option name="presentableId" value="LOCAL-00105" />
-      <option name="project" value="LOCAL" />
-      <updated>1647531811875</updated>
-    </task>
     <task id="LOCAL-00106" summary="Fixed some small issues">
       <created>1647535089216</created>
       <option name="number" value="00106" />
@@ -426,7 +419,14 @@
       <option name="project" value="LOCAL" />
       <updated>1648756995597</updated>
     </task>
-    <option name="localTasksCounter" value="154" />
+    <task id="LOCAL-00154" summary="Updated the information about convergence for wander joins">
+      <created>1648757425789</created>
+      <option name="number" value="00154" />
+      <option name="presentableId" value="LOCAL-00154" />
+      <option name="project" value="LOCAL" />
+      <updated>1648757425789</updated>
+    </task>
+    <option name="localTasksCounter" value="155" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -478,7 +478,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Attempted random node neighbor algorithm" />
     <MESSAGE value="Fixed comment errors" />
     <MESSAGE value="fixed random node neighbor" />
     <MESSAGE value="write to files that don't have hard to find instances" />
@@ -503,7 +502,8 @@
     <MESSAGE value="Added restriction to how many parameters there can be" />
     <MESSAGE value="Must convert name to int when creating path to output folder" />
     <MESSAGE value="Now uses double instead of int, because too large of values.  Also increased the max epoch for the wander joins" />
-    <option name="LAST_COMMIT_MESSAGE" value="Now uses double instead of int, because too large of values.  Also increased the max epoch for the wander joins" />
+    <MESSAGE value="Updated the information about convergence for wander joins" />
+    <option name="LAST_COMMIT_MESSAGE" value="Updated the information about convergence for wander joins" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

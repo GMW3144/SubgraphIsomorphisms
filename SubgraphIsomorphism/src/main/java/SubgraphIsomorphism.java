@@ -3950,7 +3950,7 @@ public class SubgraphIsomorphism {
             stats.addValue(cost);
 
             // every 20 check the confidence value
-            if(stats.getN()%maxEpoch == 0){
+            if(stats.getN()%1000 == 0){
                 double conf = computeConfidenceInterval(stats, zScore);
                 if(conf<tau) {
                     break;
@@ -4610,7 +4610,7 @@ public class SubgraphIsomorphism {
 
         // estimation
         double tau = 100;
-        int maxEpoch = 1000;
+        int maxEpoch = 5000;
         double zScore = 1.96; // z-score for 95% confidence
 
         // create query graph
