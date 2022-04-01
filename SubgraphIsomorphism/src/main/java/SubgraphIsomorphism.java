@@ -4381,17 +4381,20 @@ public class SubgraphIsomorphism {
         numIsomorphic = new HashMap<>();
         removeIsomorphicGraphs(graphs);
 
+        int numGraphs = 0;
         // iterate through the query graphs
         for (Graph<Vertex, DefaultEdge> query : graphs.keySet()) {
             double estimate = graphs.get(query);
 
             // store what the graph looks like
-            File outputGraphFolder = new File(outputFolderName + "Graphs\\");
+            /*File outputGraphFolder = new File(outputFolderName + "Graphs\\");
             int numGraphs = 0;
             if (outputGraphFolder.list() != null) {
                 numGraphs = outputGraphFolder.list().length;
             }
             String queryName = "graph" + (numGraphs + 1) + ".txt";
+             */
+            String queryName = "graph" + (numGraphs + 1) + ".txt"; numGraphs++;
             writeGraph(query, outputFolderName + "Graphs\\", queryName);
 
             // write statistics of the graph

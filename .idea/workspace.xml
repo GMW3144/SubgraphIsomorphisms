@@ -6,6 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="6d0b8e23-97b2-4b58-991e-87f7b486f404" name="Default Changelist" comment="used different minimum supports (part 2)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/HeatMap/constructHeatMap.py" beforeDir="false" afterPath="$PROJECT_DIR$/HeatMap/constructHeatMap.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -70,7 +71,7 @@
     <configuration name="SubgraphIsomorphism " type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="SubgraphIsomorphism" />
       <module name="SubgraphIsomorphism" />
-      <option name="PROGRAM_PARAMETERS" value="RandomWalkEstimation C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Yeast\yeast.igraph C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\HeatMap\Yeast\" />
+      <option name="PROGRAM_PARAMETERS" value="PropRandomWalkEstimation C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Yeast\yeast.igraph C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\HeatMap\Yeast\Test\ 0" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../../ISProject" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -85,13 +86,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1642694530105</updated>
-    </task>
-    <task id="LOCAL-00109" summary="Added comments, and made sure the the isomorphism for getting rid of isomorphic graphs is induced and set a value for gamma">
-      <created>1647616477452</created>
-      <option name="number" value="00109" />
-      <option name="presentableId" value="LOCAL-00109" />
-      <option name="project" value="LOCAL" />
-      <updated>1647616477452</updated>
     </task>
     <task id="LOCAL-00110" summary="First attempt at making the DAG">
       <created>1647637055368</created>
@@ -429,7 +423,14 @@
       <option name="project" value="LOCAL" />
       <updated>1648773851265</updated>
     </task>
-    <option name="localTasksCounter" value="158" />
+    <task id="LOCAL-00158" summary="Fixed profile problem in random node neighbor, added a new method to help make sure always add to profile with new vertex or edge">
+      <created>1648840044380</created>
+      <option name="number" value="00158" />
+      <option name="presentableId" value="LOCAL-00158" />
+      <option name="project" value="LOCAL" />
+      <updated>1648840044380</updated>
+    </task>
+    <option name="localTasksCounter" value="159" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -481,7 +482,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Added number of labels in generation info file" />
     <MESSAGE value="Fixed processing order creating a DAG" />
     <MESSAGE value="Working completely for DAG" />
     <MESSAGE value="Everything working before big change" />
@@ -506,7 +506,8 @@
     <MESSAGE value="Made closer to original" />
     <MESSAGE value="Small change, to undo previous one" />
     <MESSAGE value="Made some changes to heatmap, now considers average with number isomorphic and white out where no graphs with properties" />
-    <option name="LAST_COMMIT_MESSAGE" value="Made some changes to heatmap, now considers average with number isomorphic and white out where no graphs with properties" />
+    <MESSAGE value="Fixed profile problem in random node neighbor, added a new method to help make sure always add to profile with new vertex or edge" />
+    <option name="LAST_COMMIT_MESSAGE" value="Fixed profile problem in random node neighbor, added a new method to help make sure always add to profile with new vertex or edge" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -618,7 +619,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>4524</line>
+          <line>4527</line>
           <option name="timeStamp" value="649" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -628,12 +629,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>4571</line>
+          <line>4574</line>
           <option name="timeStamp" value="654" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>4588</line>
+          <line>4591</line>
           <option name="timeStamp" value="658" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -645,16 +646,6 @@
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
           <line>4342</line>
           <option name="timeStamp" value="663" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>250</line>
-          <option name="timeStamp" value="664" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>263</line>
-          <option name="timeStamp" value="665" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>

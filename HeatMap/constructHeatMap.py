@@ -52,7 +52,7 @@ def readInputData(dataFolder):
                             break
 
                         if("matchings" in line):
-                            M_current = int(line.split(":")[1].strip())
+                            M_current = float(line.split(":")[1].strip())
                             foundM = True
 
                         if("isomorphic graphs" in line):
@@ -119,7 +119,7 @@ def plotValues(graphInformation, maxDe, maxDi, folder):
         constructHeatMap(key, heatMapsInfo[key], maxM, folder)
 
 if __name__ == '__main__':
-    dataFolder = "C:\\Users\\Gabi\\Desktop\\IndependentStudy\\GitHubProject\\Data\\Output\\HeatMap\\Proteins\\SecondAttempt\\"
+    dataFolder = "C:\\Users\\Gabi\\Desktop\\IndependentStudy\\GitHubProject\\Data\\Output\\HeatMap\\Yeast\\Attempt1\\"
     (graphInformation, maxDe, maxDi) = readInputData(dataFolder)
-    plotValues(graphInformation, maxDe, maxDi, dataFolder+"HeatMaps\\Test\\")
+    plotValues(graphInformation, maxDe, maxDi, dataFolder+"HeatMaps\\")
         
