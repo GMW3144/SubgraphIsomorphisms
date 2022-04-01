@@ -202,11 +202,8 @@ public class SubgraphIsomorphism {
 
             // create/add new vertex
             Vertex v = new Vertex(vID, vChemical);
-            g.addVertex(v);
             idToVertex.put(vID, v);
-
-            // build the profile to include own label
-            v.addToProfile(v);
+            addVertex(g, v);
 
             line = br.readLine();
         }
@@ -233,11 +230,7 @@ public class SubgraphIsomorphism {
                 if(vID1 < vID2){
                     Vertex v1 = idToVertex.get(vID1);
                     Vertex v2 = idToVertex.get(vID2);
-                    g.addEdge(v1, v2);
-
-                    // build the profile of each
-                    v1.addToProfile(v2);
-                    v2.addToProfile(v1);
+                    addEdge(g, v1, v2);
                 }
 
             }
@@ -246,6 +239,45 @@ public class SubgraphIsomorphism {
         br.close();
 
         return g;
+    }
+
+    /**
+     * Add a vertex to the graph.  Must update it's profile as well
+     * @param graph the graph
+     * @param u the vertex
+     */
+    public static void addVertex(Graph<Vertex, DefaultEdge> graph, Vertex u){
+        // add the vertex to the graph
+        graph.addVertex(u);
+
+        // build the profile to include own label
+        u.addToProfile(u);
+    }
+
+    /**
+     * Add an edge to the graph between the two vertices.  Must update both of the vertices profiles
+     * @param graph the graph
+     * @param u the source vertex of edge within the graph
+     * @param v the target vertex of edge within the graph
+     */
+    public static void addEdge(Graph<Vertex, DefaultEdge> graph, Vertex u, Vertex v){
+        graph.addEdge(u, v);
+
+        u.addToProfile(v);
+        v.addToProfile(u);
+    }
+
+    /**
+     * Remove an edge to the graph between the two vertices.  Must update both of the vertices profiles
+     * @param graph the graph
+     * @param u the source vertex of edge within the graph
+     * @param v the target vertex of edge within the graph
+     */
+    public static void removeEdge(Graph<Vertex, DefaultEdge> graph, Vertex u, Vertex v){
+        graph.removeEdge(u, v);
+
+        u.removeFromProfile(v);
+        v.removeFromProfile(u);
     }
 
     /**
@@ -285,12 +317,10 @@ public class SubgraphIsomorphism {
                 // add the vertex
                 String stringLabels = new String(labels);
                 Vertex v = new Vertex(id, stringLabels);
-                g.addVertex(v);
+                addVertex(g,v);
 
                 // keep track of vertex and id
                 idToVertex.put(id, v);
-                // build the profile to include own label
-                v.addToProfile(v);
             }
             else{
                 break;
@@ -311,11 +341,7 @@ public class SubgraphIsomorphism {
                 if(vID1 < vID2){
                     Vertex v1 = idToVertex.get(vID1);
                     Vertex v2 = idToVertex.get(vID2);
-                    g.addEdge(v1, v2);
-
-                    // build the profile of each
-                    v1.addToProfile(v2);
-                    v2.addToProfile(v1);
+                    addEdge(g, v1, v2);
                 }
             }
             line = br.readLine();
@@ -2273,7 +2299,7 @@ public class SubgraphIsomorphism {
         seen.put(firstVertex, lastVertexCopy); // target, query
 
         // add the first vertex to the graph
-        queryGraph.addVertex(lastVertexCopy); currentId++;
+        addVertex(queryGraph, lastVertexCopy); currentId++;
 
         // the set of possible vertices is initially the neighbors list
         Set<Vertex> possibleVertices = new HashSet<>(Graphs.neighborListOf(target, firstVertex));
@@ -2288,7 +2314,7 @@ public class SubgraphIsomorphism {
             // create a copy of the vertex and add to graph
             lastVertexCopy = copyVertex(randVertex, currentId);
             seen.put(randVertex, lastVertexCopy); // target, query
-            queryGraph.addVertex(lastVertexCopy); currentId++;
+            addVertex(queryGraph, lastVertexCopy); currentId++;
 
             // add the neighbors of the random vertex, and remove any that we have already visited
             possibleVertices.addAll(Graphs.neighborListOf(target, randVertex));
@@ -2297,7 +2323,7 @@ public class SubgraphIsomorphism {
             // add an edge between it and all existing vertices
             for(Vertex prevVertices: seen.keySet()){
                 if(target.containsEdge(prevVertices, randVertex)){
-                    queryGraph.addEdge(seen.get(prevVertices), seen.get(randVertex));
+                    addEdge(queryGraph, seen.get(prevVertices), seen.get(randVertex));
                 }
             }
         }
@@ -2331,11 +2357,10 @@ public class SubgraphIsomorphism {
         int maxTimesChecked = 100;
 
         // create a new vertex, by copying info
-        queryGraph.addVertex(lastVertexCopy);
-        // build the profile to include own label
-        lastVertexCopy.addToProfile(lastVertexCopy);
+        addVertex(queryGraph, lastVertexCopy);
 
         for(int i = 0; i<maxTimesChecked; i++) {
+            maxIteration = 1000;
             // perform the walk
             while (iter.hasNext()) {
                 // keeps it from getting stuck in an infinite loop
@@ -2361,18 +2386,12 @@ public class SubgraphIsomorphism {
                 // if we haven't seen it, then add new vertex to query graph
                 else {
                     seen.put(nextVertex, nextVertexCopy);
-                    queryGraph.addVertex(nextVertexCopy);
-                    // build the profile to include own label
-                    nextVertexCopy.addToProfile(nextVertexCopy);
+                    addVertex(queryGraph,nextVertexCopy);
                 }
 
                 // only add edge if haven't seen it before in query
                 if (!queryGraph.containsEdge(lastVertexCopy, nextVertexCopy)) {
-                    queryGraph.addEdge(lastVertexCopy, nextVertexCopy);
-
-                    // build the profile of each
-                    lastVertexCopy.addToProfile(nextVertexCopy);
-                    nextVertexCopy.addToProfile(lastVertexCopy);
+                    addEdge(queryGraph, lastVertexCopy, nextVertexCopy);
                 }
 
                 // keep track of last vertex to create edge
@@ -2452,7 +2471,7 @@ public class SubgraphIsomorphism {
             avgDActual += possibleNeighbors.size();
             for (Vertex v : possibleNeighbors) {
                 if (!query.containsEdge(seen.get(u), seen.get(v))) {
-                    query.addEdge(seen.get(u), seen.get(v));
+                    addEdge(query, seen.get(u), seen.get(v));
                 }
             }
         }
@@ -2483,10 +2502,10 @@ public class SubgraphIsomorphism {
             Vertex s = query.getEdgeSource(e); Vertex t = query.getEdgeTarget(e);
 
             // check if connected when remove edge
-            query.removeEdge(e);
+            removeEdge(query, s, t);
             ConnectivityInspector<Vertex,DefaultEdge> connectivityInspector = new ConnectivityInspector<>(query);
             if(!connectivityInspector.isConnected()){
-                query.addEdge(s, t);
+                addEdge(query, s, t);
                 // cant use this edge in the future
                 possibleEdges.remove(eIndex);
                 continue;
@@ -2963,7 +2982,7 @@ public class SubgraphIsomorphism {
         // add vertices to graph
         for(Vertex v: graph.vertexSet()){
             Vertex copyVertex = copyVertex(v, id);
-            combinedGraph.addVertex(copyVertex); copyVertex.addToProfile(copyVertex);
+            addVertex(combinedGraph, copyVertex);
             oldToNew.put(v, copyVertex);
             id++;
         }
@@ -2974,10 +2993,7 @@ public class SubgraphIsomorphism {
                 Vertex vP = oldToNew.get(v);
                 Vertex uP = oldToNew.get(u);
                 if(!combinedGraph.containsEdge(vP, uP)) {
-                    combinedGraph.addEdge(vP, uP);
-
-                    vP.addToProfile(uP);
-                    uP.addToProfile(vP);
+                    addEdge(combinedGraph, vP, uP);
                 }
             }
         }
@@ -3102,9 +3118,7 @@ public class SubgraphIsomorphism {
                 v.removeFromProfile(v1);
 
                 // add new edge between vertex and maxV2, update profile
-                combinedGraph.addEdge(v2, v);
-                v.addToProfile(v2);
-                v2.addToProfile(v);
+                addEdge(combinedGraph, v2, v);
             }
             // remove the vertex in each
             combinedGraph.removeVertex(v1);
@@ -3236,9 +3250,7 @@ public class SubgraphIsomorphism {
             Vertex v1 = v1Choices.remove(0);
             Vertex v2 = v2Choices.remove(0);
 
-            combinedGraph.addEdge(v1, v2);
-            v1.addToProfile(v2);
-            v2.addToProfile(v1);
+            addEdge(combinedGraph, v1, v2);
 
             List<Vertex> edgeInfo = new ArrayList<>();
             edgeInfo.add(v1); edgeInfo.add(v2);
@@ -3424,22 +3436,17 @@ public class SubgraphIsomorphism {
 
             // add the root
             Vertex root = new Vertex(currentId, rootLabel);
-            query.addVertex(root);
-            root.addToProfile(root);
+            addVertex(query, root);
 
             currentId++;
             // add the other vertices and their edges
             for (String neighborLabel : neighbors) {
                 // add the vertex, update profile
                 Vertex neighbor = new Vertex(currentId, neighborLabel);
-                query.addVertex(neighbor);
-                neighbor.addToProfile(neighbor);
+                addVertex(query, neighbor);
 
                 // add the edge, update profile
-                query.addEdge(root, neighbor);
-                root.addToProfile(neighbor);
-                neighbor.addToProfile(root);
-
+                addEdge(query, root, neighbor);
                 currentId++;
             }
 
