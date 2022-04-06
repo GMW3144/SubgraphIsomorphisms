@@ -1,21 +1,45 @@
-// Graph Implementation
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Random;
+import java.util.Set;
+
+// Statistics
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
-import org.jgrapht.*;
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
+
+// Graph Implementation
+import org.jgrapht.Graph;
+import org.jgrapht.Graphs;
 import org.jgrapht.alg.connectivity.ConnectivityInspector;
+import org.jgrapht.alg.interfaces.MatchingAlgorithm;
+import org.jgrapht.alg.matching.HopcroftKarpMaximumCardinalityBipartiteMatching;
 import org.jgrapht.alg.shortestpath.GraphMeasurer;
 import org.jgrapht.graph.DefaultEdge;
-import org.jgrapht.alg.interfaces.MatchingAlgorithm;
-import org.jgrapht.graph.*;
+import org.jgrapht.graph.DefaultWeightedEdge;
+import org.jgrapht.graph.DirectedAcyclicGraph;
+import org.jgrapht.graph.Multigraph;
+import org.jgrapht.graph.SimpleGraph;
+import org.jgrapht.graph.SimpleWeightedGraph;
 import org.jgrapht.traverse.BreadthFirstIterator;
 import org.jgrapht.traverse.DepthFirstIterator;
 import org.jgrapht.traverse.RandomWalkVertexIterator;
-import org.jgrapht.alg.matching.HopcroftKarpMaximumCardinalityBipartiteMatching;
-
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
-
-import java.io.*;
-import java.util.*;
 
 public class SubgraphIsomorphism {
     // the statistics
@@ -242,45 +266,6 @@ public class SubgraphIsomorphism {
     }
 
     /**
-     * Add a vertex to the graph.  Must update it's profile as well
-     * @param graph the graph
-     * @param u the vertex
-     */
-    public static void addVertex(Graph<Vertex, DefaultEdge> graph, Vertex u){
-        // add the vertex to the graph
-        graph.addVertex(u);
-
-        // build the profile to include own label
-        u.addToProfile(u);
-    }
-
-    /**
-     * Add an edge to the graph between the two vertices.  Must update both of the vertices profiles
-     * @param graph the graph
-     * @param u the source vertex of edge within the graph
-     * @param v the target vertex of edge within the graph
-     */
-    public static void addEdge(Graph<Vertex, DefaultEdge> graph, Vertex u, Vertex v){
-        graph.addEdge(u, v);
-
-        u.addToProfile(v);
-        v.addToProfile(u);
-    }
-
-    /**
-     * Remove an edge to the graph between the two vertices.  Must update both of the vertices profiles
-     * @param graph the graph
-     * @param u the source vertex of edge within the graph
-     * @param v the target vertex of edge within the graph
-     */
-    public static void removeEdge(Graph<Vertex, DefaultEdge> graph, Vertex u, Vertex v){
-        graph.removeEdge(u, v);
-
-        u.removeFromProfile(v);
-        v.removeFromProfile(u);
-    }
-
-    /**
      * Reads the graphs from a iGraph format
      * @param inputFile the file which contains the vertex and edge information
      *                  Formatted :
@@ -371,6 +356,56 @@ public class SubgraphIsomorphism {
             return null;
         }
         return g;
+    }
+
+    /**
+     * Add a vertex to the graph.  Must update it's profile as well
+     * @param graph the graph
+     * @param u the vertex
+     */
+    public static void addVertex(Graph<Vertex, DefaultEdge> graph, Vertex u){
+        // add the vertex to the graph
+        graph.addVertex(u);
+
+        // build the profile to include own label
+        u.addToProfile(u);
+    }
+
+    /**
+     * Add an edge to the graph between the two vertices.  Must update both of the vertices profiles
+     * @param graph the graph
+     * @param u the source vertex of edge within the graph
+     * @param v the target vertex of edge within the graph
+     */
+    public static void addEdge(Graph<Vertex, DefaultEdge> graph, Vertex u, Vertex v){
+        graph.addEdge(u, v);
+
+        u.addToProfile(v);
+        v.addToProfile(u);
+    }
+
+    /**
+     * Remove an edge to the graph between the two vertices.  Must update both of the vertices profiles
+     * @param graph the graph
+     * @param u the source vertex of edge within the graph
+     * @param v the target vertex of edge within the graph
+     */
+    public static void removeEdge(Graph<Vertex, DefaultEdge> graph, Vertex u, Vertex v){
+        graph.removeEdge(u, v);
+
+        u.removeFromProfile(v);
+        v.removeFromProfile(u);
+    }
+
+    /**
+     * A function that will copy a vertex and create a new one
+     * @param vertex the vertex we are copying
+     * @param newId the id of the new vertex
+     * @return the copied vertex
+     */
+    private static Vertex copyVertex(Vertex vertex, int newId){
+        // copy the attributes
+        return new Vertex(newId, vertex.getLabel());
     }
 
     /**
@@ -2266,17 +2301,6 @@ public class SubgraphIsomorphism {
         writer.write("");
         displayGraphStatistics(queryName, queryGraph, targetName, targetGraph, writer);
         writer.close();
-    }
-
-    /**
-     * A function that will copy a vertex and create a new one
-     * @param vertex the vertex we are copying
-     * @param newId the id of the new vertex
-     * @return the copied vertex
-     */
-    private static Vertex copyVertex(Vertex vertex, int newId){
-        // copy the attributes
-        return new Vertex(newId, vertex.getLabel());
     }
 
     /**
@@ -4381,18 +4405,28 @@ public class SubgraphIsomorphism {
         numIsomorphic = new HashMap<>();
         removeIsomorphicGraphs(graphs);
 
-        int numGraphs = 0;
+        String prefix = "size_"+size+"_de_"+Math.round(avgD.get(0))+"_di_"+Math.round(dia.get(0));
+
+        // Find the next graph index.
+        int numGraphs = -1;
+        for (File f : new File(outputFolderName).listFiles())
+            if (f.getName().startsWith(prefix + "_graph_")) {
+                int current = Integer.valueOf(f.getName().replace(prefix + "_graph_", "").replace(".txt", ""));
+                if (numGraphs < current)
+                    numGraphs = current;
+            }
+        numGraphs++;
+
         // iterate through the query graphs
         for (Graph<Vertex, DefaultEdge> query : graphs.keySet()) {
             double estimate = graphs.get(query);
 
             // store what the graph looks like
-            String queryName = "graph" + (numGraphs + 1) + ".txt"; numGraphs++;
-            writeGraph(query, outputFolderName + "Graphs\\", queryName);
+            String queryName = "_graph_" + numGraphs + ".txt", statsName = "_stats_" + numGraphs + ".txt";
+            writeGraph(query, outputFolderName, prefix + queryName);
 
             // write statistics of the graph
-            File outputStatsFile = new File(outputFolderName + "GenerationInfo\\" + queryName);
-            BufferedWriter writer = new BufferedWriter(new FileWriter(outputStatsFile));
+            BufferedWriter writer = new BufferedWriter(new FileWriter(new File(outputFolderName + prefix + statsName)));
 
             // write hard-to-find information first
             writer.write(hardToFind+"\n");
@@ -4413,6 +4447,7 @@ public class SubgraphIsomorphism {
             displayGraphStatistics(queryName, query, targetLocation.getName(), target, writer);
 
             writer.close();
+            numGraphs++;
         }
     }
 
@@ -4619,9 +4654,9 @@ public class SubgraphIsomorphism {
         // create query graph
         int minSize = 10;
         int maxSize = 50;
-        int maxNumQueries = 1000;
-        int maxNumAttempts = 5;
-        int maxNumFailedProp = 1000;
+        int maxNumQueries = 10000;
+        int maxNumAttempts = 10;
+        int maxNumFailedProp = 10000;
 
         // format of the graphs
         formatTarget = IGRAPH;
@@ -4738,15 +4773,13 @@ public class SubgraphIsomorphism {
                     for(double di = 1; di<=10; di++) {
                         System.out.println("Degree: "+de+", Diameter: "+di+"\n================");
 
-                        String outputFolderNameDeDi = outputFolderName+size+"\\"+"de"+(int)de+"_di"+(int)di+"\\";
-
                         // properties of query graph
                         List<Double> avgD = new ArrayList<>(List.of(de, de+1));
                         List<Double> dia = new ArrayList<>(List.of(di, di+1));
                         List<Double> den = null;
                         List<Double> numLabels = null;
 
-                        randomGenerationWithEstimate(target, targetLocation, outputFolderNameDeDi, size, gamma, tau, maxEpoch,
+                        randomGenerationWithEstimate(target, targetLocation, outputFolderName, size, gamma, tau, maxEpoch,
                                 zScore, isInduced, maxNumQueries, maxNumAttempts, maxNumFailedProp, avgD, dia, den, numLabels,
                                 subgraphMethods);
                     }
@@ -4790,8 +4823,6 @@ public class SubgraphIsomorphism {
                 return;
             }
 
-            String outputFolderNameDeDi = outputFolderName + size + "\\" + "de" + (int) de + "_di" + (int) di + "\\";
-
             // properties of query graph
             List<Double> avgD = new ArrayList<>(List.of(de, de + 1));
             List<Double> dia = new ArrayList<>(List.of(di, di + 1));
@@ -4800,7 +4831,7 @@ public class SubgraphIsomorphism {
 
             final List<String> subgraphMethods = new ArrayList<>(List.of(RANDOM_NODE_NEIGHBOR, RANDOM_WALK));
 
-            randomGenerationWithEstimate(target, targetLocation, outputFolderNameDeDi, size, gamma, tau, maxEpoch,
+            randomGenerationWithEstimate(target, targetLocation, outputFolderName, size, gamma, tau, maxEpoch,
                     zScore, isInduced, maxNumQueries, maxNumAttempts, maxNumFailedProp, avgD, dia, den, numLabels,
                     subgraphMethods);
         }
@@ -4861,7 +4892,6 @@ public class SubgraphIsomorphism {
                     "\nRandomWalkEstimation <targetFile> <outputFolder>"+
                     "\n\t Creates a query graph from the target graph using a random walk and estimation." +
                     "\n\t Graphs who's estimation is an outlier compare to other random walks will be created."+
-                    "\n\t Output folder must contain folders: \"GenerationInfo\", \"Graphs\", \"Isomorphism\""+
                     "\nAverage <isomorphismFolder>"+
                     "\n\t Finds the average number of backtracking and matchings for given isomorphisms." +
                     "\nTestIsomorphism <groundTruthFile> <queryFolder> <targetFolder> <outputFile>"+
