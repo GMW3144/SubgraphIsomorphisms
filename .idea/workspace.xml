@@ -87,13 +87,6 @@
       <option name="presentableId" value="Default" />
       <updated>1642694530105</updated>
     </task>
-    <task id="LOCAL-00110" summary="First attempt at making the DAG">
-      <created>1647637055368</created>
-      <option name="number" value="00110" />
-      <option name="presentableId" value="LOCAL-00110" />
-      <option name="project" value="LOCAL" />
-      <updated>1647637055368</updated>
-    </task>
     <task id="LOCAL-00111" summary="Fixed some bugs with creating the DAG and order">
       <created>1647700954913</created>
       <option name="number" value="00111" />
@@ -430,7 +423,14 @@
       <option name="project" value="LOCAL" />
       <updated>1648840044380</updated>
     </task>
-    <option name="localTasksCounter" value="159" />
+    <task id="LOCAL-00159" summary="updated naming convention, so doesn't have to count the number of graphs in a file for write graph information">
+      <created>1648843252468</created>
+      <option name="number" value="00159" />
+      <option name="presentableId" value="LOCAL-00159" />
+      <option name="project" value="LOCAL" />
+      <updated>1648843252471</updated>
+    </task>
+    <option name="localTasksCounter" value="160" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -482,7 +482,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Fixed processing order creating a DAG" />
     <MESSAGE value="Working completely for DAG" />
     <MESSAGE value="Everything working before big change" />
     <MESSAGE value="Now will find hard-to-find instance in set number of graphs, and attempts multiple times" />
@@ -507,7 +506,8 @@
     <MESSAGE value="Small change, to undo previous one" />
     <MESSAGE value="Made some changes to heatmap, now considers average with number isomorphic and white out where no graphs with properties" />
     <MESSAGE value="Fixed profile problem in random node neighbor, added a new method to help make sure always add to profile with new vertex or edge" />
-    <option name="LAST_COMMIT_MESSAGE" value="Fixed profile problem in random node neighbor, added a new method to help make sure always add to profile with new vertex or edge" />
+    <MESSAGE value="updated naming convention, so doesn't have to count the number of graphs in a file for write graph information" />
+    <option name="LAST_COMMIT_MESSAGE" value="updated naming convention, so doesn't have to count the number of graphs in a file for write graph information" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -619,7 +619,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>4527</line>
+          <line>4520</line>
           <option name="timeStamp" value="649" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
@@ -629,12 +629,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>4574</line>
+          <line>4567</line>
           <option name="timeStamp" value="654" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>4591</line>
+          <line>4584</line>
           <option name="timeStamp" value="658" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">

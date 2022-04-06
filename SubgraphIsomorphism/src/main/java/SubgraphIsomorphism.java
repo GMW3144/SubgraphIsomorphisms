@@ -4387,13 +4387,6 @@ public class SubgraphIsomorphism {
             double estimate = graphs.get(query);
 
             // store what the graph looks like
-            /*File outputGraphFolder = new File(outputFolderName + "Graphs\\");
-            int numGraphs = 0;
-            if (outputGraphFolder.list() != null) {
-                numGraphs = outputGraphFolder.list().length;
-            }
-            String queryName = "graph" + (numGraphs + 1) + ".txt";
-             */
             String queryName = "graph" + (numGraphs + 1) + ".txt"; numGraphs++;
             writeGraph(query, outputFolderName + "Graphs\\", queryName);
 
@@ -4763,37 +4756,45 @@ public class SubgraphIsomorphism {
         else if (mainMethod.equals("PropRandomWalkEstimation")  && args.length == 4){
             final String targetLocationName = args[1];
             String outputFolderName = args[2];
-            int x = Integer.parseInt(args[3]); //give a value between 0 and 299
+            int x = Integer.parseInt(args[3]); //give a value between 0 and 899
 
-            // the number of nodes between 10 and 50, with 10 increments (total 5)
-            int size = 50;
-            if (x < 60) { size = 10; }
-            else if (x < 120) { size = 20; }
-            else if (x < 180) { size = 30; }
-            else if (x < 240) { size = 40; }
+            // the number of nodes between 10 and given value, with 10 increments (total given value/10)
+            int size = 150;
+            for (int i = 60; i < 60 * size; i += 60) {
+                if (x < i) {
+                    size = i / 60 * 10;
+                    break;
+                }
+            }
             // the average degree between 1 and 6
             double de = 6;
-            if (x % 60 < 10) { de = 1; }
-            else if (x % 60 < 20) { de = 2; }
-            else if (x % 60 < 30) { de = 3; }
-            else if (x % 60 < 40) { de = 4; }
-            else if (x % 60 < 50) { de = 5; }
+            if (x % 60 < 10) {
+                de = 1;
+            } else if (x % 60 < 20) {
+                de = 2;
+            } else if (x % 60 < 30) {
+                de = 3;
+            } else if (x % 60 < 40) {
+                de = 4;
+            } else if (x % 60 < 50) {
+                de = 5;
+            }
             // the diameter between 1 and 10
             double di = x % 10 + 1;
 
             File targetLocation = new File(targetLocationName);
             Graph<Vertex, DefaultEdge> target = readGraph(targetLocation, formatTarget);
-            if(target == null){
+            if (target == null) {
                 System.out.println("Target File: ");
                 System.out.println(noGraphFormat);
                 return;
             }
 
-            String outputFolderNameDeDi = outputFolderName+size+"\\"+"de"+(int) de+"_di"+(int) di+"\\";
+            String outputFolderNameDeDi = outputFolderName + size + "\\" + "de" + (int) de + "_di" + (int) di + "\\";
 
             // properties of query graph
-            List<Double> avgD = new ArrayList<>(List.of(de, de+1));
-            List<Double> dia = new ArrayList<>(List.of(di, di+1));
+            List<Double> avgD = new ArrayList<>(List.of(de, de + 1));
+            List<Double> dia = new ArrayList<>(List.of(di, di + 1));
             List<Double> den = null;
             List<Double> numLabels = null;
 
