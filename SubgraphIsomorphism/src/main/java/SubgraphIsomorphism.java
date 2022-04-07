@@ -1910,6 +1910,11 @@ public class SubgraphIsomorphism {
     public static List<Vertex> calcPi(Vertex u, Vertex v, Map<Vertex, Set<Vertex>> candidates){
         List<Vertex> pi = new ArrayList<>();
         for(Vertex vP: candidates.get(u)) {
+            // don't want to include self because always equivalent
+            if(vP.equals(v)){
+                continue;
+            }
+            // find which are symetric
             if(Graphs.neighborListOf(CS, v).containsAll(Graphs.neighborListOf(CS, vP))){
                 pi.add(vP);
             }
@@ -1951,7 +1956,7 @@ public class SubgraphIsomorphism {
                                                            int i, Map<Vertex, Vertex> currentFunction,
                                                            List<Map<Vertex, Vertex>> allFunctionsFound,
                                                            boolean isInduced,
-                                                Map<Map<Vertex, Vertex>, List<Vertex>> pi,
+                                                Map<Map<Vertex, Vertex>, List<Vertex>> piMinus,
                                                 Map<Map<Vertex, Vertex>, List<Vertex>> piM,
                                                 Map<Map<Vertex, Vertex>, List<Vertex>> deltaM,
                                                 Map<Map<Vertex, Vertex>, List<Vertex>> equivalent,
@@ -1960,19 +1965,15 @@ public class SubgraphIsomorphism {
         if(currentFunction.size() == query.vertexSet().size()){
             allFunctionsFound.add(new HashMap<>(currentFunction));
 
-            // add the mappings rooted at each point
-            Map<Vertex, Vertex> toAdd = new HashMap<>(currentFunction);
             // iterate through the vertices in order
             for(int k = 0; k<order.size(); k++){
                 // if we have not seen root before then add a new one
                 if(!TM.containsKey(Map.of(order.get(k), currentFunction.get(order.get(k))))){
                     TM.put(Map.of(order.get(k), currentFunction.get(order.get(k))), new ArrayList<>());
                 }
-                // remove the current vertex
-                toAdd.remove(order.get(k));
                 // add the following mapping
-                for(int j = i; j<order.size(); j++){
-                    TM.get(Map.of(order.get(k), currentFunction.get(order.get(k)))).add(new HashMap<>(toAdd));
+                for(int j = k; j<order.size(); j++){
+                    TM.get(Map.of(order.get(k), currentFunction.get(order.get(k)))).add(new HashMap<>(currentFunction));
                 }
             }
         }
@@ -1988,6 +1989,8 @@ public class SubgraphIsomorphism {
 
             // iterate through C_M
             for(Vertex v: possibleVertices){
+                // calculate the symetry at beginning
+                List<Vertex> pi = calcPi(u, v, candidates);
                 // check if v is equivalent
                 if(!equivalent.get(Map.of(u,v)).isEmpty()){
                     // iterate through the equavalent vertices
@@ -2011,28 +2014,28 @@ public class SubgraphIsomorphism {
 
 
                 // check not in another mapping
-                if(!isInduced || isValid(query, target, currentFunction, u, v, isInduced)) {
+                if(!currentFunction.containsValue(v) && (!isInduced || isValid(query, target, currentFunction, u, v, isInduced))) {
                     currentFunction.put(u, v);
 
                     // calculate pi
-                    pi.put(Map.of(u, v), calcPi(u, v, candidates));
+                    piMinus.put(Map.of(u, v), calcPi(u, v, candidates));
                     deltaM.put(Map.of(u,v), new ArrayList<>());
 
                     // check the ancestors
                     for(Vertex ua: currentFunction.keySet()){
                         Vertex va = currentFunction.get(ua);
                         List<Vertex> pia = calcPi(ua, va, candidates);
-                        pia.retainAll(pi.get(Map.of(u, v)));
+                        pia.retainAll(pi);
 
-                        if(!pi.get(Map.of(u, v)).contains(va) && !pia.isEmpty()){
-                            deltaM.get(Map.of(u, v)).addAll(pi.get(Map.of(u, v)));
+                        if(!pi.contains(va) && !pia.isEmpty()){
+                            deltaM.get(Map.of(ua, va)).addAll(pi);
                         }
                     }
-                    subgraphIsomorphismVEQs(query, target, candidates, order, i, currentFunction, allFunctionsFound,
-                            isInduced, pi, piM, deltaM, equivalent, TM);
+                    subgraphIsomorphismVEQs(query, target, candidates, order, i+1, currentFunction, allFunctionsFound,
+                            isInduced, piMinus, piM, deltaM, equivalent, TM);
+                    currentFunction.remove(u);
 
-
-                    piM.put(Map.of(u, v), new ArrayList<>(pi.get(Map.of(u, v))));
+                    piM.put(Map.of(u, v), piMinus.get(Map.of(u,v)));
                     if(!TM.get(Map.of(u, v)).isEmpty()){
                         piM.get(Map.of(u, v)).removeAll(deltaM.get(Map.of(u, v)));
                     }
@@ -2051,7 +2054,8 @@ public class SubgraphIsomorphism {
                     for(Vertex uP: currentFunction.keySet()){
                         // update piM
                         if(currentFunction.get(uP).equals(v)){
-                            piM.get(Map.of(uP, v)).retainAll(pi.get(Map.of(u,v)));
+                            piMinus.get(Map.of(uP, v)).retainAll(pi);
+                            break;
                         }
                     }
                 }
@@ -4828,7 +4832,7 @@ public class SubgraphIsomorphism {
         outlierValue = 3;
 
         // format of the graphs
-        formatTarget = IGRAPH;
+        formatTarget = PROTEINS;
         formatQuery = PROTEINS;
 
         // if we are going to check if the labels are equivalent or subsets

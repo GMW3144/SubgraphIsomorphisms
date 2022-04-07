@@ -5,10 +5,10 @@ Target: human_2EQF.grf
 Used candidate algorithm: graphQL
 Used processing order algorithm: graphQL
 Used backtracking algorithm: VEQs
-Number backtracking calls: 0
+Number backtracking calls: 280
 
-Total number of possible matchings: 0
-Number pruned from local pruning: 0
-Number pruned from global pruning: 0
+Total number of possible matchings: 5072
+Number pruned from local pruning: 4341
+Number pruned from global pruning: 671
 
-Cost of order found by graphQL: 0.0
+Cost of order found by graphQL: 31938.3984375
