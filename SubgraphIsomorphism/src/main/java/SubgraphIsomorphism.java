@@ -1989,6 +1989,7 @@ public class SubgraphIsomorphism {
 
             // iterate through C_M
             for(Vertex v: possibleVertices){
+                numBackTracking++;
                 // calculate the symetry at beginning
                 List<Vertex> pi = calcPi(u, v, candidates);
                 // check if v is equivalent
@@ -2018,13 +2019,13 @@ public class SubgraphIsomorphism {
                     currentFunction.put(u, v);
 
                     // calculate pi
-                    piMinus.put(Map.of(u, v), calcPi(u, v, candidates));
+                    piMinus.put(Map.of(u, v), pi);
                     deltaM.put(Map.of(u,v), new ArrayList<>());
 
                     // check the ancestors
                     for(Vertex ua: currentFunction.keySet()){
                         Vertex va = currentFunction.get(ua);
-                        List<Vertex> pia = calcPi(ua, va, candidates);
+                        List<Vertex> pia = pi;
                         pia.retainAll(pi);
 
                         if(!pi.contains(va) && !pia.isEmpty()){
@@ -2036,6 +2037,9 @@ public class SubgraphIsomorphism {
                     currentFunction.remove(u);
 
                     piM.put(Map.of(u, v), piMinus.get(Map.of(u,v)));
+                    if(!TM.containsKey(Map.of(u, v))){
+                        TM.put(Map.of(u,v), new ArrayList<>());
+                    }
                     if(!TM.get(Map.of(u, v)).isEmpty()){
                         piM.get(Map.of(u, v)).removeAll(deltaM.get(Map.of(u, v)));
                     }
