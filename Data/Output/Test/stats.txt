@@ -2,30 +2,13 @@ Graph Statistics:
 Query: human_2GW6.8.sub.grf
 Target: human_2EQF.grf
 
-Distribution: (number_profiles:frequency) 
-Query Graph:
-	3:2
-	4:3
-	5:1
-	6:1
-	8:1
-Target Graph:
-	4:358
-	5:5
-	6:1
-	8:45
-	9:3
-	12:150
-	16:43
-	18:29
-
 Used candidate algorithm: graphQL
 Used processing order algorithm: graphQL
-Used backtracking algorithm: DAF
-Number backtracking calls: 355
+Used backtracking algorithm: VEQs
+Number backtracking calls: 0
 
-Total number of possible matchings: 5072
-Number pruned from local pruning: 4341
-Number pruned from global pruning: 671
+Total number of possible matchings: 0
+Number pruned from local pruning: 0
+Number pruned from global pruning: 0
 
-Cost of order found by graphQL: 31938.3984375
+Cost of order found by graphQL: 0.0

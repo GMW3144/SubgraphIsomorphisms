@@ -67,6 +67,7 @@ public class SubgraphIsomorphism {
     private static final String QUICKSI = "quickSI";
     private static final String DYNAMIC_ORDER = "dynamic order";
     private static final String DAF = "DAF";
+    private static final String VEQS = "VEQs";
     // creating graphs from star graph
     private static final String MERGE = "merge";
     private static final String EDGE = "edge";
@@ -94,7 +95,8 @@ public class SubgraphIsomorphism {
             "\t "+DYNAMIC_ORDER+": uses the dynamic ordering for process order. (Note: cannot only be used for ordering\n" +
             "\t\tand cannot use QUICKSI isomorphism)\n"+
             "\t "+DAF+": uses the DAF algorithm. (Note: equivalent to "+GROUNDTRUTH+" for processing candidates " +
-            "\t\tand cannot use " +DYNAMIC_ORDER+")";
+            "\t\tand cannot use " +DYNAMIC_ORDER+")\n"+
+            "\t "+VEQS+": uses the VEQs algorithm (Note: only can be used for backtracking and cannot use dynamic ordering)";
     // error message if didn't find connection algorithm
     private static final String noConnectionMethodFound = "Connection type of graphs specified is not valid.\n " +
             "Specify one of the following connections methods: \n" +
@@ -1822,7 +1824,7 @@ public class SubgraphIsomorphism {
             }
             possibleVertices = newPossibleVertices;
         }
-        else if(i!=0 && algorithmNameB.equals(DAF)){
+        else if(i!=0 && (algorithmNameB.equals(DAF)||algorithmNameB.equals(VEQS))){
             // iterate through the parents
             for(DefaultEdge e: queryDAG.incomingEdgesOf(u)){
                 Vertex uP = queryDAG.getEdgeSource(e);
@@ -1901,6 +1903,158 @@ public class SubgraphIsomorphism {
             if(algorithmNamePO.equals(DYNAMIC_ORDER)){
                 order.add(u);
                 dynamicOrder.remove(u);
+            }
+        }
+    }
+
+    public static List<Vertex> calcPi(Vertex u, Vertex v, Map<Vertex, Set<Vertex>> candidates){
+        List<Vertex> pi = new ArrayList<>();
+        for(Vertex vP: candidates.get(u)) {
+            if(Graphs.neighborListOf(CS, v).containsAll(Graphs.neighborListOf(CS, vP))){
+                pi.add(vP);
+            }
+        }
+        return pi;
+    }
+
+    public static void symetricMatching(Vertex u, Vertex v, Vertex uP, Map<Vertex, Vertex> currentFunction,
+                                        List<Map<Vertex, Vertex>> allFunctionsFound){
+        // if there is no conflict
+        if(uP != null){
+            Map<Vertex, Vertex> newFunction = new HashMap<>(currentFunction);
+            Vertex vP = newFunction.get(u);
+            newFunction.put(u, v);
+            newFunction.put(uP, vP);
+            allFunctionsFound.add(newFunction);
+        }
+        // if there is a conflict
+        else{
+            Map<Vertex, Vertex> newFunction = new HashMap<>(currentFunction);
+            newFunction.put(u, v);
+            allFunctionsFound.add(newFunction);
+        }
+    }
+    /**
+     * Does backtracking with the addition of failing sets
+     * @param query the query graph
+     * @param target the target graph
+     * @param candidates the candidate set
+     * @param order the processing order
+     * @param i  the current vertex within the order
+     * @param currentFunction the current matching between the query and target for the previous i vertices
+     * @param allFunctionsFound all the solutions that were discovered
+     * @param isInduced whether the isomorphism is induced
+     */
+    private static void subgraphIsomorphismVEQs(Graph<Vertex, DefaultEdge> query,
+                                                           Graph<Vertex, DefaultEdge> target,
+                                                           Map<Vertex, Set<Vertex>> candidates, ArrayList<Vertex> order,
+                                                           int i, Map<Vertex, Vertex> currentFunction,
+                                                           List<Map<Vertex, Vertex>> allFunctionsFound,
+                                                           boolean isInduced,
+                                                Map<Map<Vertex, Vertex>, List<Vertex>> pi,
+                                                Map<Map<Vertex, Vertex>, List<Vertex>> piM,
+                                                Map<Map<Vertex, Vertex>, List<Vertex>> deltaM,
+                                                Map<Map<Vertex, Vertex>, List<Vertex>> equivalent,
+                                                Map<Map<Vertex, Vertex>, List<Map<Vertex, Vertex>>> TM){
+        // check if found solution
+        if(currentFunction.size() == query.vertexSet().size()){
+            allFunctionsFound.add(new HashMap<>(currentFunction));
+
+            // add the mappings rooted at each point
+            Map<Vertex, Vertex> toAdd = new HashMap<>(currentFunction);
+            // iterate through the vertices in order
+            for(int k = 0; k<order.size(); k++){
+                // if we have not seen root before then add a new one
+                if(!TM.containsKey(Map.of(order.get(k), currentFunction.get(order.get(k))))){
+                    TM.put(Map.of(order.get(k), currentFunction.get(order.get(k))), new ArrayList<>());
+                }
+                // remove the current vertex
+                toAdd.remove(order.get(k));
+                // add the following mapping
+                for(int j = i; j<order.size(); j++){
+                    TM.get(Map.of(order.get(k), currentFunction.get(order.get(k)))).add(new HashMap<>(toAdd));
+                }
+            }
+        }
+        else{
+            // look at next node
+            Vertex u = getNextVertex(query, target, order, i, currentFunction, candidates);
+            // compute C_M
+            Set<Vertex> possibleVertices = getPossibleVertices(target, candidates, currentFunction, i, u);
+            // set v - inequivalent for each v in C_M(u)
+            for(Vertex v: possibleVertices){
+                equivalent.put(Map.of(u, v), new ArrayList<>());
+            }
+
+            // iterate through C_M
+            for(Vertex v: possibleVertices){
+                // check if v is equivalent
+                if(!equivalent.get(Map.of(u,v)).isEmpty()){
+                    // iterate through the equavalent vertices
+                    for(Vertex vEq : equivalent.get(Map.of(u,v))){
+                        // iterate through all of their possible matchings
+                        for(Map<Vertex, Vertex> MStar : TM.get(Map.of(u,vEq))){
+                            // find if there is a conflict previously, need to add differently
+                            Vertex uP = null;
+                            for(Vertex uVals : MStar.keySet()){
+                                if(MStar.get(uVals) == v){
+                                    uP = uVals;
+                                    break;
+                                }
+                            }
+
+                            symetricMatching(u, v, uP, currentFunction, allFunctionsFound);
+                        }
+                    }
+                    continue;
+                }
+
+
+                // check not in another mapping
+                if(!isInduced || isValid(query, target, currentFunction, u, v, isInduced)) {
+                    currentFunction.put(u, v);
+
+                    // calculate pi
+                    pi.put(Map.of(u, v), calcPi(u, v, candidates));
+                    deltaM.put(Map.of(u,v), new ArrayList<>());
+
+                    // check the ancestors
+                    for(Vertex ua: currentFunction.keySet()){
+                        Vertex va = currentFunction.get(ua);
+                        List<Vertex> pia = calcPi(ua, va, candidates);
+                        pia.retainAll(pi.get(Map.of(u, v)));
+
+                        if(!pi.get(Map.of(u, v)).contains(va) && !pia.isEmpty()){
+                            deltaM.get(Map.of(u, v)).addAll(pi.get(Map.of(u, v)));
+                        }
+                    }
+                    subgraphIsomorphismVEQs(query, target, candidates, order, i, currentFunction, allFunctionsFound,
+                            isInduced, pi, piM, deltaM, equivalent, TM);
+
+
+                    piM.put(Map.of(u, v), new ArrayList<>(pi.get(Map.of(u, v))));
+                    if(!TM.get(Map.of(u, v)).isEmpty()){
+                        piM.get(Map.of(u, v)).removeAll(deltaM.get(Map.of(u, v)));
+                    }
+
+                    // add the equivalent vertices
+                    for(Vertex vP: piM.get(Map.of(u, v))){
+                        if(!equivalent.containsKey(Map.of(u, vP))){
+                            equivalent.put(Map.of(u, vP), new ArrayList<>());
+                        }
+                        equivalent.get(Map.of(u, vP)).add(v);
+                    }
+
+                }
+                // there is a conflict
+                else{
+                    for(Vertex uP: currentFunction.keySet()){
+                        // update piM
+                        if(currentFunction.get(uP).equals(v)){
+                            piM.get(Map.of(uP, v)).retainAll(pi.get(Map.of(u,v)));
+                        }
+                    }
+                }
             }
         }
     }
@@ -2158,6 +2312,17 @@ public class SubgraphIsomorphism {
 
             subgraphIsomorphismWithFailingSets(query, target, candidates, order, 0, new HashMap<>(), results,
                     allFailingSets, isInduced);
+        }
+        else if(algorithmNameB.equals(VEQS) && !algorithmNamePO.equals(DYNAMIC_ORDER)){
+            if(!algorithmNamePO.equals(DAF)){
+                queryDAG = constructDAGWithOrder(query, order);
+            }
+
+            refineCS(query, target, candidates);
+            materializeCS(target, candidates);
+
+            subgraphIsomorphismVEQs(query, target, candidates, order, 0, new HashMap<>(), results, isInduced,
+                    new HashMap<>(), new HashMap<>(),new HashMap<>(),new HashMap<>(),new HashMap<>());
         }
         else{
             System.out.println("Backtracking Algorithm:");
@@ -4641,7 +4806,7 @@ public class SubgraphIsomorphism {
         // basic information for isomorphism
         algorithmNameC = GRAPHQL;
         algorithmNamePO = GRAPHQL;
-        algorithmNameB = GRAPHQL;
+        algorithmNameB = VEQS;
 
         // isomorphism
         final boolean isInduced = true;
