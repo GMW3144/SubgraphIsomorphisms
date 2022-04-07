@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="6d0b8e23-97b2-4b58-991e-87f7b486f404" name="Default Changelist" comment="used different minimum supports (part 2)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -85,13 +84,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1642694530105</updated>
-    </task>
-    <task id="LOCAL-00112" summary="Attempt to create DAG with order">
-      <created>1647701436677</created>
-      <option name="number" value="00112" />
-      <option name="presentableId" value="LOCAL-00112" />
-      <option name="project" value="LOCAL" />
-      <updated>1647701436677</updated>
     </task>
     <task id="LOCAL-00113" summary="Made some fixes to constructing DAG given order">
       <created>1647702624686</created>
@@ -429,7 +421,14 @@
       <option name="project" value="LOCAL" />
       <updated>1649261206357</updated>
     </task>
-    <option name="localTasksCounter" value="161" />
+    <task id="LOCAL-00161" summary="Changed parameters and nameing convention for estimation">
+      <created>1649263184406</created>
+      <option name="number" value="00161" />
+      <option name="presentableId" value="LOCAL-00161" />
+      <option name="project" value="LOCAL" />
+      <updated>1649263184406</updated>
+    </task>
+    <option name="localTasksCounter" value="162" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -481,7 +480,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Everything working before big change" />
     <MESSAGE value="Now will find hard-to-find instance in set number of graphs, and attempts multiple times" />
     <MESSAGE value="fixed parents is no longer ancestors..." />
     <MESSAGE value="Attempt at forest fire" />
@@ -506,7 +504,8 @@
     <MESSAGE value="Fixed profile problem in random node neighbor, added a new method to help make sure always add to profile with new vertex or edge" />
     <MESSAGE value="updated naming convention, so doesn't have to count the number of graphs in a file for write graph information" />
     <MESSAGE value="Now can give any numbers of sizes for propRandomWalkEstimation" />
-    <option name="LAST_COMMIT_MESSAGE" value="Now can give any numbers of sizes for propRandomWalkEstimation" />
+    <MESSAGE value="Changed parameters and nameing convention for estimation" />
+    <option name="LAST_COMMIT_MESSAGE" value="Changed parameters and nameing convention for estimation" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

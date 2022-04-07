@@ -57,7 +57,8 @@ public class SubgraphIsomorphism {
     private static String algorithmNameB = ""; // algorithm in use for backtracking
     // failing sets
     private static int fullSolutions = 0, partialSolutions = 0, emptyCandidates = 0, conflicts = 0, numRefined = 0;
-
+    // outlier value
+    static double outlierValue = 1.5;
 
     // algorithms
     // isomorphisms
@@ -4578,7 +4579,7 @@ public class SubgraphIsomorphism {
                 double q3 = stats.getPercentile(75);
                 double iqr = q3 - q1;
 
-                outlier = q3 + 1.5 * iqr;
+                outlier = q3 + outlierValue * iqr;
 
                 if (stats.getMax() > outlier) {
                     hardToFind = true;
@@ -4654,9 +4655,12 @@ public class SubgraphIsomorphism {
         // create query graph
         int minSize = 10;
         int maxSize = 50;
-        int maxNumQueries = 10000;
-        int maxNumAttempts = 10;
-        int maxNumFailedProp = 10000;
+        int maxNumQueries = 5000;
+        int maxNumAttempts = 5;
+        int maxNumFailedProp = 2500;
+
+        // caluclate outlier
+        outlierValue = 3;
 
         // format of the graphs
         formatTarget = IGRAPH;
