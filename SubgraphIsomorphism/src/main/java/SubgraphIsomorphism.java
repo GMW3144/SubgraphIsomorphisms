@@ -1956,11 +1956,10 @@ public class SubgraphIsomorphism {
                                                            int i, Map<Vertex, Vertex> currentFunction,
                                                            List<Map<Vertex, Vertex>> allFunctionsFound,
                                                            boolean isInduced,
-                                                Map<Map<Vertex, Vertex>, List<Vertex>> piMinus,
-                                                Map<Map<Vertex, Vertex>, List<Vertex>> piM,
-                                                Map<Map<Vertex, Vertex>, List<Vertex>> deltaM,
-                                                Map<Map<Vertex, Vertex>, List<Vertex>> equivalent,
-                                                Map<Map<Vertex, Vertex>, List<Map<Vertex, Vertex>>> TM){
+                                                           Map<Map<Vertex, Vertex>, List<Vertex>> piMinus,
+                                                           Map<Map<Vertex, Vertex>, List<Vertex>> deltaM,
+                                                           Map<Map<Vertex, Vertex>, List<Vertex>> equivalent,
+                                                           Map<Map<Vertex, Vertex>, List<Map<Vertex, Vertex>>> TM){
         // check if found solution
         if(currentFunction.size() == query.vertexSet().size()){
             allFunctionsFound.add(new HashMap<>(currentFunction));
@@ -1992,6 +1991,7 @@ public class SubgraphIsomorphism {
                 numBackTracking++;
                 // calculate the symetry at beginning
                 List<Vertex> pi = calcPi(u, v, candidates);
+                List<Vertex> piM = new ArrayList<>();
                 // check if v is equivalent
                 if(!equivalent.get(Map.of(u,v)).isEmpty()){
                     // iterate through the equavalent vertices
@@ -2033,19 +2033,19 @@ public class SubgraphIsomorphism {
                         }
                     }
                     subgraphIsomorphismVEQs(query, target, candidates, order, i+1, currentFunction, allFunctionsFound,
-                            isInduced, piMinus, piM, deltaM, equivalent, TM);
+                            isInduced, piMinus, deltaM, equivalent, TM);
                     currentFunction.remove(u);
 
-                    piM.put(Map.of(u, v), piMinus.get(Map.of(u,v)));
+                    piM = piMinus.get(Map.of(u,v));
                     if(!TM.containsKey(Map.of(u, v))){
                         TM.put(Map.of(u,v), new ArrayList<>());
                     }
                     if(!TM.get(Map.of(u, v)).isEmpty()){
-                        piM.get(Map.of(u, v)).removeAll(deltaM.get(Map.of(u, v)));
+                        piM.removeAll(deltaM.get(Map.of(u, v)));
                     }
 
                     // add the equivalent vertices
-                    for(Vertex vP: piM.get(Map.of(u, v))){
+                    for(Vertex vP: piM){
                         if(!equivalent.containsKey(Map.of(u, vP))){
                             equivalent.put(Map.of(u, vP), new ArrayList<>());
                         }
@@ -2330,7 +2330,7 @@ public class SubgraphIsomorphism {
             materializeCS(target, candidates);
 
             subgraphIsomorphismVEQs(query, target, candidates, order, 0, new HashMap<>(), results, isInduced,
-                    new HashMap<>(), new HashMap<>(),new HashMap<>(),new HashMap<>(),new HashMap<>());
+                    new HashMap<>(),new HashMap<>(),new HashMap<>(),new HashMap<>());
         }
         else{
             System.out.println("Backtracking Algorithm:");

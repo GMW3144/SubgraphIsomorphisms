@@ -87,13 +87,6 @@
       <option name="presentableId" value="Default" />
       <updated>1642694530105</updated>
     </task>
-    <task id="LOCAL-00116" summary="Created an edge class with a label">
-      <created>1647796944936</created>
-      <option name="number" value="00116" />
-      <option name="presentableId" value="LOCAL-00116" />
-      <option name="project" value="LOCAL" />
-      <updated>1647796944936</updated>
-    </task>
     <task id="LOCAL-00117" summary="Attempt MaterializeCS">
       <created>1647797779418</created>
       <option name="number" value="00117" />
@@ -430,7 +423,14 @@
       <option name="project" value="LOCAL" />
       <updated>1649373100254</updated>
     </task>
-    <option name="localTasksCounter" value="165" />
+    <task id="LOCAL-00165" summary="Working completely for groundtruth6">
+      <created>1649375113603</created>
+      <option name="number" value="00165" />
+      <option name="presentableId" value="LOCAL-00165" />
+      <option name="project" value="LOCAL" />
+      <updated>1649375113603</updated>
+    </task>
+    <option name="localTasksCounter" value="166" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -482,7 +482,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Removed at forest fire" />
     <MESSAGE value="Fixed so only has to find one useful attempt" />
     <MESSAGE value="Fixed so must be BFS order before constructing QuickSI sequence (one root as well)" />
     <MESSAGE value="Heat map construction" />
@@ -507,7 +506,8 @@
     <MESSAGE value="added a way to change the outlier value and reduced parameters" />
     <MESSAGE value="First attmept with VEQs" />
     <MESSAGE value="Got it working for one of subgraph isomorphisms.  Had to make sure vertex wasn't visited and change piM and piMinus.  Also calculated pi at beginning" />
-    <option name="LAST_COMMIT_MESSAGE" value="Got it working for one of subgraph isomorphisms.  Had to make sure vertex wasn't visited and change piM and piMinus.  Also calculated pi at beginning" />
+    <MESSAGE value="Working completely for groundtruth6" />
+    <option name="LAST_COMMIT_MESSAGE" value="Working completely for groundtruth6" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -636,6 +636,11 @@
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
           <line>2043</line>
           <option name="timeStamp" value="707" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
+          <line>2324</line>
+          <option name="timeStamp" value="708" />
         </line-breakpoint>
         <breakpoint enabled="true" type="java-exception">
           <properties class="java.lang.NullPointerException" package="java.lang" />
