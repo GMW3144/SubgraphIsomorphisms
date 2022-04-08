@@ -1,6 +1,6 @@
 # SubgraphIsomorphisms
 
-Subgraph Isomorphism is finding instances of a query graph in a larger target graph.  This program does a number of tasks relating to subgraph matching, and the main function exists within "SubgraphIsomorphism.java".  It is used as follows: <br />
+Subgraph Isomorphism is finding instances of a query graph in a larger target graph.  This program does a number of tasks relating to subgraph matching, and the main function exists within "SubgraphIsomorphism.java" (within SubgraphIsomorphism Folder).  It is used as follows: <br />
 - **KnownGraphs \<queryFile\> \<targetFile\> \<isomorphismsFileName\> \<statisticsFile\> -**
 Find the subgraph isomorphism between two know graphs. Writes Isomorphisms to isomorphismsFileName and statistics to statisticsFile.<br />
 - **Estimate \<queryFile\> \<targetFile\> \<outputFile\> -**
@@ -57,4 +57,4 @@ To construct a random subgraph we must provide the method:
 
 If we are constructing it with an estimate, then we must provide field outlierValue, which will give us the threshold for the outlier.  We also will provide a list of random subgraph methods.  These are contained within the corresponding if statements.
 
-The constructHeatMap.py will create heatmaps for the hard-to-find instances found by RandomWalkEstimation.  We must provide the location of folder containing these files as a field within the main function.
+The "constructHeatMap.py" (within HeatMap) will create heatmaps for the hard-to-find instances found by RandomWalkEstimation.  We must provide the location of folder containing these files as a field within the main function.
