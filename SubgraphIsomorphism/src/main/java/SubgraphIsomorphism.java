@@ -57,6 +57,8 @@ public class SubgraphIsomorphism {
     private static String algorithmNameB = ""; // algorithm in use for backtracking
     // failing sets
     private static int fullSolutions = 0, partialSolutions = 0, emptyCandidates = 0, conflicts = 0, numRefined = 0;
+    // veqs
+    private static int numSymetric = -1;
     // outlier value
     static double outlierValue = 1.5;
 
@@ -2007,6 +2009,7 @@ public class SubgraphIsomorphism {
                                 }
                             }
 
+                            numSymetric++;
                             symetricMatching(u, v, uP, currentFunction, allFunctionsFound);
                         }
                     }
@@ -2329,6 +2332,7 @@ public class SubgraphIsomorphism {
             refineCS(query, target, candidates);
             materializeCS(target, candidates);
 
+            numSymetric = 0;
             subgraphIsomorphismVEQs(query, target, candidates, order, 0, new HashMap<>(), results, isInduced,
                     new HashMap<>(),new HashMap<>(),new HashMap<>(),new HashMap<>());
         }
@@ -3932,6 +3936,11 @@ public class SubgraphIsomorphism {
                     "Number Refined: "+numRefined+
                     "\n\n";
             writer.append(output);
+        }
+
+        if(numSymetric!=-1){
+            writer.append("Symetric matchings found from VEQS: ").append(String.valueOf(numSymetric))
+                    .append("\n");
         }
 
         // the combination information if combined two graphs

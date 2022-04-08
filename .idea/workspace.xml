@@ -6,7 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="6d0b8e23-97b2-4b58-991e-87f7b486f404" name="Default Changelist" comment="used different minimum supports (part 2)">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Data/Output/Test/test.txt" beforeDir="false" afterPath="$PROJECT_DIR$/Data/Output/Test/test.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/HeatMap/constructHeatMap.py" beforeDir="false" afterPath="$PROJECT_DIR$/HeatMap/constructHeatMap.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" beforeDir="false" afterPath="$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -71,7 +71,7 @@
     <configuration name="SubgraphIsomorphism " type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="SubgraphIsomorphism" />
       <module name="SubgraphIsomorphism" />
-      <option name="PROGRAM_PARAMETERS" value="TestIsomorphism C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\GroundTruth\GroundTruthEvery6.txt C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\query\ C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\ C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\Test\test.txt" />
+      <option name="PROGRAM_PARAMETERS" value="KnownGraphs C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Proteins\backbones_2QRK\Graphs\graph148.txt C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Proteins\target\backbones_2QRK.grf C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Proteins\backbones_2QRK\Isomorphism\graph148VEQS.txt C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\RandomWalk\Proteins\backbones_2QRK\GenerationInfo\graph148VEQS.txt" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../../ISProject" />
       <method v="2">
         <option name="Make" enabled="true" />
@@ -86,13 +86,6 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1642694530105</updated>
-    </task>
-    <task id="LOCAL-00117" summary="Attempt MaterializeCS">
-      <created>1647797779418</created>
-      <option name="number" value="00117" />
-      <option name="presentableId" value="LOCAL-00117" />
-      <option name="project" value="LOCAL" />
-      <updated>1647797779418</updated>
     </task>
     <task id="LOCAL-00118" summary="Fixed direction of the edge">
       <created>1647798894478</created>
@@ -430,7 +423,14 @@
       <option name="project" value="LOCAL" />
       <updated>1649375113603</updated>
     </task>
-    <option name="localTasksCounter" value="166" />
+    <task id="LOCAL-00166" summary="Got rid of unessasary file">
+      <created>1649376304914</created>
+      <option name="number" value="00166" />
+      <option name="presentableId" value="LOCAL-00166" />
+      <option name="project" value="LOCAL" />
+      <updated>1649376304914</updated>
+    </task>
+    <option name="localTasksCounter" value="167" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -482,7 +482,6 @@
     <option name="oldMeFiltersMigrated" value="true" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Fixed so only has to find one useful attempt" />
     <MESSAGE value="Fixed so must be BFS order before constructing QuickSI sequence (one root as well)" />
     <MESSAGE value="Heat map construction" />
     <MESSAGE value="Constructing heat map using data" />
@@ -507,7 +506,8 @@
     <MESSAGE value="First attmept with VEQs" />
     <MESSAGE value="Got it working for one of subgraph isomorphisms.  Had to make sure vertex wasn't visited and change piM and piMinus.  Also calculated pi at beginning" />
     <MESSAGE value="Working completely for groundtruth6" />
-    <option name="LAST_COMMIT_MESSAGE" value="Working completely for groundtruth6" />
+    <MESSAGE value="Got rid of unessasary file" />
+    <option name="LAST_COMMIT_MESSAGE" value="Got rid of unessasary file" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -534,112 +534,112 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>3111</line>
+          <line>3115</line>
           <option name="timeStamp" value="118" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>3293</line>
+          <line>3297</line>
           <option name="timeStamp" value="249" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>3493</line>
+          <line>3497</line>
           <option name="timeStamp" value="267" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>3072</line>
+          <line>3076</line>
           <option name="timeStamp" value="268" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>4189</line>
+          <line>4198</line>
           <option name="timeStamp" value="341" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>4429</line>
+          <line>4438</line>
           <option name="timeStamp" value="401" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1709</line>
+          <line>1711</line>
           <option name="timeStamp" value="430" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1764</line>
+          <line>1766</line>
           <option name="timeStamp" value="432" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>1890</line>
+          <line>1892</line>
           <option name="timeStamp" value="433" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>3882</line>
+          <line>3886</line>
           <option name="timeStamp" value="612" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>3871</line>
+          <line>3875</line>
           <option name="timeStamp" value="614" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>4508</line>
+          <line>4517</line>
           <option name="timeStamp" value="619" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>3820</line>
+          <line>3824</line>
           <option name="timeStamp" value="620" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>4209</line>
+          <line>4218</line>
           <option name="timeStamp" value="643" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>4729</line>
+          <line>4738</line>
           <option name="timeStamp" value="649" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>4776</line>
+          <line>4785</line>
           <option name="timeStamp" value="654" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>4793</line>
+          <line>4802</line>
           <option name="timeStamp" value="658" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>4581</line>
+          <line>4590</line>
           <option name="timeStamp" value="675" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>2051</line>
+          <line>2054</line>
           <option name="timeStamp" value="692" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>2009</line>
+          <line>2012</line>
           <option name="timeStamp" value="700" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>2043</line>
+          <line>2046</line>
           <option name="timeStamp" value="707" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
           <url>file://$PROJECT_DIR$/SubgraphIsomorphism/src/main/java/SubgraphIsomorphism.java</url>
-          <line>2324</line>
+          <line>2327</line>
           <option name="timeStamp" value="708" />
         </line-breakpoint>
         <breakpoint enabled="true" type="java-exception">
