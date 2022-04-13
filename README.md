@@ -31,7 +31,7 @@ We must give an algorithm for the pruning, ordering, and backtracking.  We set t
 - **DAF**: uses the DAF algorithm. (Note: equivalent to GROUNDTRUTH for processing candidates and cannot use DYNAMIC_ORDER)<br />
 - **VEQS**: uses the VEQs algorithm (Note: only can be used for backtracking and cannot use dynamic ordering)<br />
 
-The format of the graphs must also be included whenever a target or query graph is given.  There are two choices: igraph or protiens.  Protiens has the following format:<br />
+The format of the graphs must also be included whenever a target or query graph is given.  There are two choices: igraph or protein.  Protein has the following format:<br />
 
 The constructHeatMap.py is a file to construct heat maps based on the hard-to-find cases.  It works with the output provided by   Enter the field 
 Formatted :<br />
