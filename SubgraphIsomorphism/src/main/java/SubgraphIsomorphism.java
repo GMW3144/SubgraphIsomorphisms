@@ -62,6 +62,7 @@ public class SubgraphIsomorphism {
     // outlier value
     static double outlierValue = 1.5;
 
+
     // algorithms
     // isomorphisms
     private static final String GROUNDTRUTH = "groundTruth";
@@ -1909,6 +1910,66 @@ public class SubgraphIsomorphism {
         }
     }
 
+    /**
+     * Performs subgraph isomorphism on the given graphs
+     * @param query the query graph
+     * @param target the target graph
+     * @param candidates sets of candidates for each query vertex
+     * @param order list of order which each vertex should be mapped
+     * @param i the current vertex within the order
+     * @param currentFunction the current matching between the query and target for the previous i vertices
+     * @param isInduced whether matching is induced
+     */
+    private static double subgraphIsomorphismNumeric(Graph<Vertex, DefaultEdge> query, Graph<Vertex, DefaultEdge> target,
+                                            Map<Vertex, Set<Vertex>> candidates, ArrayList<Vertex> order, int i,
+                                            Map<Vertex, Vertex> currentFunction, boolean isInduced){
+        double totalNumberMatchings = 0;
+
+        // check if found solution
+        if(currentFunction.size() == query.vertexSet().size()){
+            return 1;
+        }
+        else{
+            // look at next node
+            Vertex u = getNextVertex(query, target, order, i, currentFunction, candidates);
+            Set<Vertex> possibleVertices = getPossibleVertices(target, candidates, currentFunction, i, u);
+
+            // look at candidates
+            for(Vertex v : possibleVertices){
+                // looking at new element
+                numBackTracking+=1;
+                // check not in another mapping
+                if(!currentFunction.containsValue(v) && isValid(query, target, currentFunction, u, v, isInduced)){
+                    currentFunction.put(u, v);
+                    // if dynamic program must make a copy of the vertex
+                    if(algorithmNamePO.equals(DYNAMIC_ORDER)){
+                        // reset the local candidates and order
+                        Map<Vertex, Set<Vertex>> candidatesCopy = new HashMap<>();
+                        for (Vertex uCopy : order) {
+                            candidatesCopy.put(uCopy, new HashSet<>(candidates.get(uCopy)));
+                        }
+
+                        totalNumberMatchings+=subgraphIsomorphismNumeric(query, target, candidatesCopy, order, i + 1,
+                                currentFunction, isInduced);
+                    }
+                    else {
+                        totalNumberMatchings+=subgraphIsomorphismNumeric(query, target, candidates, order, i + 1,
+                                currentFunction, isInduced);
+                    }
+                    currentFunction.remove(u);
+                }
+            }
+
+            // must add the vertex back if dynamic processing order
+            if(algorithmNamePO.equals(DYNAMIC_ORDER)){
+                order.add(u);
+                dynamicOrder.remove(u);
+            }
+        }
+
+        return totalNumberMatchings;
+    }
+
     public static List<Vertex> calcPi(Vertex u, Vertex v, Map<Vertex, Set<Vertex>> candidates){
         List<Vertex> pi = new ArrayList<>();
         for(Vertex vP: candidates.get(u)) {
@@ -1941,6 +2002,7 @@ public class SubgraphIsomorphism {
             allFunctionsFound.add(newFunction);
         }
     }
+
     /**
      * Does backtracking with the addition of failing sets
      * @param query the query graph
@@ -2078,6 +2140,133 @@ public class SubgraphIsomorphism {
      * @param order the processing order
      * @param i  the current vertex within the order
      * @param currentFunction the current matching between the query and target for the previous i vertices
+     * @param isInduced whether the isomorphism is induced
+     */
+    private static double subgraphIsomorphismVEQsNumeric(Graph<Vertex, DefaultEdge> query,
+                                                Graph<Vertex, DefaultEdge> target,
+                                                Map<Vertex, Set<Vertex>> candidates, ArrayList<Vertex> order,
+                                                int i, Map<Vertex, Vertex> currentFunction, boolean isInduced,
+                                                Map<Map<Vertex, Vertex>, List<Vertex>> piMinus,
+                                                Map<Map<Vertex, Vertex>, List<Vertex>> deltaM,
+                                                Map<Map<Vertex, Vertex>, List<Vertex>> equivalent,
+                                                Map<Map<Vertex, Vertex>, List<Map<Vertex, Vertex>>> TM){
+        double totalNumberMatchings = 0;
+        // check if found solution
+        if(currentFunction.size() == query.vertexSet().size()){
+            // iterate through the vertices in order
+            for(int k = 0; k<order.size(); k++){
+                // if we have not seen root before then add a new one
+                if(!TM.containsKey(Map.of(order.get(k), currentFunction.get(order.get(k))))){
+                    TM.put(Map.of(order.get(k), currentFunction.get(order.get(k))), new ArrayList<>());
+                }
+                // add the following mapping
+                for(int j = k; j<order.size(); j++){
+                    TM.get(Map.of(order.get(k), currentFunction.get(order.get(k)))).add(new HashMap<>(currentFunction));
+                }
+            }
+            return 1;
+        }
+        else{
+            // look at next node
+            Vertex u = getNextVertex(query, target, order, i, currentFunction, candidates);
+            // compute C_M
+            Set<Vertex> possibleVertices = getPossibleVertices(target, candidates, currentFunction, i, u);
+            // set v - inequivalent for each v in C_M(u)
+            for(Vertex v: possibleVertices){
+                equivalent.put(Map.of(u, v), new ArrayList<>());
+            }
+
+            // iterate through C_M
+            for(Vertex v: possibleVertices){
+                numBackTracking++;
+                // calculate the symetry at beginning
+                List<Vertex> pi = calcPi(u, v, candidates);
+                List<Vertex> piM = new ArrayList<>();
+                // check if v is equivalent
+                if(!equivalent.get(Map.of(u,v)).isEmpty()){
+                    // iterate through the equavalent vertices
+                    for(Vertex vEq : equivalent.get(Map.of(u,v))){
+                        // iterate through all of their possible matchings
+                        for(Map<Vertex, Vertex> MStar : TM.get(Map.of(u,vEq))){
+                            // find if there is a conflict previously, need to add differently
+                            Vertex uP = null;
+                            for(Vertex uVals : MStar.keySet()){
+                                if(MStar.get(uVals) == v){
+                                    uP = uVals;
+                                    break;
+                                }
+                            }
+
+                            numSymetric++;
+                            totalNumberMatchings++;
+                        }
+                    }
+                    continue;
+                }
+
+
+                // check not in another mapping
+                if(!currentFunction.containsValue(v) && (!isInduced || isValid(query, target, currentFunction, u, v, isInduced))) {
+                    currentFunction.put(u, v);
+
+                    // calculate pi
+                    piMinus.put(Map.of(u, v), pi);
+                    deltaM.put(Map.of(u,v), new ArrayList<>());
+
+                    // check the ancestors
+                    for(Vertex ua: currentFunction.keySet()){
+                        Vertex va = currentFunction.get(ua);
+                        List<Vertex> pia = pi;
+                        pia.retainAll(pi);
+
+                        if(!pi.contains(va) && !pia.isEmpty()){
+                            deltaM.get(Map.of(ua, va)).addAll(pi);
+                        }
+                    }
+                    totalNumberMatchings+=subgraphIsomorphismVEQsNumeric(query, target, candidates, order, i+1,
+                            currentFunction, isInduced, piMinus, deltaM, equivalent, TM);
+                    currentFunction.remove(u);
+
+                    piM = piMinus.get(Map.of(u,v));
+                    if(!TM.containsKey(Map.of(u, v))){
+                        TM.put(Map.of(u,v), new ArrayList<>());
+                    }
+                    if(!TM.get(Map.of(u, v)).isEmpty()){
+                        piM.removeAll(deltaM.get(Map.of(u, v)));
+                    }
+
+                    // add the equivalent vertices
+                    for(Vertex vP: piM){
+                        if(!equivalent.containsKey(Map.of(u, vP))){
+                            equivalent.put(Map.of(u, vP), new ArrayList<>());
+                        }
+                        equivalent.get(Map.of(u, vP)).add(v);
+                    }
+
+                }
+                // there is a conflict
+                else{
+                    for(Vertex uP: currentFunction.keySet()){
+                        // update piM
+                        if(currentFunction.get(uP).equals(v)){
+                            piMinus.get(Map.of(uP, v)).retainAll(pi);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return totalNumberMatchings;
+    }
+
+    /**
+     * Does backtracking with the addition of failing sets
+     * @param query the query graph
+     * @param target the target graph
+     * @param candidates the candidate set
+     * @param order the processing order
+     * @param i  the current vertex within the order
+     * @param currentFunction the current matching between the query and target for the previous i vertices
      * @param allFunctionsFound all the solutions that were discovered
      * @param allFailingSets the failing sets
      * @param isInduced whether the isomorphism is induced
@@ -2159,6 +2348,97 @@ public class SubgraphIsomorphism {
                 }
             }
         }
+    }
+
+    /**
+     * Does backtracking with the addition of failing sets
+     * @param query the query graph
+     * @param target the target graph
+     * @param candidates the candidate set
+     * @param order the processing order
+     * @param i  the current vertex within the order
+     * @param currentFunction the current matching between the query and target for the previous i vertices
+     * @param allFailingSets the failing sets
+     * @param isInduced whether the isomorphism is induced
+     */
+    private static double subgraphIsomorphismWithFailingSetsNumeric(Graph<Vertex, DefaultEdge> query,
+                                                           Graph<Vertex, DefaultEdge> target,
+                                                           Map<Vertex, Set<Vertex>> candidates, ArrayList<Vertex> order,
+                                                           int i, Map<Vertex, Vertex> currentFunction,
+                                                           Map<Integer, List<Set<Vertex>>> allFailingSets,
+                                                           boolean isInduced){
+        double totalNumberMatchings = 0;
+        // check if found solution
+        if(currentFunction.size() == query.vertexSet().size()){
+            allFailingSets.get(i).add(getFullSolution());
+            return 1;
+        }
+        else{
+            // look at next node
+            Vertex u = getNextVertex(query, target, order, i, currentFunction, candidates);
+            Set<Vertex> possibleVertices = getPossibleVertices(target, candidates, currentFunction, i, u);
+
+            if(possibleVertices.size() == 0){
+                allFailingSets.get(i).add(getEmptyCandidates(u));
+            }
+
+            // look at candidates
+            for(Vertex v : possibleVertices){
+                // looking at new element
+                numBackTracking+=1;
+                if(currentFunction.containsValue(v)){
+                    allFailingSets.get(i).add(getConflict(u, v, currentFunction));
+                    continue;
+                }
+
+                // check not in another mapping
+                if(!isInduced || isValid(query, target, currentFunction, u, v, isInduced)){
+                    currentFunction.put(u, v);
+                    totalNumberMatchings+=subgraphIsomorphismWithFailingSetsNumeric(query, target, candidates, order,
+                            i+1, currentFunction, allFailingSets, isInduced);
+                    currentFunction.remove(u);
+
+                    // failing sets
+                    List<Set<Vertex>> T = allFailingSets.get(i+1);
+                    // Get next vertex.
+                    Vertex un = i+1<order.size()?order.get(i+1):null;
+
+                    Set<Vertex> current = new HashSet<>();
+                    Set<Vertex> failingSetWithoutUn = null;
+                    // check the three conditions
+                    for(Set<Vertex> t : T){
+                        // if find an empty set, them must continue
+                        if(t.size()==0){
+                            current = getPartialSolution();
+                            break;
+                        }
+                        // keep track of conflicting vertex
+                        else if(!t.contains(un)){
+                            failingSetWithoutUn = t;
+                        }
+                        // otherwise just keep track of everything
+                        else {
+                            current.addAll(t);
+                        }
+                    }
+                    if(current.size()!=0 && failingSetWithoutUn != null){
+                        current = failingSetWithoutUn;
+                    }
+                    allFailingSets.get(i).add(current);
+
+                    // clear subtree
+                    T.clear();
+                    if(current.size()!=0 && !current.contains(u)){
+                        partialSolutions++;
+                        break;
+                    }
+                }
+                else{
+                    allFailingSets.get(i).add(new HashSet<>());
+                }
+            }
+        }
+        return totalNumberMatchings;
     }
 
     /**
@@ -2271,6 +2551,7 @@ public class SubgraphIsomorphism {
      * @param query the query graph
      * @param target the target graph
      * @param isInduced whether matching is induced
+     * @param gamma the gamma value for graphQL
      * @return the solutions to the subgraph isomorphism between the given graphs
      */
     private static List<Map<Vertex, Vertex>> matching(Graph<Vertex, DefaultEdge> query,
@@ -2344,6 +2625,88 @@ public class SubgraphIsomorphism {
         // reset the QI-Sequence
         SEQq = null;
         return results;
+    }
+
+    /**
+     * Computes the subgraph isomorphism and the necessary candidates and order using ground truth algorithm
+     * @param query the query graph
+     * @param target the target graph
+     * @param isInduced whether matching is induced
+     * @param gamma the gamma value for graphQL
+     * @return the solutions to the subgraph isomorphism between the given graphs
+     */
+    private static double matchingNumeric(Graph<Vertex, DefaultEdge> query,
+                                                      Graph<Vertex, DefaultEdge> target, boolean isInduced,
+                                                      double gamma){
+        // compute the candidates
+        Map<Vertex, Set<Vertex>> candidates = computeCandidates(query, target);
+        if (candidates == null) {
+            return -1;
+        }
+
+        // compute the order
+        ArrayList<Vertex> order = computeProcessingOrder(query, target, candidates, gamma);
+        if(order == null){
+            return -1;
+        }
+
+        // keep track of number of backtracking
+        numBackTracking = 0;
+        double totalNumberMatchings = 0;
+        if(algorithmNameB.equals(GROUNDTRUTH) || algorithmNameB.equals(GRAPHQL) ||
+                (algorithmNameB.equals(QUICKSI)&&!algorithmNamePO.equals(DYNAMIC_ORDER))) {
+            if(algorithmNameB.equals(QUICKSI)){
+                falseMatchingParents = 0;
+                falseMatchingExtraEdge = 0;
+            }
+            if(algorithmNameB.equals(QUICKSI) && SEQq == null){
+                SEQq = buildSpanningTreeWithOrder(query, order);
+            }
+            totalNumberMatchings = subgraphIsomorphismNumeric(query, target, candidates, order, 0, new HashMap<>(),
+                    isInduced);
+        }
+        else if(algorithmNameB.equals(DAF) && !algorithmNamePO.equals(DYNAMIC_ORDER)){
+            if(!algorithmNamePO.equals(DAF)){
+                queryDAG = constructDAGWithOrder(query, order);
+            }
+            fullSolutions = 0;
+            partialSolutions = 0;
+            emptyCandidates = 0;
+            conflicts = 0;
+            numRefined = 0;
+            refineCS(query, target, candidates);
+            materializeCS(target, candidates);
+
+            // For each query node in the order, we will create a list of failing sets to record i
+            // information of the backtracking process.
+            Map<Integer, List<Set<Vertex>>> allFailingSets = new HashMap<>();
+            for (int i = 0; i <= order.size(); i++)
+                allFailingSets.put(i, new ArrayList<>());
+
+
+            subgraphIsomorphismWithFailingSetsNumeric(query, target, candidates, order, 0, new HashMap<>(),
+                    allFailingSets, isInduced);
+        }
+        else if(algorithmNameB.equals(VEQS) && !algorithmNamePO.equals(DYNAMIC_ORDER)){
+            if(!algorithmNamePO.equals(DAF)){
+                queryDAG = constructDAGWithOrder(query, order);
+            }
+
+            refineCS(query, target, candidates);
+            materializeCS(target, candidates);
+
+            numSymetric = 0;
+            subgraphIsomorphismVEQsNumeric(query, target, candidates, order, 0, new HashMap<>(), isInduced,
+                    new HashMap<>(),new HashMap<>(),new HashMap<>(),new HashMap<>());
+        }
+        else{
+            System.out.println("Backtracking Algorithm:");
+            System.out.println(noAlgorithmFound);
+            return -1;
+        }
+        // reset the QI-Sequence
+        SEQq = null;
+        return totalNumberMatchings;
     }
 
     /**
@@ -2445,6 +2808,7 @@ public class SubgraphIsomorphism {
             return;
         }
         Graph<Vertex, DefaultEdge> targetGraph = readGraph(targetFile, formatTarget);
+        System.out.println(targetGraph.edgeSet().size());
         if(targetGraph == null){
             System.out.println("Target File: ");
             System.out.println(noGraphFormat);
@@ -4735,9 +5099,6 @@ public class SubgraphIsomorphism {
 
                 // estimate the number of matchings
                 double estimate = wanderJoins(query, target, gamma, tau, maxEpoch, zScore, isInduced);
-                if(estimate<0){
-                    System.out.println("HERE");
-                }
 
                 // add to estimate random walks map
                 if (!estimationRandomWalk.containsKey(estimate)) {
@@ -4783,6 +5144,7 @@ public class SubgraphIsomorphism {
 
             System.out.println("Found hard-to-find instance\n" +
                     "================");
+
             writeGraphsInformation(target, "Hard-to-find", hardToFindGraphs, outputFolderName, targetLocation,
                     induce, outlier, tau, maxEpoch, zScore, size, avgD, dia,  den, numLabels, stats);
         }
@@ -4800,13 +5162,97 @@ public class SubgraphIsomorphism {
             for (Graph<Vertex, DefaultEdge> query : estimationRandomWalk.get(maxValue)) {
                 hardToFindGraphs.put(query, maxValue);
             }
+
             writeGraphsInformation( target,  "Possibly Hard-to-find", hardToFindGraphs, outputFolderName,
                     targetLocation, induce, outlier, tau, maxEpoch, zScore, size, avgD,  dia, den, numLabels, stats);
         }
         else{
             System.out.println("Could not find graphs with property\n" +
                     "================");
+            String prefix = "size_"+size+"_de_"+Math.round(avgD.get(0))+"_di_"+Math.round(dia.get(0));
+
+            // store what the graph looks like
+            String statsName = "_stats_1.txt";
+
+            // write statistics of the graph
+            BufferedWriter writer = new BufferedWriter(new FileWriter(new File(outputFolderName + prefix + statsName)));
+
+            // write hard-to-find information first
+            writer.write("No graphs of family\n");
+
+            writer.close();
         }
+    }
+
+    public static void graphComparisionProperties(Graph<Vertex, DefaultEdge> target,String outputFileName,
+                                                  boolean isInduced, double gamma,
+                                                  int maxNumQueryGraphs, int maxNumAttempts, int maxNumFailedProp,
+                                                  int size, List<Double> avgD, List<Double> dia,
+                                                  List<String> subgraphMethods) throws IOException {
+        Random random = new Random();
+
+
+        int biggestAttempt = 0;
+        double biggestAttemptNumMatchings = 0;
+
+        for (int i = 0; i < maxNumAttempts; i++) {
+            double totalNumMatchings = 0;
+            System.out.print("Attempt " + (i + 1) + ". Graphs Created: ");
+
+            // keep track of the failed attempts
+            int failedAttempts = 0;
+            int j = 0;
+
+            // construct a 100 random walks
+            for (j = 0; j < maxNumQueryGraphs; j++) {
+                if (failedAttempts >= maxNumFailedProp) {
+                    System.out.println(" - Could not find a graph with the given properties");
+                    break;
+                }
+
+                // keep track of equivalencies, so know when see a target vertex again
+                Map<Vertex, Vertex> seen = new HashMap<>();
+
+                // create graph of given size from the target, with a random method
+                Graph<Vertex, DefaultEdge> query = randomGraphWithProperties(target, seen, size, avgD, dia, null,
+                        null, subgraphMethods.get(random.nextInt(subgraphMethods.size())));
+                if (query == null) {
+                    failedAttempts++;
+                    j--;
+                    continue;
+                }
+                failedAttempts = 0;
+
+                // find and display the isomorphisms
+                double numMatchings = matchingNumeric(query, target, isInduced, gamma);
+                if(numMatchings==-1){
+                    // write to output files
+                    BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName));
+                    writer.write(noAlgorithmFound);
+                    writer.close();
+                }
+                totalNumMatchings += numMatchings;
+
+                if(j%100==0){
+                    System.out.print(j+", ");
+                }
+            }
+            if(j==maxNumQueryGraphs){
+                biggestAttempt = j;
+                biggestAttemptNumMatchings = totalNumMatchings;
+            }
+            else if(j>biggestAttempt){
+                biggestAttempt = j;
+                biggestAttemptNumMatchings = totalNumMatchings;
+            }
+        }
+
+        // write to output file
+        BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName));
+        writer.write("");
+        writer.write("Average Number of Matchings: "+biggestAttemptNumMatchings/biggestAttempt);
+        writer.write("Total Number of Graphs: "+biggestAttempt);
+        writer.close();
     }
 
     /**
@@ -4837,15 +5283,16 @@ public class SubgraphIsomorphism {
         // create query graph
         int minSize = 10;
         int maxSize = 50;
-        int maxNumQueries = 5000;
-        int maxNumAttempts = 5;
-        int maxNumFailedProp = 2500;
+        int maxNumQueries = 10000;
+        int maxNumAttempts = 1;
+        int maxNumFailedProp = 1000;
+        final List<String> subgraphMethods = new ArrayList<>(List.of(RANDOM_NODE_NEIGHBOR, RANDOM_WALK));
 
         // caluclate outlier
         outlierValue = 3;
 
         // format of the graphs
-        formatTarget = PROTEINS;
+        formatTarget = IGRAPH;
         formatQuery = PROTEINS;
 
         // if we are going to check if the labels are equivalent or subsets
@@ -4936,8 +5383,6 @@ public class SubgraphIsomorphism {
         }
         // find graphs that are outliers when comparing number of matchings
         else if(mainMethod.equals("RandomWalkEstimation") && args.length == 3){
-            final List<String> subgraphMethods = new ArrayList<>(List.of(RANDOM_NODE_NEIGHBOR, RANDOM_WALK));
-
             final String targetLocationName = args[1];
             String outputFolderName = args[2];
 
@@ -5015,7 +5460,7 @@ public class SubgraphIsomorphism {
             List<Double> den = null;
             List<Double> numLabels = null;
 
-            final List<String> subgraphMethods = new ArrayList<>(List.of(RANDOM_NODE_NEIGHBOR, RANDOM_WALK));
+            System.out.println("Size:"+size+", Diameter: "+di+", Degree: "+de);
 
             randomGenerationWithEstimate(target, targetLocation, outputFolderName, size, gamma, tau, maxEpoch,
                     zScore, isInduced, maxNumQueries, maxNumAttempts, maxNumFailedProp, avgD, dia, den, numLabels,
@@ -5049,6 +5494,88 @@ public class SubgraphIsomorphism {
             final String isomorphismFolder = args[1];
 
             rewriteName(isomorphismFolder);
+        }
+
+        else if(mainMethod.equals("Comparison") && args.length == 4){
+            final String targetLocationName = args[1];
+            String outputFolderName = args[2];
+            int x = Integer.parseInt(args[3]); //give a value between 0 and 660
+
+            algorithmNameB = GRAPHQL;
+            algorithmNamePO = GRAPHQL;
+            algorithmNameC = GRAPHQL;
+            // Backtracking
+            if (x < 300) {
+                if (x % 300 < 60) {
+                    algorithmNameB = GROUNDTRUTH;
+                } else if (x % 300 < 120) {
+                    algorithmNameB = GRAPHQL;
+                } else if (x % 300 < 180) {
+                    algorithmNameB = QUICKSI;
+                } else if (x % 300 < 240) {
+                    algorithmNameB = DAF;
+                } else {
+                    algorithmNameB = VEQS;
+                }
+            }
+            // Processing order
+            else if (x < 540) {
+                if ((x - 300) % 240 < 60) {
+                    algorithmNamePO = GROUNDTRUTH;
+                } else if ((x - 300) % 240 < 120) {
+                    algorithmNamePO = GRAPHQL;
+                } else if ((x - 300) % 240 < 180) {
+                    algorithmNamePO = QUICKSI;
+                } else {
+                    algorithmNamePO = DYNAMIC_ORDER;
+                }
+            }
+            // Candidates
+            else {
+                if ((x - 540) % 120 < 60) {
+                    algorithmNameC = GROUNDTRUTH;
+                } else {
+                    algorithmNameC = GRAPHQL;
+                }
+            }
+            // the number of nodes is set
+            int size = 10;
+
+            // the average degree between 1 and 6
+            double de = 6;
+            if (x % 60 < 10) {
+                de = 1;
+            } else if (x % 60 < 20) {
+                de = 2;
+            } else if (x % 60 < 30) {
+                de = 3;
+            } else if (x % 60 < 40) {
+                de = 4;
+            } else if (x % 60 < 50) {
+                de = 5;
+            }
+            // the diameter between 1 and 10
+            double di = x % 10 + 1;
+
+            File targetLocation = new File(targetLocationName);
+            Graph<Vertex, DefaultEdge> target = readGraph(targetLocation, formatTarget);
+            if (target == null) {
+                System.out.println("Target File: ");
+                System.out.println(noGraphFormat);
+                return;
+            }
+
+            // properties of query graph
+            List<Double> avgD = new ArrayList<>(List.of(de, de + 1));
+            List<Double> dia = new ArrayList<>(List.of(di, di + 1));
+
+            String outputFile = outputFolderName + "B_" + algorithmNameB + "_PO_" + algorithmNamePO + "_C_" + algorithmNameC +
+                    "_size_" + size + "_de_" + de + "_di_" + di + ".txt";
+
+            System.out.println(outputFile);
+            graphComparisionProperties(target, outputFile, isInduced, gamma, maxNumQueries, maxNumAttempts,
+                    maxNumFailedProp, size, avgD, dia, subgraphMethods);
+            System.out.println();
         }
 
         else{
