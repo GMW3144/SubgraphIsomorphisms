@@ -457,7 +457,8 @@ public class SubgraphIsomorphism {
 
     /**
      * Calculates the statistics for a given graph.
-     * The number of subsets for a profile for each vertex
+     * The number of subsets for a profile for each vertex.
+     * NOTE: Only use for small graphs
      * @param graph the graph to calculate the statistics
      */
     private static void calculateStatistics(Graph<Vertex, DefaultEdge> graph){
@@ -1350,6 +1351,11 @@ public class SubgraphIsomorphism {
         return qD;
     }
 
+    /**
+     * Converts the order to BFS, so that trees and DAGs only have one root
+     * @param query the query graph
+     * @param order the original order
+     */
     public static void convertOrderBFS(Graph<Vertex, DefaultEdge> query,
                                        List<Vertex> order){
         // make sure order is in BFS
@@ -1970,6 +1976,13 @@ public class SubgraphIsomorphism {
         return totalNumberMatchings;
     }
 
+    /**
+     * Calculates the symmetry within CS structure to use for VEQs
+     * @param u the query vertex
+     * @param v the target vertex
+     * @param candidates the canidate set
+     * @return a list of target vertices symetric to v given u in the CS structure
+     */
     public static List<Vertex> calcPi(Vertex u, Vertex v, Map<Vertex, Set<Vertex>> candidates){
         List<Vertex> pi = new ArrayList<>();
         for(Vertex vP: candidates.get(u)) {
@@ -1985,6 +1998,14 @@ public class SubgraphIsomorphism {
         return pi;
     }
 
+    /**
+     * Create a matching using symetry
+     * @param u the query vertex
+     * @param v the target vertex
+     * @param uP the parent vertex of u
+     * @param currentFunction the current matchings
+     * @param allFunctionsFound all possible matchings
+     */
     public static void symetricMatching(Vertex u, Vertex v, Vertex uP, Map<Vertex, Vertex> currentFunction,
                                         List<Map<Vertex, Vertex>> allFunctionsFound){
         // if there is no conflict
@@ -5181,6 +5202,22 @@ public class SubgraphIsomorphism {
         }
     }
 
+    /**
+     * Finds an average number of matchings and backtracking for graphs given certain properties.  These values can be
+     * compared with other algorithms.
+     * @param target the target graph
+     * @param outputFileName the output file
+     * @param isInduced if the isomorphism is induced
+     * @param gamma the gamma value for graphql
+     * @param maxNumQueryGraphs the maximum number of query graphs we will construct
+     * @param maxNumAttempts the maximum number of times we will try to reach the chosen number of query graphs
+     * @param maxNumFailedProp the maximum number of failed attempts for looking for a graph with given properties
+     * @param size the size of the graph
+     * @param avgD the average degree range for query
+     * @param dia the diameter range for query
+     * @param subgraphMethods the methods used to construct subgraphs
+     * @throws IOException problems writing to file
+     */
     public static void graphComparisionProperties(Graph<Vertex, DefaultEdge> target,String outputFileName,
                                                   boolean isInduced, double gamma,
                                                   int maxNumQueryGraphs, int maxNumAttempts, int maxNumFailedProp,
@@ -5270,7 +5307,7 @@ public class SubgraphIsomorphism {
         algorithmNameB = VEQS;
 
         // isomorphism
-        final boolean isInduced = true;
+        final boolean isInduced = false;
         double gamma = 0.5;
 
         // estimation
@@ -5514,6 +5551,7 @@ public class SubgraphIsomorphism {
                     algorithmNameB = DAF;
                 } else if(x<20) {
                     algorithmNameB = VEQS;
+                    continue; //TODO test after
                 }
                 // Processing order
                 else if (x<25) {
@@ -5524,7 +5562,7 @@ public class SubgraphIsomorphism {
                     continue;
                 }
                 // the number of nodes between 10 and given value, with 10 increments (total given value/10)
-                int size = (x%5+6)*10;
+                int size = (x%5+1)*10;
 
                 File targetLocation = new File(targetLocationName);
                 Graph<Vertex, DefaultEdge> target = readGraph(targetLocation, formatTarget);
