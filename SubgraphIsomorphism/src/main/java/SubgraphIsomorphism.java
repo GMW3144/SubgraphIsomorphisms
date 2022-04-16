@@ -2684,7 +2684,7 @@ public class SubgraphIsomorphism {
                 allFailingSets.put(i, new ArrayList<>());
 
 
-            subgraphIsomorphismWithFailingSetsNumeric(query, target, candidates, order, 0, new HashMap<>(),
+            totalNumberMatchings = subgraphIsomorphismWithFailingSetsNumeric(query, target, candidates, order, 0, new HashMap<>(),
                     allFailingSets, isInduced);
         }
         else if(algorithmNameB.equals(VEQS) && !algorithmNamePO.equals(DYNAMIC_ORDER)){
@@ -2696,7 +2696,7 @@ public class SubgraphIsomorphism {
             materializeCS(target, candidates);
 
             numSymetric = 0;
-            subgraphIsomorphismVEQsNumeric(query, target, candidates, order, 0, new HashMap<>(), isInduced,
+            totalNumberMatchings = subgraphIsomorphismVEQsNumeric(query, target, candidates, order, 0, new HashMap<>(), isInduced,
                     new HashMap<>(),new HashMap<>(),new HashMap<>(),new HashMap<>());
         }
         else{
@@ -4579,9 +4579,6 @@ public class SubgraphIsomorphism {
 
         // compute the estimation
         double estimation =  wanderJoins(queryGraph, targetGraph, gamma, tau, maxEpoch, zAlpha, isInduced);
-        if(estimation<0){
-            System.out.println("HERE");
-        }
         if(estimation == -1){
             BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName));
             writer.write("Something went wrong");
@@ -5194,9 +5191,11 @@ public class SubgraphIsomorphism {
 
         int biggestAttempt = 0;
         double biggestAttemptNumMatchings = 0;
+        double biggestAttemptNumBacktracking = 0;
 
         for (int i = 0; i < maxNumAttempts; i++) {
             double totalNumMatchings = 0;
+            double totalNumBacktracking = 0;
             System.out.print("Attempt " + (i + 1) + ". Graphs Created: ");
 
             // keep track of the failed attempts
@@ -5232,25 +5231,24 @@ public class SubgraphIsomorphism {
                     writer.close();
                 }
                 totalNumMatchings += numMatchings;
+                totalNumBacktracking+=numBackTracking;
 
-                if(j%100==0){
+                if(j%50==0){
                     System.out.print(j+", ");
                 }
             }
-            if(j==maxNumQueryGraphs){
+            if(j>=maxNumQueryGraphs){
                 biggestAttempt = j;
                 biggestAttemptNumMatchings = totalNumMatchings;
-            }
-            else if(j>biggestAttempt){
-                biggestAttempt = j;
-                biggestAttemptNumMatchings = totalNumMatchings;
+                biggestAttemptNumBacktracking = totalNumBacktracking;
             }
         }
 
         // write to output file
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName));
         writer.write("");
-        writer.write("Average Number of Matchings: "+biggestAttemptNumMatchings/biggestAttempt);
+        writer.write("Average Number of Matchings: "+biggestAttemptNumMatchings/biggestAttempt+"\n");
+        writer.write("Average Number of Backtracking: "+biggestAttemptNumBacktracking/biggestAttempt+"\n");
         writer.write("Total Number of Graphs: "+biggestAttempt);
         writer.close();
     }
@@ -5277,22 +5275,22 @@ public class SubgraphIsomorphism {
 
         // estimation
         double tau = 100;
-        int maxEpoch = 10000;
+        int maxEpoch = 1000;
         double zScore = 1.96; // z-score for 95% confidence
 
         // create query graph
         int minSize = 10;
         int maxSize = 50;
-        int maxNumQueries = 10000;
+        int maxNumQueries = 500;
         int maxNumAttempts = 1;
-        int maxNumFailedProp = 1000;
+        int maxNumFailedProp = 100;
         final List<String> subgraphMethods = new ArrayList<>(List.of(RANDOM_NODE_NEIGHBOR, RANDOM_WALK));
 
         // caluclate outlier
         outlierValue = 3;
 
         // format of the graphs
-        formatTarget = IGRAPH;
+        formatTarget = PROTEINS;
         formatQuery = PROTEINS;
 
         // if we are going to check if the labels are equivalent or subsets
@@ -5496,86 +5494,56 @@ public class SubgraphIsomorphism {
             rewriteName(isomorphismFolder);
         }
 
-        else if(mainMethod.equals("Comparison") && args.length == 4){
+        else if(mainMethod.equals("ComparisonSize") && args.length == 4){
             final String targetLocationName = args[1];
             String outputFolderName = args[2];
-            int x = Integer.parseInt(args[3]); //give a value between 0 and 660
+            int x = Integer.parseInt(args[3]); //give a value between 0 and 60
 
-            algorithmNameB = GRAPHQL;
-            algorithmNamePO = GRAPHQL;
-            algorithmNameC = GRAPHQL;
-            // Backtracking
-            if (x < 300) {
-                if (x % 300 < 60) {
-                    algorithmNameB = GROUNDTRUTH;
-                } else if (x % 300 < 120) {
+            for(x=0; x<30; x++) {
+                algorithmNameB = GRAPHQL;
+                algorithmNamePO = GRAPHQL;
+                algorithmNameC = GRAPHQL;
+                // Backtracking
+                if (x < 5) {
                     algorithmNameB = GRAPHQL;
-                } else if (x % 300 < 180) {
+                    continue;
+                } else if (x < 10) {
                     algorithmNameB = QUICKSI;
-                } else if (x % 300 < 240) {
+                    continue;
+                } else if (x < 15) {
                     algorithmNameB = DAF;
-                } else {
+                } else if(x<20) {
                     algorithmNameB = VEQS;
                 }
-            }
-            // Processing order
-            else if (x < 540) {
-                if ((x - 300) % 240 < 60) {
-                    algorithmNamePO = GROUNDTRUTH;
-                } else if ((x - 300) % 240 < 120) {
-                    algorithmNamePO = GRAPHQL;
-                } else if ((x - 300) % 240 < 180) {
+                // Processing order
+                else if (x<25) {
                     algorithmNamePO = QUICKSI;
+                    continue;
                 } else {
                     algorithmNamePO = DYNAMIC_ORDER;
+                    continue;
                 }
-            }
-            // Candidates
-            else {
-                if ((x - 540) % 120 < 60) {
-                    algorithmNameC = GROUNDTRUTH;
-                } else {
-                    algorithmNameC = GRAPHQL;
+                // the number of nodes between 10 and given value, with 10 increments (total given value/10)
+                int size = (x%5+6)*10;
+
+                File targetLocation = new File(targetLocationName);
+                Graph<Vertex, DefaultEdge> target = readGraph(targetLocation, formatTarget);
+                if (target == null) {
+                    System.out.println("Target File: ");
+                    System.out.println(noGraphFormat);
+                    return;
                 }
+
+
+                String runInfo = "B_" + algorithmNameB + "_PO_" + algorithmNamePO + "_C_" + algorithmNameC +
+                        "_size_" + size;
+                String outputFile = outputFolderName + runInfo+  ".txt";
+
+                System.out.println(runInfo);
+                graphComparisionProperties(target, outputFile, isInduced, gamma, maxNumQueries, maxNumAttempts,
+                        maxNumFailedProp, size, null, null, subgraphMethods);
+                System.out.println();
             }
-            // the number of nodes is set
-            int size = 10;
-
-            // the average degree between 1 and 6
-            double de = 6;
-            if (x % 60 < 10) {
-                de = 1;
-            } else if (x % 60 < 20) {
-                de = 2;
-            } else if (x % 60 < 30) {
-                de = 3;
-            } else if (x % 60 < 40) {
-                de = 4;
-            } else if (x % 60 < 50) {
-                de = 5;
-            }
-            // the diameter between 1 and 10
-            double di = x % 10 + 1;
-
-            File targetLocation = new File(targetLocationName);
-            Graph<Vertex, DefaultEdge> target = readGraph(targetLocation, formatTarget);
-            if (target == null) {
-                System.out.println("Target File: ");
-                System.out.println(noGraphFormat);
-                return;
-            }
-
-            // properties of query graph
-            List<Double> avgD = new ArrayList<>(List.of(de, de + 1));
-            List<Double> dia = new ArrayList<>(List.of(di, di + 1));
-
-            String outputFile = outputFolderName + "B_" + algorithmNameB + "_PO_" + algorithmNamePO + "_C_" + algorithmNameC +
-                    "_size_" + size + "_de_" + de + "_di_" + di + ".txt";
-
-            System.out.println(outputFile);
-            graphComparisionProperties(target, outputFile, isInduced, gamma, maxNumQueries, maxNumAttempts,
-                    maxNumFailedProp, size, avgD, dia, subgraphMethods);
-            System.out.println();
         }
 
         else{

@@ -328,8 +328,8 @@ def plotValues(graphInformation, maxDe, maxDi, minSize, maxSize, folder, type):
     fig.subplots_adjust(wspace=0)
 
     # add labels
-    fig.supxlabel('diameter (range x to x+1)')
-    fig.supylabel('average degree (range x to x+1)')
+    fig.supylabel('diameter (range x to x+1)')
+    fig.supxlabel('average degree (range x to x+1)')
 
     # save and close the plot
     endOfString = "_min"+str(minSize)+"_max"+str(maxSize)
@@ -344,8 +344,8 @@ def plotValues(graphInformation, maxDe, maxDi, minSize, maxSize, folder, type):
     plt.close()
 
 if __name__ == '__main__':
-    dataFolder = "C:\\Users\\Gabi\\Desktop\\IndependentStudy\\GitHubProject\\Data\\Output\\HeatMap\\Yeast\\Attempt4\\"
-    (graphInformation, maxDe, maxDi) = readInputDataOneFile(dataFolder+"Yeast_NonInduced\\")
+    dataFolder = "C:\\Users\\Gabi\\Desktop\\IndependentStudy\\GitHubProject\\Data\\Output\\HeatMap\\Yeast\\Attempt5\\"
+    (graphInformation, maxDe, maxDi) = readInputDataOneFile(dataFolder+"Yeast_Induced\\")
 
     #textSize = 10
     #plt.rc('xtick', labelsize=textSize)
