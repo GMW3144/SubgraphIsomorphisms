@@ -15,9 +15,8 @@ def readInputDataOneFile(dataFolder):
 
     # iterate through the graph stats
     for statsFile in os.listdir(dataFolder):
-        if (statsFile.split("_")[6] != "stats.txt"):
+        if ("stats" not in statsFile):
             continue
-
         n = statsFile.split("_")[1]
         if(n==60):
             print("here")
@@ -43,6 +42,9 @@ def readInputDataOneFile(dataFolder):
         for line in file.readlines():
             line = line.strip().lower()
             if (count == 0 and line != "hard-to-find"):
+                M = None
+                I = None
+
                 break
 
             if ("matchings" in line):
@@ -69,10 +71,10 @@ def readInputDataOneFile(dataFolder):
             count += 1
         file.close()
 
-        if (M != None):
+        if (M != None ):
             graphInformation[graphStructureInformation] = {"M": M / I, "I": I}
         else:
-            graphInformation[graphStructureInformation] = {"M": M, "I": I}
+            graphInformation[graphStructureInformation] = {"M": None, "I": None}
 
     for n in range(10, 101, 10):
         for density in range(1, 7):
@@ -81,7 +83,7 @@ def readInputDataOneFile(dataFolder):
                 graphStructureInformation = "n" + str(n) + "_de" + str(density) + "_di" + str(diameter)
 
                 if(graphStructureInformation not in graphInformation):
-                    graphInformation[graphStructureInformation] = {"M": None, "I":None}
+                    graphInformation[graphStructureInformation] = {"M": -1, "I":-1}
 
     return (graphInformation, maxDe, maxDi)
 
@@ -247,7 +249,7 @@ def readInputData(dataFolder):
     return (graphInformation, maxDe, maxDi)
 
 def constructHeatMap(size, datapoints, minM, maxM, trueMax, folder, outlierMaxPointsX, outlierMaxPointsY,
-                             outlierMaxM, type, i, ax):
+                             outlierMaxM, noOuputx, noOuputy, type, i, ax):
     if(i<5):
         row = 0
     else:
@@ -260,11 +262,15 @@ def constructHeatMap(size, datapoints, minM, maxM, trueMax, folder, outlierMaxPo
     plt.xlim(1, datapoints.shape[1]+1)
     ax[row,col].set_title("Size " + str(size), fontsize = 12)
 
+    # plot if did not compute
+    ax[row, col].scatter(noOuputx,  noOuputy, marker='x', s=10, color="black")
+
     # plot the outliers
     if(len(outlierMaxM)>0):
         ax[row,col].scatter(outlierMaxPointsX, outlierMaxPointsY, vmin=maxM, vmax=trueMax, c=outlierMaxM,
                             cmap = "gist_heat", s=10)
         return True
+
 
 def plotValues(graphInformation, maxDe, maxDi, minSize, maxSize, folder, type):
     heatMapsInfo = {}
@@ -275,6 +281,9 @@ def plotValues(graphInformation, maxDe, maxDi, minSize, maxSize, folder, type):
 
     outlierMaxInfo = {}
     outlierMinInfo = {}
+
+    noOuput = {}
+
     for key in graphInformation:
         n = int(key.split("_")[0][1:])
         if(n<minSize or n>maxSize):
@@ -283,11 +292,20 @@ def plotValues(graphInformation, maxDe, maxDi, minSize, maxSize, folder, type):
             heatMapsInfo[n] = np.zeros((maxDi+1,maxDe+1))
             outlierMaxInfo[n] = ([], [], [])
             outlierMinInfo[n] = ([], [], [])
+
+
+            noOuput[n] = ([], [])
         de = int(key.split("_")[1][2:])
         di = int(key.split("_")[2][2:])
 
 
         val = graphInformation[key][type]
+        # if didnt compute in time
+        if(val==-1):
+            noOuput[n][1].append(di+.5)
+            noOuput[n][0].append(de+.5)
+            heatMapsInfo[n][di][de] = None
+            continue
 
         if(val!= None and val>capMax):
             if(val>trueMax):
@@ -310,7 +328,7 @@ def plotValues(graphInformation, maxDe, maxDi, minSize, maxSize, folder, type):
     i = 0
     for key in sorted(heatMapsInfo):
         setColorBar=constructHeatMap(key, heatMapsInfo[key], minM, maxM, trueMax, folder, outlierMaxInfo[key][0], outlierMaxInfo[key][1],
-                         outlierMaxInfo[key][2], type, i, ax)
+                         outlierMaxInfo[key][2], noOuput[key][0], noOuput[key][1], type, i, ax)
         i+=1
 
     # overall color bar
@@ -344,7 +362,7 @@ def plotValues(graphInformation, maxDe, maxDi, minSize, maxSize, folder, type):
     plt.close()
 
 if __name__ == '__main__':
-    dataFolder = "C:\\Users\\Gabi\\Desktop\\IndependentStudy\\GitHubProject\\Data\\Output\\HeatMap\\Yeast\\Attempt5\\"
+    dataFolder = "C:\\Users\\Gabi\\Desktop\\IndependentStudy\\GitHubProject\\Data\\Output\\HeatMap\\Yeast\\Attempt5\\Yeast_Induced_Copy\\"
     (graphInformation, maxDe, maxDi) = readInputDataOneFile(dataFolder+"Yeast_Induced\\")
 
     #textSize = 10

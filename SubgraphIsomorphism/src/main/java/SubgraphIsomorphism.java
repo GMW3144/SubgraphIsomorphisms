@@ -5190,7 +5190,7 @@ public class SubgraphIsomorphism {
             String prefix = "size_"+size+"_de_"+Math.round(avgD.get(0))+"_di_"+Math.round(dia.get(0));
 
             // store what the graph looks like
-            String statsName = "_stats_1.txt";
+            String statsName = "_stats.txt";
 
             // write statistics of the graph
             BufferedWriter writer = new BufferedWriter(new FileWriter(new File(outputFolderName + prefix + statsName)));
@@ -5543,23 +5543,19 @@ public class SubgraphIsomorphism {
                 // Backtracking
                 if (x < 5) {
                     algorithmNameB = GRAPHQL;
-                    continue;
                 } else if (x < 10) {
                     algorithmNameB = QUICKSI;
-                    continue;
                 } else if (x < 15) {
                     algorithmNameB = DAF;
+                    continue;
                 } else if(x<20) {
                     algorithmNameB = VEQS;
-                    continue; //TODO test after
                 }
                 // Processing order
                 else if (x<25) {
                     algorithmNamePO = QUICKSI;
-                    continue;
                 } else {
                     algorithmNamePO = DYNAMIC_ORDER;
-                    continue;
                 }
                 // the number of nodes between 10 and given value, with 10 increments (total given value/10)
                 int size = (x%5+1)*10;
