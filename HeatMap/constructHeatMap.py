@@ -271,6 +271,46 @@ def constructHeatMap(size, datapoints, minM, maxM, trueMax, folder, outlierMaxPo
                             cmap = "gist_heat", s=10)
         return True
 
+def plotSuperHeatMap(heatMapsInfo, minM, maxM, trueMax, folder, outlierMaxInfo, noOutput, type):
+    fig, ax = plt.subplots(nrows=2, ncols=5, sharey=True, sharex=True)
+
+    # add each plot
+    i = 0
+    for key in sorted(heatMapsInfo):
+        setColorBar = constructHeatMap(key, heatMapsInfo[key], minM, maxM, trueMax, folder, outlierMaxInfo[key][0],
+                                       outlierMaxInfo[key][1], outlierMaxInfo[key][2], noOutput[key][0], noOutput[key][1],
+                                       type, i, ax)
+        i += 1
+
+    # overall color bar
+    cbar_ax = fig.add_axes([.91, .61, .02, .3])
+    norm = colors.Normalize(vmin=minM, vmax=maxM)
+    colorbar.ColorbarBase(cbar_ax, cmap=cm.get_cmap("viridis"), norm=norm)
+
+    # color bar for dots
+    cbarDOT_ax = fig.add_axes([.91, .11, .02, .3])
+    norm = colors.Normalize(vmin=maxM, vmax=trueMax)
+    colorbar.ColorbarBase(cbarDOT_ax, cmap=cm.get_cmap("gist_heat"), norm=norm)
+
+    # adjust plots
+    fig.tight_layout(rect=[0.05, 0.05, .9, 0.9])
+    fig.subplots_adjust(wspace=0)
+
+    # add labels
+    fig.supylabel('diameter (range x to x+1)')
+    fig.supxlabel('average degree (range x to x+1)')
+
+    # save and close the plot
+    endOfString = "_min" + str(minSize) + "_max" + str(maxSize)
+    if (type == "M"):
+        title = "Average Number of Matchings for Hard-to-find Graphs"
+        fig.suptitle(title)
+        plt.savefig(folder + "avgMatching" + endOfString + ".pdf")
+    else:
+        title = "Number of Hard-to-find Graphs"
+        fig.suptitle(title)
+        plt.savefig(folder + "count" + endOfString + ".pdf")
+    plt.close()
 
 def plotValues(graphInformation, maxDe, maxDi, minSize, maxSize, folder, type):
     heatMapsInfo = {}
@@ -321,45 +361,28 @@ def plotValues(graphInformation, maxDe, maxDi, minSize, maxSize, folder, type):
 
         heatMapsInfo[n][di][de] = val
 
+    plotSuperHeatMap(heatMapsInfo, minM, maxM, trueMax, folder, outlierMaxInfo, noOuput, type)
 
-    fig, ax = plt.subplots(nrows=2, ncols=5, sharey=True, sharex=True)
 
-    # add each plot
-    i = 0
-    for key in sorted(heatMapsInfo):
-        setColorBar=constructHeatMap(key, heatMapsInfo[key], minM, maxM, trueMax, folder, outlierMaxInfo[key][0], outlierMaxInfo[key][1],
-                         outlierMaxInfo[key][2], noOuput[key][0], noOuput[key][1], type, i, ax)
-        i+=1
+def constructProbHeatMap(inputFile, folder, type):
+    # read through graph information
+    file = open(inputFile, 'r')
+    heatMapsInfo = {}
 
-    # overall color bar
-    cbar_ax = fig.add_axes([.91, .61, .02, .3])
-    norm = colors.Normalize(vmin=minM, vmax=maxM)
-    colorbar.ColorbarBase(cbar_ax, cmap=cm.get_cmap("viridis"), norm=norm)
+    for line in file.readlines():
+        line = line.strip().lower()
+        info = line.split(",")
+        n = double(info[0].spit(":")[1])
+        di = double(info[1].spit(":")[1])
+        de = double(info[2].spit(":")[1].split('---')[0])
 
-    # color bar for dots
-    cbarDOT_ax = fig.add_axes([.91, .11, .02, .3])
-    norm = colors.Normalize(vmin=maxM, vmax=trueMax)
-    colorbar.ColorbarBase(cbarDOT_ax, cmap=cm.get_cmap("gist_heat"), norm=norm)
+        prob = double(info[2].spit(":")[1].split('---')[1])
 
-    # adjust plots
-    fig.tight_layout(rect=[0.05, 0.05, .9, 0.9])
-    fig.subplots_adjust(wspace=0)
 
-    # add labels
-    fig.supylabel('diameter (range x to x+1)')
-    fig.supxlabel('average degree (range x to x+1)')
+        heatMapsInfo[n][di][de] = prob
 
-    # save and close the plot
-    endOfString = "_min"+str(minSize)+"_max"+str(maxSize)
-    if (type == "M"):
-        title = "Average Number of Matchings for Hard-to-find Graphs"
-        fig.suptitle(title)
-        plt.savefig(folder  + "avgMatching"+endOfString+".pdf")
-    else:
-        title = "Number of Hard-to-find Graphs"
-        fig.suptitle(title)
-        plt.savefig(folder + "count"+endOfString+".pdf")
-    plt.close()
+    plotSuperHeatMap(heatMapsInfo, 0, 1, 1, folder, {}, {}, type)
+
 
 if __name__ == '__main__':
     dataFolder = "C:\\Users\\Gabi\\Desktop\\IndependentStudy\\GitHubProject\\Data\\Output\\HeatMap\\Yeast\\Attempt5\\Yeast_Induced_Copy\\"

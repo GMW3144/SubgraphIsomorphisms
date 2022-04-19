@@ -5291,6 +5291,54 @@ public class SubgraphIsomorphism {
     }
 
     /**
+     * Returns the number of graphs found with given properties divided by number of attempts
+     * @param target the target graph
+     * @param size the size of the query graph
+     * @param maxNumQueryGraphs the number of query graphs we will check
+     * @param avgD the average degree range
+     * @param dia the diameter range
+     * @param den the density range
+     * @param numLabels the number of labels for the query graph
+     * @param subgraphMethods the different random graph construction methods
+     * @return the probability we will construct a graph with the properties
+     */
+    public static double probabilityCanFindRandomGraph(Graph<Vertex,DefaultEdge> target, int size, int maxNumQueryGraphs,
+                                                     List<Double> avgD, List<Double> dia, List<Double> den,
+                                                     List<Double> numLabels, List<String> subgraphMethods){
+        Random random = new Random();
+
+        // if the processing order is dynamic ordering the break
+        if(algorithmNamePO.equals(DYNAMIC_ORDER)){
+            System.out.println("Cannot use "+DYNAMIC_ORDER+" for estimations.");
+            System.out.println(noAlgorithmFound);
+            return -1;
+        }
+
+        // check if all the subgraph methods are valid
+        for(String method : subgraphMethods){
+            if(!method.equals(RANDOM_WALK) && !method.equals(RANDOM_NODE_NEIGHBOR)){
+                System.out.println("Cannot use "+method+" for constructing query graphs.");
+                System.out.println(noRandomSubgraphMethodFound);
+                return -1;
+            }
+        }
+
+        double count = 0;
+        // construct a 100 random walks
+        for (int j = 0; j < maxNumQueryGraphs; j++) {
+            // keep track of equivalencies, so know when see a target vertex again
+            Map<Vertex, Vertex> seen = new HashMap<>();
+            // create graph of given size from the target, with a random method
+            Graph<Vertex, DefaultEdge> query = randomGraphWithProperties(target, seen, size, avgD, dia, den,
+                    numLabels, subgraphMethods.get(random.nextInt(subgraphMethods.size())));
+            if(query != null){
+                count++;
+            }
+        }
+        return count/maxNumQueryGraphs;
+    }
+
+    /**
      * Main function where the graphs are constructed and we find the subgraph isomorphisms
      * @param args the command line arguments
      * @throws IOException for reader and writer
@@ -5318,7 +5366,7 @@ public class SubgraphIsomorphism {
         // create query graph
         int minSize = 10;
         int maxSize = 50;
-        int maxNumQueries = 500;
+        int maxNumQueries = 5000;
         int maxNumAttempts = 1;
         int maxNumFailedProp = 100;
         final List<String> subgraphMethods = new ArrayList<>(List.of(RANDOM_NODE_NEIGHBOR, RANDOM_WALK));
@@ -5327,7 +5375,7 @@ public class SubgraphIsomorphism {
         outlierValue = 3;
 
         // format of the graphs
-        formatTarget = PROTEINS;
+        formatTarget = IGRAPH;
         formatQuery = PROTEINS;
 
         // if we are going to check if the labels are equivalent or subsets
@@ -5500,6 +5548,63 @@ public class SubgraphIsomorphism {
             randomGenerationWithEstimate(target, targetLocation, outputFolderName, size, gamma, tau, maxEpoch,
                     zScore, isInduced, maxNumQueries, maxNumAttempts, maxNumFailedProp, avgD, dia, den, numLabels,
                     subgraphMethods);
+        }
+        else if(mainMethod.equals("ProbGraphWithProps")  && args.length == 4){
+            final String targetLocationName = args[1];
+            String outputFileName = args[2];
+            int x = Integer.parseInt(args[3]); //give a value between 0 and 899
+
+            BufferedWriter writer = new BufferedWriter(new FileWriter(
+                    outputFileName));
+            writer.write("Total Number Queries "+ maxNumQueries+"\n");
+            System.out.print("Total Number Queries "+ maxNumQueries+"\n");
+
+            for(x=0; x<900; x++) {
+                // the number of nodes between 10 and given value, with 10 increments (total given value/10)
+                int size = 150;
+                for (int i = 60; i < 60 * size; i += 60) {
+                    if (x < i) {
+                        size = i / 60 * 10;
+                        break;
+                    }
+                }
+                // the average degree between 1 and 6
+                double de = 6;
+                if (x % 60 < 10) {
+                    de = 1;
+                } else if (x % 60 < 20) {
+                    de = 2;
+                } else if (x % 60 < 30) {
+                    de = 3;
+                } else if (x % 60 < 40) {
+                    de = 4;
+                } else if (x % 60 < 50) {
+                    de = 5;
+                }
+                // the diameter between 1 and 10
+                double di = x % 10 + 1;
+
+                File targetLocation = new File(targetLocationName);
+                Graph<Vertex, DefaultEdge> target = readGraph(targetLocation, formatTarget);
+                if (target == null) {
+                    System.out.println("Target File: ");
+                    System.out.println(noGraphFormat);
+                    return;
+                }
+
+                // properties of query graph
+                List<Double> avgD = new ArrayList<>(List.of(de, de + 1));
+                List<Double> dia = new ArrayList<>(List.of(di, di + 1));
+                List<Double> den = null;
+                List<Double> numLabels = null;
+
+                String output = "Size:" + size + ", Diameter: " + di + ", Degree: " + de+ "---"+
+                        probabilityCanFindRandomGraph(target, size, maxNumQueries, avgD, dia, den,
+                                numLabels, subgraphMethods)+"\n";
+                System.out.print(output);
+                writer.append(output);
+            }
+            writer.close();
         }
 
 
