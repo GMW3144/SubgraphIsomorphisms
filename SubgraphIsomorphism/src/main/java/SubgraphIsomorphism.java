@@ -5256,87 +5256,57 @@ public class SubgraphIsomorphism {
      * Finds an average number of matchings and backtracking for graphs given certain properties.  These values can be
      * compared with other algorithms.
      * @param target the target graph
+     * @param queryGraphFolder the folder containing the queries
      * @param outputFileName the output file
      * @param isInduced if the isomorphism is induced
      * @param gamma the gamma value for graphql
      * @param maxNumQueryGraphs the maximum number of query graphs we will construct
-     * @param maxNumAttempts the maximum number of times we will try to reach the chosen number of query graphs
-     * @param maxNumFailedProp the maximum number of failed attempts for looking for a graph with given properties
-     * @param size the size of the graph
-     * @param avgD the average degree range for query
-     * @param dia the diameter range for query
-     * @param subgraphMethods the methods used to construct subgraphs
+     * @param size the size of the query graph
      * @throws IOException problems writing to file
      */
-    public static void graphComparisionProperties(Graph<Vertex, DefaultEdge> target,String outputFileName,
-                                                  boolean isInduced, double gamma,
-                                                  int maxNumQueryGraphs, int maxNumAttempts, int maxNumFailedProp,
-                                                  int size, List<Double> avgD, List<Double> dia,
-                                                  List<String> subgraphMethods) throws IOException {
-        Random random = new Random();
+    public static void graphComparisonProperties(Graph<Vertex, DefaultEdge> target, String queryGraphFolder,
+                                                 String outputFileName, boolean isInduced, double gamma,
+                                                 int maxNumQueryGraphs, int size) throws IOException {
+        double totalNumMatchings = 0;
+        double totalNumBacktracking = 0;
 
+        int j = 0;
+        // read through the query graphs
+        for (j = 0; j < maxNumQueryGraphs; j++) {
+            // keep track of equivalencies, so know when see a target vertex again
+            Map<Vertex, Vertex> seen = new HashMap<>();
 
-        int biggestAttempt = 0;
-        double biggestAttemptNumMatchings = 0;
-        double biggestAttemptNumBacktracking = 0;
-
-        for (int i = 0; i < maxNumAttempts; i++) {
-            double totalNumMatchings = 0;
-            double totalNumBacktracking = 0;
-            System.out.print("Attempt " + (i + 1) + ". Graphs Created: ");
-
-            // keep track of the failed attempts
-            int failedAttempts = 0;
-            int j = 0;
-
-            // construct a 100 random walks
-            for (j = 0; j < maxNumQueryGraphs; j++) {
-                if (failedAttempts >= maxNumFailedProp) {
-                    System.out.println(" - Could not find a graph with the given properties");
-                    break;
-                }
-
-                // keep track of equivalencies, so know when see a target vertex again
-                Map<Vertex, Vertex> seen = new HashMap<>();
-
-                // create graph of given size from the target, with a random method
-                Graph<Vertex, DefaultEdge> query = randomGraphWithProperties(target, seen, size, avgD, dia, null,
-                        null, subgraphMethods.get(random.nextInt(subgraphMethods.size())));
-                if (query == null) {
-                    failedAttempts++;
-                    j--;
-                    continue;
-                }
-                failedAttempts = 0;
-
-                // find and display the isomorphisms
-                double numMatchings = matchingNumeric(query, target, isInduced, gamma);
-                if(numMatchings==-1){
-                    // write to output files
-                    BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName));
-                    writer.write(noAlgorithmFound);
-                    writer.close();
-                }
-                totalNumMatchings += numMatchings;
-                totalNumBacktracking+=numBackTracking;
-
-                if(j%50==0){
-                    System.out.print(j+", ");
-                }
+            Graph<Vertex, DefaultEdge> query;
+            // create graph of given size from the target, with a random method
+            try {
+                query = readGraph(new File(queryGraphFolder+"size_"+size+"_graph"+j+".txt"),
+                        formatQuery);
+            }catch (Exception e){
+                break;
             }
-            if(j>=maxNumQueryGraphs){
-                biggestAttempt = j;
-                biggestAttemptNumMatchings = totalNumMatchings;
-                biggestAttemptNumBacktracking = totalNumBacktracking;
+
+            // find and display the isomorphisms
+            double numMatchings = matchingNumeric(query, target, isInduced, gamma);
+            if(numMatchings==-1){
+                // write to output files
+                BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName));
+                writer.write(noAlgorithmFound);
+                writer.close();
+            }
+            totalNumMatchings += numMatchings;
+            totalNumBacktracking+=numBackTracking;
+
+            if(j%50==0){
+                System.out.print(j+", ");
             }
         }
 
         // write to output file
         BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName));
         writer.write("");
-        writer.write("Average Number of Matchings: "+biggestAttemptNumMatchings/biggestAttempt+"\n");
-        writer.write("Average Number of Backtracking: "+biggestAttemptNumBacktracking/biggestAttempt+"\n");
-        writer.write("Total Number of Graphs: "+biggestAttempt);
+        writer.write("Average Number of Matchings: "+totalNumMatchings/j+"\n");
+        writer.write("Average Number of Backtracking: "+totalNumBacktracking/j+"\n");
+        writer.write("Total Number of Graphs: "+j);
         writer.close();
     }
 
@@ -5405,7 +5375,7 @@ public class SubgraphIsomorphism {
         algorithmNameB = VEQS;
 
         // isomorphism
-        final boolean isInduced = false;
+        final boolean isInduced = true;
         double gamma = 0.5;
 
         // estimation
@@ -5418,7 +5388,7 @@ public class SubgraphIsomorphism {
         int maxSize = 25;
         int maxNumQueries = 500;
         int maxNumAttempts = 1;
-        int maxNumFailedProp = 100;
+        int maxNumFailedProp = 1000;
         final List<String> subgraphMethods = new ArrayList<>(List.of(RANDOM_NODE_NEIGHBOR, RANDOM_WALK));
 
         // caluclate outlier
@@ -5720,55 +5690,49 @@ public class SubgraphIsomorphism {
             rewriteName(isomorphismFolder);
         }
 
-        else if(mainMethod.equals("Comparison") && args.length == 5){
+        else if(mainMethod.equals("Comparison") && args.length == 4){
             final String targetLocationName = args[1];
             String outputFolderName = args[2];
+            String queryGraphFolder = args[3];
 
-            // properties of query graph
-            double de = Double.parseDouble(args[3]);
-            double di = Double.parseDouble(args[4]);
-            List<Double> avgD = new ArrayList<>(List.of(de, de + 1));
-            List<Double> dia = new ArrayList<>(List.of(di, di + 1));
+            File targetLocation = new File(targetLocationName);
+            Graph<Vertex, DefaultEdge> target = readGraph(targetLocation, formatTarget);
+            if (target == null) {
+                System.out.println("Target File: ");
+                System.out.println(noGraphFormat);
+                return;
+            }
 
-            for(int x=0; x<30; x++) {
+            for(int x=0; x<(maxSize-minSize)*6; x++) {
                 algorithmNameB = GRAPHQL;
                 algorithmNamePO = GRAPHQL;
                 algorithmNameC = GRAPHQL;
                 // Backtracking
-                if (x < 5) {
+                if (x < (maxSize-minSize)) {
                     algorithmNameB = GRAPHQL;
-                } else if (x < 10) {
+                } else if (x < (maxSize-minSize)*2) {
                     algorithmNameB = QUICKSI;
-                } else if (x < 15) {
+                } else if (x < (maxSize-minSize)*3) {
                     algorithmNameB = DAF;
                     continue;
-                } else if(x<20) {
+                } else if(x<(maxSize-minSize)*4) {
                     algorithmNameB = VEQS;
                 }
                 // Processing order
-                else if (x<25) {
+                else if (x<(maxSize-minSize)*5) {
                     algorithmNamePO = QUICKSI;
                 } else {
                     algorithmNamePO = DYNAMIC_ORDER;
                 }
                 // the number of nodes between 10 and given value, with 10 increments (total given value/10)
-                int size = (x%5+1)*10;
-
-                File targetLocation = new File(targetLocationName);
-                Graph<Vertex, DefaultEdge> target = readGraph(targetLocation, formatTarget);
-                if (target == null) {
-                    System.out.println("Target File: ");
-                    System.out.println(noGraphFormat);
-                    return;
-                }
+                int size = x%(maxSize-minSize)+minSize;
 
                 String runInfo = "B_" + algorithmNameB + "_PO_" + algorithmNamePO + "_C_" + algorithmNameC +
                         "_size_" + size;
                 String outputFile = outputFolderName + runInfo+  ".txt";
 
-                System.out.println(runInfo);
-                graphComparisionProperties(target, outputFile, isInduced, gamma, maxNumQueries, maxNumAttempts,
-                        maxNumFailedProp, size, avgD, dia, subgraphMethods);
+                System.out.println(x+": "+runInfo);
+                graphComparisonProperties(target, queryGraphFolder, outputFile, isInduced, gamma, maxNumQueries, size);
                 System.out.println();
             }
         }
@@ -5806,11 +5770,10 @@ public class SubgraphIsomorphism {
                     "\n\t Must provide the location of the query and target folders.  If path is contained within " +
                     "ground truth folder, then give argument '_'."+
                     "\n\t If there is any errors in the isomorphism it will be recorded in the output file."+
-                    "\n Comparison <targetLocationName> <outputFolderName> <degree> <diameter> " +
+                    "\n Comparison <targetLocationName> <outputFolderName> <queryGraphsFolder>" +
                     "\n\t Compares the algorithms against each other, once for processing order and again for backtracking" +
-                    "\n\t targetLocationName is the target graph and outputFolderName is where we will output the comparisions to" +
-                    "\n\t the degree and diameter are the properties of the graph we would like to maintain.  Range will be made" +
-                    "\n\t with value and value plus one. ");
+                    "\n\t targetLocationName is the target graph and outputFolderName is where we will output the comparisons to." +
+                    "\n\t The queryGraphsFolder contains all of the query graphs.");
         }
 
         // finish time
