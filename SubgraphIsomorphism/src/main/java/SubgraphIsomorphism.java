@@ -5203,6 +5203,56 @@ public class SubgraphIsomorphism {
     }
 
     /**
+     * Creates random graphs with given properties
+     * @param target the target graph
+     * @param outputFolderName the output folder we will write the queries to
+     * @param maxNumQueryGraphs the maximum number of query graphs we are constructing
+     * @param maxNumFailedProp the maximum number of times we will try to construct the query with properties
+     * @param size the size of the query
+     * @param avgD the range of average degree of query
+     * @param dia the diameter of query
+     * @param subgraphMethods the subgraph isomorphism methods we are using
+     * @throws IOException
+     */
+    public static void constructRandomGraphWithProp(Graph<Vertex, DefaultEdge> target,String outputFolderName,
+                                                    int maxNumQueryGraphs, int maxNumFailedProp,
+                                                    int size, List<Double> avgD, List<Double> dia,
+                                                    List<String> subgraphMethods) throws IOException {
+        Random random = new Random();
+
+         // keep track of the failed attempts
+        int failedAttempts = 0;
+        int j = 0;
+
+        // construct a 100 random graphs
+        for (j = 0; j < maxNumQueryGraphs; j++) {
+            if (failedAttempts >= maxNumFailedProp) {
+                System.out.println(" - Could not find a graph with the given properties");
+                break;
+            }
+
+            // keep track of equivalencies, so know when see a target vertex again
+            Map<Vertex, Vertex> seen = new HashMap<>();
+            // create graph of given size from the target, with a random method
+            Graph<Vertex, DefaultEdge> query = randomGraphWithProperties(target, seen, size, avgD, dia, null,
+                    null, subgraphMethods.get(random.nextInt(subgraphMethods.size())));
+            if (query == null) {
+                failedAttempts++;
+                j--;
+                continue;
+            }
+            failedAttempts = 0;
+            // write query file
+            writeGraph(query, outputFolderName, "size_"+size+"_graph"+j+".txt");
+
+
+            if(j%100==0){
+                System.out.print(j+", ");
+            }
+        }
+    }
+
+    /**
      * Finds an average number of matchings and backtracking for graphs given certain properties.  These values can be
      * compared with other algorithms.
      * @param target the target graph
@@ -5364,9 +5414,9 @@ public class SubgraphIsomorphism {
         double zScore = 1.96; // z-score for 95% confidence
 
         // create query graph
-        int minSize = 10;
-        int maxSize = 50;
-        int maxNumQueries = 5000;
+        int minSize = 5;
+        int maxSize = 25;
+        int maxNumQueries = 500;
         int maxNumAttempts = 1;
         int maxNumFailedProp = 100;
         final List<String> subgraphMethods = new ArrayList<>(List.of(RANDOM_NODE_NEIGHBOR, RANDOM_WALK));
@@ -5375,7 +5425,7 @@ public class SubgraphIsomorphism {
         outlierValue = 3;
 
         // format of the graphs
-        formatTarget = IGRAPH;
+        formatTarget = PROTEINS;
         formatQuery = PROTEINS;
 
         // if we are going to check if the labels are equivalent or subsets
@@ -5464,8 +5514,42 @@ public class SubgraphIsomorphism {
                         subgraphMethod);
             }
         }
+        else if(mainMethod.equals("RandomGraphWithProp") && args.length == 5){
+            final String targetLocationName = args[1];
+            String outputFolderName = args[2];
+
+            // properties of query graph
+            double de = Double.parseDouble(args[3]);
+            double di = Double.parseDouble(args[4]);
+            List<Double> avgD = new ArrayList<>(List.of(de, de + 1));
+            List<Double> dia = new ArrayList<>(List.of(di, di + 1));
+
+            File targetLocation = new File(targetLocationName);
+            Graph<Vertex, DefaultEdge> target = readGraph(targetLocation, formatTarget);
+            if (target == null) {
+                System.out.println("Target File: ");
+                System.out.println(noGraphFormat);
+                return;
+            }
+
+            BufferedWriter writer = new BufferedWriter(new FileWriter(
+                    outputFolderName+"info.txt"));
+            writer.write("Target Graph: "+ targetLocation+"\n");
+            writer.append("Degree: "+ de+", Diameter: "+di+"\n");
+            writer.close();
+
+            for(int x=minSize; x<maxSize; x++) {
+                // the number of nodes between 10 and given value, with 10 increments (total given value/10)
+                int size = x%(maxSize);;
+
+                System.out.println(size +"======");
+                constructRandomGraphWithProp(target, outputFolderName, maxNumQueries, maxNumFailedProp, size,
+                        avgD, dia, subgraphMethods);
+                System.out.println();
+            }
+        }
         // find graphs that are outliers when comparing number of matchings
-        else if(mainMethod.equals("RandomWalkEstimation") && args.length == 3){
+        else if(mainMethod.equals("ConstructHardToFindGraphs") && args.length == 3){
             final String targetLocationName = args[1];
             String outputFolderName = args[2];
 
@@ -5559,7 +5643,7 @@ public class SubgraphIsomorphism {
             writer.write("Total Number Queries "+ maxNumQueries+"\n");
             System.out.print("Total Number Queries "+ maxNumQueries+"\n");
 
-            for(x=0; x<900; x++) {
+            for(x=185; x<900; x++) {
                 // the number of nodes between 10 and given value, with 10 increments (total given value/10)
                 int size = 150;
                 for (int i = 60; i < 60 * size; i += 60) {
@@ -5636,12 +5720,17 @@ public class SubgraphIsomorphism {
             rewriteName(isomorphismFolder);
         }
 
-        else if(mainMethod.equals("ComparisonSize") && args.length == 4){
+        else if(mainMethod.equals("Comparison") && args.length == 5){
             final String targetLocationName = args[1];
             String outputFolderName = args[2];
-            int x = Integer.parseInt(args[3]); //give a value between 0 and 60
 
-            for(x=0; x<30; x++) {
+            // properties of query graph
+            double de = Double.parseDouble(args[3]);
+            double di = Double.parseDouble(args[4]);
+            List<Double> avgD = new ArrayList<>(List.of(de, de + 1));
+            List<Double> dia = new ArrayList<>(List.of(di, di + 1));
+
+            for(int x=0; x<30; x++) {
                 algorithmNameB = GRAPHQL;
                 algorithmNamePO = GRAPHQL;
                 algorithmNameC = GRAPHQL;
@@ -5673,18 +5762,16 @@ public class SubgraphIsomorphism {
                     return;
                 }
 
-
                 String runInfo = "B_" + algorithmNameB + "_PO_" + algorithmNamePO + "_C_" + algorithmNameC +
                         "_size_" + size;
                 String outputFile = outputFolderName + runInfo+  ".txt";
 
                 System.out.println(runInfo);
                 graphComparisionProperties(target, outputFile, isInduced, gamma, maxNumQueries, maxNumAttempts,
-                        maxNumFailedProp, size, null, null, subgraphMethods);
+                        maxNumFailedProp, size, avgD, dia, subgraphMethods);
                 System.out.println();
             }
         }
-
         else{
             System.out.println("Unknown Command.  Please use one of the following:"+
                     "\nKnownGraphs <queryFile> <targetFile> <isomorphismsFileName> <statisticsFile>"+
@@ -5709,7 +5796,7 @@ public class SubgraphIsomorphism {
                     "\n\t Creates a query graph from the target graph using a random walk." +
                     "\n\t Find the subgraph isomorphism between given target graph and random query graph"+
                     "\n\t Output folder must contain folders: \"GenerationInfo\", \"Graphs\", \"Isomorphism\""+
-                    "\nRandomWalkEstimation <targetFile> <outputFolder>"+
+                    "\nConstructHardToFindGraphs <targetFile> <outputFolder>"+
                     "\n\t Creates a query graph from the target graph using a random walk and estimation." +
                     "\n\t Graphs who's estimation is an outlier compare to other random walks will be created."+
                     "\nAverage <isomorphismFolder>"+
@@ -5718,7 +5805,12 @@ public class SubgraphIsomorphism {
                     "\n\t Test the subgraph isomorphisms within the ground truth file."+
                     "\n\t Must provide the location of the query and target folders.  If path is contained within " +
                     "ground truth folder, then give argument '_'."+
-                    "\n\t If there is any errors in the isomorphism it will be recorded in the output file.");
+                    "\n\t If there is any errors in the isomorphism it will be recorded in the output file."+
+                    "\n Comparison <targetLocationName> <outputFolderName> <degree> <diameter> " +
+                    "\n\t Compares the algorithms against each other, once for processing order and again for backtracking" +
+                    "\n\t targetLocationName is the target graph and outputFolderName is where we will output the comparisions to" +
+                    "\n\t the degree and diameter are the properties of the graph we would like to maintain.  Range will be made" +
+                    "\n\t with value and value plus one. ");
         }
 
         // finish time

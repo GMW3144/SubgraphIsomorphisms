@@ -368,37 +368,52 @@ def constructProbHeatMap(inputFile, folder, type):
     # read through graph information
     file = open(inputFile, 'r')
     heatMapsInfo = {}
+    outlierMaxInfo = {}
+    noOutput ={}
 
+    cnt = 0
     for line in file.readlines():
+        if(cnt==0):
+            cnt+=1
+            continue
         line = line.strip().lower()
         info = line.split(",")
-        n = double(info[0].spit(":")[1])
-        di = double(info[1].spit(":")[1])
-        de = double(info[2].spit(":")[1].split('---')[0])
+        n = float(info[0].split(":")[1])
+        di = int(float(info[1].split(":")[1]))
+        de = int(float(info[2].split(":")[1].split('---')[0]))
 
-        prob = double(info[2].spit(":")[1].split('---')[1])
+        prob = float(info[2].split(":")[1].split('---')[1])
 
-
+        if (n not in heatMapsInfo):
+            heatMapsInfo[n] = np.zeros((11,7))
+            outlierMaxInfo[n] = ([], [], [])
+            noOutput[n] = ([], [], [])
         heatMapsInfo[n][di][de] = prob
 
-    plotSuperHeatMap(heatMapsInfo, 0, 1, 1, folder, {}, {}, type)
+    plotSuperHeatMap(heatMapsInfo, 0, 1, 1, folder, outlierMaxInfo, noOutput, type)
 
 
 if __name__ == '__main__':
-    dataFolder = "C:\\Users\\Gabi\\Desktop\\IndependentStudy\\GitHubProject\\Data\\Output\\HeatMap\\Yeast\\Attempt5\\Yeast_Induced_Copy\\"
-    (graphInformation, maxDe, maxDi) = readInputDataOneFile(dataFolder+"Yeast_Induced\\")
-
-    #textSize = 10
-    #plt.rc('xtick', labelsize=textSize)
-    #plt.rc('ytick', labelsize=textSize)
-    #plt.rcParams.update({'font.size': textSize})
-
-    # will only put 10 graphs at a time in figure, so must adjust
-    # right now set for graphs between 10 and 100 with increments of 10
+    inputFile = 'C:\\Users\\Gabi\\Desktop\\IndependentStudy\\GitHubProject\\Data\\Output\\HeatMap\\Yeast\\Attempt4\\probabilities\\prob.txt'
+    folder ='C:\\Users\\Gabi\\Desktop\\IndependentStudy\\GitHubProject\\Data\\Output\\HeatMap\\Yeast\\Attempt4\\probabilities\\'
     inc = 10
     minSize=10
     maxSize=100
-    for n in range(minSize, maxSize, inc*10):
-        plotValues(graphInformation, maxDe, maxDi, n, n+inc*10, dataFolder+"HeatMaps\\Matchings\\", "M")
-        plotValues(graphInformation, maxDe, maxDi, n, n+inc*10, dataFolder+"HeatMaps\\Isomorphisms\\", "I")
+
+    for n in range(minSize, maxSize, inc * 10):
+        constructProbHeatMap(inputFile, folder+"Matchings\\", "M")
+        constructProbHeatMap(inputFile, folder+"Isomorphisms\\", "I")
+
+
+    # dataFolder = "C:\\Users\\Gabi\\Desktop\\IndependentStudy\\GitHubProject\\Data\\Output\\HeatMap\\Yeast\\Attempt5\\Yeast_Induced_Copy\\"
+    # (graphInformation, maxDe, maxDi) = readInputDataOneFile(dataFolder+"Yeast_Induced\\")
+    #
+    # # will only put 10 graphs at a time in figure, so must adjust
+    # # right now set for graphs between 10 and 100 with increments of 10
+    # inc = 10
+    # minSize=10
+    # maxSize=100
+    # for n in range(minSize, maxSize, inc*10):
+    #     plotValues(graphInformation, maxDe, maxDi, n, n+inc*10, dataFolder+"HeatMaps\\Matchings\\", "M")
+    #     plotValues(graphInformation, maxDe, maxDi, n, n+inc*10, dataFolder+"HeatMaps\\Isomorphisms\\", "I")
         
