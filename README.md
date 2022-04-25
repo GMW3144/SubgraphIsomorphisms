@@ -16,12 +16,18 @@ Find the subgraph isomorphism between given target graph and new query graph. Ou
 - **RandomWalk \<targetFile\> \<outputFolder\> -**
 Creates a query graph from the target graph using a random walk. Find the subgraph isomorphism between given target graph and random query graph.
 Output folder must contain folders: "GenerationInfo", "Graphs", "Isomorphism"<br />
-- **RandomWalkEstimation \<targetFile\> \<outputFolder\> -**
+- **RandomWalkWithProp \<targetFile\> \<outputFolder\> \<de\> \<di\> -**
+Creates query graphs from the target graph with given properties.  The output folder will contain all the text files containing the query graphs. Will create maxNumQueries query graphs of different sizes.  <br />
+- **ConstructHardToFindGraphs \<targetFile\> \<outputFolder\> -**
 Creates a query graph from the target graph using a random walk and estimation. Graphs who's estimation is an outlier compare to other random walks will be created.<br />
+- **ProbGraphWithProps \<targetLocationName\> \<outputFileName\> -**
+Finds the probability that we will be able to find query graphs of given size and average degree.  Size will be between 10 and 600 in increments of 10, and degree will be between 1 and 7.  Output the probabilities to the outputFile. <br/>
 - **Average \<isomorphismFolder\> -**
 Finds the average number of backtracking and matchings for given isomorphisms.<br />
 - **TestIsomorphism \<groundTruthFile\> \<queryFolder\> \<targetFolder\> \<outputFile\> -**
-Test the subgraph isomorphisms within the ground truth file. Must provide the location of the query and target folders.  If path is contained within ground truth folder, then give argument '\_'. If there is any errors in the isomorphism it will be recorded in the output file.        
+Test the subgraph isomorphisms within the ground truth file. Must provide the location of the query and target folders.  If path is contained within ground truth folder, then give argument '\_'. If there is any errors in the isomorphism it will be recorded in the output file. <br />
+- **Comparison \<targetLocationName\> \<outputFolderName\> \<queryGraphsFolder\> -**
+Compares the algorithms against each other, once for processing order and again for backtracking. targetLocationName is the target graph and outputFolderName is where we will output the comparisons to.  The queryGraphsFolder contains all of the query graphs.
 
 We must give an algorithm for the pruning, ordering, and backtracking.  We set these within fields in the main function.  We also must set any values within the main function such as gamma for graphQL and if we want the subgraph isomorhism to be induced.  We can choose from one of the following:<br />
 - **GROUNDTRUTH**: finds the ground truth isomorphism.  Only uses LDA in pruning and BFS for ordering.<br />
@@ -57,4 +63,6 @@ To construct a random subgraph we must provide the method:
 
 If we are constructing it with an estimate, then we must provide field outlierValue, which will give us the threshold for the outlier.  We also will provide a list of random subgraph methods.  These are contained within the corresponding if statements.
 
-The "constructHeatMap.py" (within HeatMap folder) will create heatmaps for the hard-to-find instances found by RandomWalkEstimation.  We must provide the location of folder containing these files as a field within the main function.
+The "constructHeatMap.py" (within HeatMap folder) will create heatmaps for the hard-to-find instances found by ConstructHardToFindGraphs (heatMapType = "probability") and the probabilites function found by ProbGraphWithProps (heatMapType = "hardToFind").  We must provide the location of folder containing these files as a field within the main function.
+
+The "CompareAlgorithms.py" (within Comparision folder) will create line charts for comparing the different algorithms.  Takes the file created by comparison as input.
