@@ -1,5 +1,7 @@
 import os # read file
 import matplotlib.pyplot as plt
+import itertools
+import math
 
 # get the algorithm infmoration from how we store it
 def getAlgorithmAndGraphInfo(name):
@@ -61,9 +63,21 @@ def constructTableSize(folder, comparing):
     print(table)
     return storeInfo
 
-def plotLine(datapoints, algo):
-    x = datapoints[algo][0]
-    y = datapoints[algo][1]
+def plotLine(datapoints, algo, uselog):
+    sortedVals = {}
+    # sort datapoints
+    for i in range(0, len(datapoints[algo][0])):
+        # take the log
+        if(uselog):
+            sortedVals[datapoints[algo][0][i]] = math.log(datapoints[algo][1][i])
+        else:
+            sortedVals[datapoints[algo][0][i]] = datapoints[algo][1][i]
+
+    x = []
+    y = []
+    for xVal in sorted(sortedVals):
+        x.append(xVal)
+        y.append(sortedVals[xVal])
 
     plt.plot(x, y, label=algo)
 
@@ -80,6 +94,11 @@ def addDataPoint(algo, plotValues, size, backtracking):
 def plotCharts(storeInfo, comparing, outputFolder):
     datapoints = {}
 
+    if(comparing == "backtracking"):
+        uselog = True
+    else:
+        uselog = False
+
     for key in sorted(storeInfo):
         # get algo and graph info
         (algoB, algoPO, algoC, size) = getAlgorithmAndGraphInfo(key)
@@ -95,19 +114,22 @@ def plotCharts(storeInfo, comparing, outputFolder):
             addDataPoint(algoPO, datapoints, size, backtracking)
 
     for key in datapoints:
-        plotLine(datapoints, key)
+        plotLine(datapoints, key, uselog)
 
     # give title and axis
     plt.title("Comparing "+comparing+" algorithms")
     plt.xlabel("Size of Graph")
-    plt.ylabel("Average Number of Backtracking")
+    if(uselog):
+        plt.ylabel("Average Number of Backtracking (log)")
+    else:
+        plt.ylabel("Average Number of Backtracking")
     plt.legend()
     plt.savefig(outputFolder + "comparing_" + comparing.replace(" ", "_") + ".pdf")
     plt.close()
 
 if __name__ == '__main__':
-    dataFolder = "C:\\Users\\Gabi\\Desktop\\IndependentStudy\\GitHubProject\\Data\\Output\\Test\\Comparison\\"
-    outputFolder = "C:\\Users\\Gabi\\Desktop\\IndependentStudy\\GitHubProject\\Data\\Output\\Test\\Comparison\\output\\"
+    dataFolder = "C:\\Users\\Gabi\\Desktop\\IndependentStudy\\GitHubProject\\Data\\Output\\CompareAlgo\\Attempt2\\induced2\\"
+    outputFolder = "C:\\Users\\Gabi\\Desktop\\IndependentStudy\\GitHubProject\\Data\\Output\\CompareAlgo\\Attempt2\\induced2\\output\\"
     storeInfo = constructTableSize(dataFolder, "backtracking")
     plotCharts(storeInfo, "backtracking", outputFolder)
     print("==================")

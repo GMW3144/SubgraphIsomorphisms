@@ -338,7 +338,6 @@ def plotValues(graphInformation, maxDe, maxDi, minSize, maxSize, folder, type):
         de = int(key.split("_")[1][2:])
         di = int(key.split("_")[2][2:])
 
-
         val = graphInformation[key][type]
         # if didnt compute in time
         if(val==-1):
@@ -364,12 +363,13 @@ def plotValues(graphInformation, maxDe, maxDi, minSize, maxSize, folder, type):
     plotSuperHeatMap(heatMapsInfo, minM, maxM, trueMax, folder, outlierMaxInfo, noOuput, type)
 
 
-def constructProbHeatMap(inputFile, folder, type):
+def constructProbHeatMap(inputFile, folder, type, maxSize, maxDegree):
     # read through graph information
     file = open(inputFile, 'r')
-    heatMapsInfo = {}
-    outlierMaxInfo = {}
-    noOutput ={}
+    outlierMaxInfo = ([],[],[])
+    noOutput =([],[],[])
+
+    heatMapsInfo = np.zeros((maxSize+1, maxDegree+1))
 
     cnt = 0
     for line in file.readlines():
@@ -378,42 +378,48 @@ def constructProbHeatMap(inputFile, folder, type):
             continue
         line = line.strip().lower()
         info = line.split(",")
-        n = float(info[0].split(":")[1])
-        di = int(float(info[1].split(":")[1]))
-        de = int(float(info[2].split(":")[1].split('---')[0]))
+        n = int(info[0].split(":")[1])
+        de = int(float(info[1].split(":")[1].split('---')[0]))
 
-        prob = float(info[2].split(":")[1].split('---')[1])
+        prob = float(info[1].split(":")[1].split('---')[1])
+        heatMapsInfo[(n)//10][de] = prob
 
-        if (n not in heatMapsInfo):
-            heatMapsInfo[n] = np.zeros((11,7))
-            outlierMaxInfo[n] = ([], [], [])
-            noOutput[n] = ([], [], [])
-        heatMapsInfo[n][di][de] = prob
+    # create the heat map
+    sns.heatmap(heatMapsInfo, cmap='viridis', cbar=True, vmin=0, vmax=1)
+    plt.ylim(1, heatMapsInfo.shape[0] + 1)
+    plt.xlim(1, heatMapsInfo.shape[1] + 1)
 
-    plotSuperHeatMap(heatMapsInfo, 0, 1, 1, folder, outlierMaxInfo, noOutput, type)
+    # add labels
+    plt.ylabel('size (times 10 for true size)')
+    plt.xlabel('average degree (range x to x+1)')
+
+    # title
+    title = "Probability find graph of given properties"
+    plt.title(title)
+    plt.savefig(folder+"prob.pdf")
 
 
 if __name__ == '__main__':
-    inputFile = 'C:\\Users\\Gabi\\Desktop\\IndependentStudy\\GitHubProject\\Data\\Output\\HeatMap\\Yeast\\Attempt4\\probabilities\\prob.txt'
-    folder ='C:\\Users\\Gabi\\Desktop\\IndependentStudy\\GitHubProject\\Data\\Output\\HeatMap\\Yeast\\Attempt4\\probabilities\\'
-    inc = 10
-    minSize=10
-    maxSize=100
+    heatMapType = "probability"
+    if(heatMapType == "probability"):
+        #PROBABILITY HEAT MAPS
+        inputFile = 'C:\\Users\\Gabi\\Desktop\\IndependentStudy\\GitHubProject\\Data\\Output\\HeatMap\\Yeast\\Probability\\degreeComp.txt'
+        folder ='C:\\Users\\Gabi\\Desktop\\IndependentStudy\\GitHubProject\\Data\\Output\\HeatMap\\Yeast\\Probability\\'
 
-    for n in range(minSize, maxSize, inc * 10):
-        constructProbHeatMap(inputFile, folder+"Matchings\\", "M")
-        constructProbHeatMap(inputFile, folder+"Isomorphisms\\", "I")
+        maxSize = 60
+        maxDegree = 6
 
+        constructProbHeatMap(inputFile, folder+"Matchings\\", "M", maxSize, maxDegree)
+    if(heatMapType == "hardToFind"):
+        #HARD-TO-FIND heatmaps
+        dataFolder = "C:\\Users\\Gabi\\Desktop\\IndependentStudy\\GitHubProject\\Data\\Output\\HeatMap\\Yeast\\Attempt5\\Yeast_Induced_Copy\\"
+        (graphInformation, maxDe, maxDi) = readInputDataOneFile(dataFolder+"Yeast_Induced\\")
 
-    # dataFolder = "C:\\Users\\Gabi\\Desktop\\IndependentStudy\\GitHubProject\\Data\\Output\\HeatMap\\Yeast\\Attempt5\\Yeast_Induced_Copy\\"
-    # (graphInformation, maxDe, maxDi) = readInputDataOneFile(dataFolder+"Yeast_Induced\\")
-    #
-    # # will only put 10 graphs at a time in figure, so must adjust
-    # # right now set for graphs between 10 and 100 with increments of 10
-    # inc = 10
-    # minSize=10
-    # maxSize=100
-    # for n in range(minSize, maxSize, inc*10):
-    #     plotValues(graphInformation, maxDe, maxDi, n, n+inc*10, dataFolder+"HeatMaps\\Matchings\\", "M")
-    #     plotValues(graphInformation, maxDe, maxDi, n, n+inc*10, dataFolder+"HeatMaps\\Isomorphisms\\", "I")
-        
+        # will only put 10 graphs at a time in figure, so must adjust
+        # right now set for graphs between 10 and 100 with increments of 10
+        inc = 10
+        minSize=10
+        maxSize=100
+        for n in range(minSize, maxSize, inc*10):
+            plotValues(graphInformation, maxDe, maxDi, n, n+inc*10, dataFolder+"HeatMaps\\Matchings\\", "M")
+            plotValues(graphInformation, maxDe, maxDi, n, n+inc*10, dataFolder+"HeatMaps\\Isomorphisms\\", "I")

@@ -3011,6 +3011,58 @@ public class SubgraphIsomorphism {
     }
 
     /**
+     * Attempts to construct subgraph with average degree.  Return if successful.
+     * @param target the target graph
+     * @param seen the vertices we check in the target graph
+     * @param n the number of vertices
+     * @param avgD the desired average degree range
+     * @param subgraphMethod the subgraph method we are using
+     * @return if it is successful in constructing a graph with average degree
+     */
+    public static boolean randGraphWithDegree(Graph<Vertex, DefaultEdge> target, Map<Vertex, Vertex> seen, int n,
+                                              List<Double> avgD, String subgraphMethod){
+        Graph<Vertex, DefaultEdge> query;
+
+        // keep track of average degree of graph
+        double avgDActual = 0;
+        switch (subgraphMethod) {
+            case RANDOM_WALK -> query = randomGraphRandomWalk(target, n, seen);
+            case RANDOM_NODE_NEIGHBOR -> query = randomGraphRandomNodeNeighbor(target, n, seen);
+            default -> {
+                System.out.println(noRandomSubgraphMethodFound);
+                return false;
+            }
+        }
+
+        // if there is a problem constructing the graph
+        if (query == null) {
+            return false;
+        }
+
+        // add all the edges within the target graph to the query graph
+        for (Vertex u : seen.keySet()) {
+            List<Vertex> possibleNeighbors = Graphs.neighborListOf(target, u);
+            possibleNeighbors.retainAll(seen.keySet());
+            avgDActual += possibleNeighbors.size();
+            for (Vertex v : possibleNeighbors) {
+                if (!query.containsEdge(seen.get(u), seen.get(v))) {
+                    addEdge(query, seen.get(u), seen.get(v));
+                }
+            }
+        }
+
+
+        double vSize = query.vertexSet().size();
+        // get the degree
+        double largestDe = avgDActual/vSize;
+        // get the smallest degree
+        double smallestDe = (2*(vSize-1))/(vSize);
+
+        // if it is possible to remove edges to get desired degree
+        return Math.max(smallestDe, avgD.get(0))<Math.min(largestDe, avgD.get(1));
+    }
+
+    /**
      * Construct a random query graph which is a subgraph of given target graph with given properties
      * @param target the target graph
      * @param seen keep track of the mapping from query to target vertices
@@ -5316,15 +5368,11 @@ public class SubgraphIsomorphism {
      * @param size the size of the query graph
      * @param maxNumQueryGraphs the number of query graphs we will check
      * @param avgD the average degree range
-     * @param dia the diameter range
-     * @param den the density range
-     * @param numLabels the number of labels for the query graph
      * @param subgraphMethods the different random graph construction methods
      * @return the probability we will construct a graph with the properties
      */
     public static double probabilityCanFindRandomGraph(Graph<Vertex,DefaultEdge> target, int size, int maxNumQueryGraphs,
-                                                     List<Double> avgD, List<Double> dia, List<Double> den,
-                                                     List<Double> numLabels, List<String> subgraphMethods){
+                                                     List<Double> avgD, List<String> subgraphMethods){
         Random random = new Random();
 
         // if the processing order is dynamic ordering the break
@@ -5349,9 +5397,7 @@ public class SubgraphIsomorphism {
             // keep track of equivalencies, so know when see a target vertex again
             Map<Vertex, Vertex> seen = new HashMap<>();
             // create graph of given size from the target, with a random method
-            Graph<Vertex, DefaultEdge> query = randomGraphWithProperties(target, seen, size, avgD, dia, den,
-                    numLabels, subgraphMethods.get(random.nextInt(subgraphMethods.size())));
-            if(query != null){
+            if(randGraphWithDegree(target, seen, size, avgD, subgraphMethods.get(random.nextInt(subgraphMethods.size())))){
                 count++;
             }
         }
@@ -5386,7 +5432,7 @@ public class SubgraphIsomorphism {
         // create query graph
         int minSize = 5;
         int maxSize = 25;
-        int maxNumQueries = 500;
+        int maxNumQueries = 10000;
         int maxNumAttempts = 1;
         int maxNumFailedProp = 1000;
         final List<String> subgraphMethods = new ArrayList<>(List.of(RANDOM_NODE_NEIGHBOR, RANDOM_WALK));
@@ -5395,7 +5441,7 @@ public class SubgraphIsomorphism {
         outlierValue = 3;
 
         // format of the graphs
-        formatTarget = PROTEINS;
+        formatTarget = IGRAPH;
         formatQuery = PROTEINS;
 
         // if we are going to check if the labels are equivalent or subsets
@@ -5603,41 +5649,27 @@ public class SubgraphIsomorphism {
                     zScore, isInduced, maxNumQueries, maxNumAttempts, maxNumFailedProp, avgD, dia, den, numLabels,
                     subgraphMethods);
         }
-        else if(mainMethod.equals("ProbGraphWithProps")  && args.length == 4){
+        else if(mainMethod.equals("ProbGraphWithProps")  && args.length == 3){
             final String targetLocationName = args[1];
             String outputFileName = args[2];
-            int x = Integer.parseInt(args[3]); //give a value between 0 and 899
+            //int x = Integer.parseInt(args[3]); //give a value between 0 and 899
 
             BufferedWriter writer = new BufferedWriter(new FileWriter(
                     outputFileName));
             writer.write("Total Number Queries "+ maxNumQueries+"\n");
             System.out.print("Total Number Queries "+ maxNumQueries+"\n");
 
-            for(x=185; x<900; x++) {
+            for(int x=0; x<360; x++) {
                 // the number of nodes between 10 and given value, with 10 increments (total given value/10)
-                int size = 150;
-                for (int i = 60; i < 60 * size; i += 60) {
+                int size = 600;
+                for (int i = 6; i < 6 * size; i += 6) {
                     if (x < i) {
-                        size = i / 60 * 10;
+                        size = i / 6 * 10;
                         break;
                     }
                 }
                 // the average degree between 1 and 6
-                double de = 6;
-                if (x % 60 < 10) {
-                    de = 1;
-                } else if (x % 60 < 20) {
-                    de = 2;
-                } else if (x % 60 < 30) {
-                    de = 3;
-                } else if (x % 60 < 40) {
-                    de = 4;
-                } else if (x % 60 < 50) {
-                    de = 5;
-                }
-                // the diameter between 1 and 10
-                double di = x % 10 + 1;
-
+                double de = x%6+1;
                 File targetLocation = new File(targetLocationName);
                 Graph<Vertex, DefaultEdge> target = readGraph(targetLocation, formatTarget);
                 if (target == null) {
@@ -5645,16 +5677,10 @@ public class SubgraphIsomorphism {
                     System.out.println(noGraphFormat);
                     return;
                 }
-
                 // properties of query graph
                 List<Double> avgD = new ArrayList<>(List.of(de, de + 1));
-                List<Double> dia = new ArrayList<>(List.of(di, di + 1));
-                List<Double> den = null;
-                List<Double> numLabels = null;
-
-                String output = "Size:" + size + ", Diameter: " + di + ", Degree: " + de+ "---"+
-                        probabilityCanFindRandomGraph(target, size, maxNumQueries, avgD, dia, den,
-                                numLabels, subgraphMethods)+"\n";
+                String output = "Size:" + size + ", Degree: " + de+ "---"+
+                        probabilityCanFindRandomGraph(target, size, maxNumQueries, avgD, subgraphMethods)+"\n";
                 System.out.print(output);
                 writer.append(output);
             }
@@ -5714,7 +5740,6 @@ public class SubgraphIsomorphism {
                     algorithmNameB = QUICKSI;
                 } else if (x < (maxSize-minSize)*3) {
                     algorithmNameB = DAF;
-                    continue;
                 } else if(x<(maxSize-minSize)*4) {
                     algorithmNameB = VEQS;
                 }
@@ -5760,9 +5785,20 @@ public class SubgraphIsomorphism {
                     "\n\t Creates a query graph from the target graph using a random walk." +
                     "\n\t Find the subgraph isomorphism between given target graph and random query graph"+
                     "\n\t Output folder must contain folders: \"GenerationInfo\", \"Graphs\", \"Isomorphism\""+
+                    "\nRandomWalkWithProp <targetFile> <outputFolder> <de> <di>"+
+                    "\n\t Creates query graphs from the target graph with given properties. " +
+                    "\n The output folder will contain all the text files containing the query graphs. " +
+                    "\n Will create maxNumQueries query graphs of different sizes." +
                     "\nConstructHardToFindGraphs <targetFile> <outputFolder>"+
                     "\n\t Creates a query graph from the target graph using a random walk and estimation." +
                     "\n\t Graphs who's estimation is an outlier compare to other random walks will be created."+
+                    "\nConstructHardToFindGraphs <targetFile> <outputFolder>"+
+                    "\n\t Creates a query graph from the target graph using a random walk and estimation. " +
+                    "\n\t Graphs who's estimation is an outlier compare to other random walks will be created."+
+                    "\nProbGraphWithProps <targetLocationName> <outputFileName>"+
+                    "\n\t Finds the probability that we will be able to find query graphs of given size and average degree. " +
+                    "\n\t Size will be between 10 and 600 in increments of 10, and degree will be between 1 and 7. " +
+                    "\n\t Output the probabilities to the outputFile." +
                     "\nAverage <isomorphismFolder>"+
                     "\n\t Finds the average number of backtracking and matchings for given isomorphisms." +
                     "\nTestIsomorphism <groundTruthFile> <queryFolder> <targetFolder> <outputFile>"+
