@@ -18,6 +18,7 @@ Creates a query graph from the target graph using a random walk. Find the subgra
 Output folder must contain folders: "GenerationInfo", "Graphs", "Isomorphism"<br />
 - **RandomWalkWithProp \<targetFile\> \<outputFolder\> \<de\> \<di\> -**
 Creates query graphs from the target graph with given properties.  The output folder will contain all the text files containing the query graphs. Will create maxNumQueries query graphs of different sizes.  <br />
+**NOTE: will output a lot of text file to outputfolder, does not follow the same convention as RandomWalk!** <br/>
 - **ConstructHardToFindGraphs \<targetFile\> \<outputFolder\> -**
 Creates a query graph from the target graph using a random walk and estimation. Graphs who's estimation is an outlier compare to other random walks will be created.<br />
 - **ProbGraphWithProps \<targetLocationName\> \<outputFileName\> -**
