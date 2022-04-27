@@ -337,10 +337,19 @@ public class SubgraphIsomorphism {
     public static Graph<Vertex, DefaultEdge> readGraph(File inputFile, String method) throws IOException {
         // create the graphs
         Graph<Vertex, DefaultEdge> g;
+        // get extension
+        String extension = inputFile.toString().substring(inputFile.toString().lastIndexOf('.')+1);
+
         if(method.equals(PROTEINS)) {
+            if(!extension.equals("grf") && !extension.equals("txt")){
+                System.out.println("NOTE: Are you sure it is "+method+" and not "+IGRAPH);
+            }
             g = readProteinsGraph(inputFile);
         }
         else if(method.equals(IGRAPH)){
+            if(!extension.equals("igraph")){
+                System.out.println("NOTE: Are you sure it is "+method+" and not "+PROTEINS);
+            }
             g = readIGraph(inputFile);
         }
         else{
@@ -658,36 +667,6 @@ public class SubgraphIsomorphism {
     }
 
     /**
-     * Calculate the size of the joins between current order and u. Calculation from GraphQL.
-     * @param query the query graph
-     * @param leftSize the previous order size of joins
-     * @param candidates the possible target vertices for the query vertices
-     * @param order the order we are checking the query vertices
-     * @param u the possible query vertex we are adding
-     * @param gamma the gamma value
-     * @return the size of joining u to the current order
-     */
-    private static double calculateSize(Graph<Vertex, DefaultEdge> query, double leftSize,
-                                       Map<Vertex, Set<Vertex>> candidates, ArrayList<Vertex> order, Vertex u,
-                                       double gamma){
-        // size(i) = size(i.left)*size(i.right)*gamma^connection(order, u)
-        double size = leftSize*candidates.get(u).size();
-        int power = 0;
-        // get the number of nodes it is currently connected to already within the order
-        for(Vertex v: order){
-            if(query.containsEdge(u, v)){
-                power++;
-            }
-        }
-
-        // multiply by gamma^power
-        for(int i = 0; i<power; i++){
-            size = size*gamma;
-        }
-        return size;
-    }
-
-    /**
      * Compute the processing order of how the query vertices will be checked.  Now it picks the vertex with the
      * smallest candidate set and then adds them in BFS order
      * @param query the query graph
@@ -724,6 +703,36 @@ public class SubgraphIsomorphism {
         }
 
         return order;
+    }
+
+    /**
+     * Calculate the size of the joins between current order and u. Calculation from GraphQL.
+     * @param query the query graph
+     * @param leftSize the previous order size of joins
+     * @param candidates the possible target vertices for the query vertices
+     * @param order the order we are checking the query vertices
+     * @param u the possible query vertex we are adding
+     * @param gamma the gamma value
+     * @return the size of joining u to the current order
+     */
+    private static double calculateSize(Graph<Vertex, DefaultEdge> query, double leftSize,
+                                        Map<Vertex, Set<Vertex>> candidates, ArrayList<Vertex> order, Vertex u,
+                                        double gamma){
+        // size(i) = size(i.left)*size(i.right)*gamma^connection(order, u)
+        double size = leftSize*candidates.get(u).size();
+        int power = 0;
+        // get the number of nodes it is currently connected to already within the order
+        for(Vertex v: order){
+            if(query.containsEdge(u, v)){
+                power++;
+            }
+        }
+
+        // multiply by gamma^power
+        for(int i = 0; i<power; i++){
+            size = size*gamma;
+        }
+        return size;
     }
 
     /**
@@ -2630,7 +2639,6 @@ public class SubgraphIsomorphism {
             return;
         }
         Graph<Vertex, DefaultEdge> targetGraph = readGraph(targetFile, formatTarget);
-        System.out.println(targetGraph.edgeSet().size());
         if(targetGraph == null){
             System.out.println("Target File: ");
             System.out.println(noGraphFormat);
@@ -4147,7 +4155,7 @@ public class SubgraphIsomorphism {
         // basic information for isomorphism
         algorithmNameC = GRAPHQL;
         algorithmNamePO = GRAPHQL;
-        algorithmNameB = VEQS;
+        algorithmNameB = QUICKSI;
 
         // isomorphism
         final boolean isInduced = true;
@@ -4155,26 +4163,28 @@ public class SubgraphIsomorphism {
 
         // estimation
         double tau = 100;
-        int maxEpoch = 1000;
+        int maxEpoch = 100;
         double zScore = 1.96; // z-score for 95% confidence
 
         // create query graph
         int minSize = 5;
         int maxSize = 25;
-        int maxNumQueries = 10000;
+        int maxNumQueries = 100;
         int maxNumAttempts = 1;
-        int maxNumFailedProp = 1000;
+        int maxNumFailedProp = 10;
         final List<String> subgraphMethods = new ArrayList<>(List.of(RANDOM_NODE_NEIGHBOR, RANDOM_WALK));
 
         // calculate outlier
         outlierValue = 3;
 
         // format of the graphs
-        formatTarget = IGRAPH;
+        formatTarget = PROTEINS;
         formatQuery = PROTEINS;
 
         // if we are going to check if the labels are equivalent or subsets
         labelCheck = SUBSETS;
+        // star graphs, and frequent dataset mining, separate file
+        sg = new HardToFindStarGraphs(formatTarget);
 
         // keep track of time
         Date startDate = new Date();
@@ -4199,6 +4209,7 @@ public class SubgraphIsomorphism {
         }
         // check the estimations
         else if(mainMethod.equals("TestEstimations") && args.length == 5){
+            // isomorphism folder is constructed by methods (random walk, FDMQuery,...)
             final String isomorphismFolder = args[1];
             String queryFolder = args[2];
             String targetFolder = args[3];
@@ -4218,9 +4229,6 @@ public class SubgraphIsomorphism {
             final String outputFolderName = args[2];
             double minSup = Double.parseDouble(args[3]);
 
-            // star graphs, and frequent dataset mining, separate file
-            sg = new HardToFindStarGraphs(formatTarget);
-
             // iterate through the possible target graphs
             File [] files = new File(targetFolderLocation).listFiles();
             for (File file : files) {
@@ -4235,12 +4243,10 @@ public class SubgraphIsomorphism {
         }
         // create a query graph from frequent profiles
         else if(mainMethod.equals("FDMQuery") && args.length == 4){
-            // star graphs, and frequent dataset mining, separate file
-            sg = new HardToFindStarGraphs(formatTarget);
 
             // connecting star graphs
             // MERGE, EDGE, NONE
-            final String connectionMethod = sg.MERGE;
+            final String connectionMethod = sg.EDGE;
 
 
             final String fdmFile = args[1];
@@ -4268,7 +4274,7 @@ public class SubgraphIsomorphism {
         }
         else if(mainMethod.equals("RandomGraphWithProp") && args.length == 5){
             final String targetLocationName = args[1];
-            String outputFolderName = args[2];
+            String outputFolderName = args[2]; // NOTE: output is different than previous functions
 
             // properties of query graph
             double de = Double.parseDouble(args[3]);
@@ -4455,7 +4461,7 @@ public class SubgraphIsomorphism {
         else if(mainMethod.equals("Comparison") && args.length == 4){
             final String targetLocationName = args[1];
             String outputFolderName = args[2];
-            String queryGraphFolder = args[3];
+            String queryGraphFolder = args[3]; // use the query graphs created by RandomGraphWithProp
 
             File targetLocation = new File(targetLocationName);
             Graph<Vertex, DefaultEdge> target = readGraph(targetLocation, formatTarget);
@@ -4523,8 +4529,9 @@ public class SubgraphIsomorphism {
                     "\n\t Output folder must contain folders: \"GenerationInfo\", \"Graphs\", \"Isomorphism\""+
                     "\nRandomWalkWithProp <targetFile> <outputFolder> <de> <di>"+
                     "\n\t Creates query graphs from the target graph with given properties. " +
-                    "\n The output folder will contain all the text files containing the query graphs. " +
-                    "\n Will create maxNumQueries query graphs of different sizes." +
+                    "\n\t The output folder will contain all the text files containing the query graphs. " +
+                    "\n\t Will create maxNumQueries query graphs of different sizes." +
+                    "\n\t NOTE: will output a lot of text file to output folder, does not follow the same convention as RandomWalk!"+
                     "\nConstructHardToFindGraphs <targetFile> <outputFolder>"+
                     "\n\t Creates a query graph from the target graph using a random walk and estimation." +
                     "\n\t Graphs who's estimation is an outlier compare to other random walks will be created."+
@@ -4545,7 +4552,7 @@ public class SubgraphIsomorphism {
                     "\n Comparison <targetLocationName> <outputFolderName> <queryGraphsFolder>" +
                     "\n\t Compares the algorithms against each other, once for processing order and again for backtracking" +
                     "\n\t targetLocationName is the target graph and outputFolderName is where we will output the comparisons to." +
-                    "\n\t The queryGraphsFolder contains all of the query graphs.");
+                    "\n\t The queryGraphsFolder contains all of the query graphs (Note: best to use RandomGraphWithProp output).");
         }
 
         // finish time
