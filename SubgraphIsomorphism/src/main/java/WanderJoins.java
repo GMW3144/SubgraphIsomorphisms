@@ -62,7 +62,7 @@ public class WanderJoins {
     }
 
     /**
-     * Finds the confidence interval for a given set of values
+     * Finds the confidence interval for a Egiven set of values
      * @param stats the cost values
      * @param zScore the alpha+1/2 quantile of the normal distribution with mean 0 and variance 1
      * @return the confidence interval
