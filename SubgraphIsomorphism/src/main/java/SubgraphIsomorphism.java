@@ -56,7 +56,7 @@ public class SubgraphIsomorphism {
     private static String algorithmNamePO = ""; // algorithm in use for processing order
     private static String algorithmNameB = ""; // algorithm in use for backtracking
     // failing sets
-    private static int fullSolutions = 0, partialSolutions = 0, emptyCandidates = 0, conflicts = 0, numRefined = 0;
+    private static int fullSolutions = 0, partialSolutions = 0, emptyCandidates = 0, conflicts = 0;
     // veqs
     private static int numSymetric = -1;
     // outlier value
@@ -136,8 +136,8 @@ public class SubgraphIsomorphism {
     // keep track of axillary structures
     private static QISequence SEQq; //QI-Sequence
     private static DirectedAcyclicGraph<Vertex, DefaultEdge> queryDAG; // directed acyclic graph
-    private static Graph<Vertex, LabeledEdge> CS; // the CS structure
     private static List<Vertex> dynamicOrder = new ArrayList<>(); // keep track of elements added with dynamic programing
+    private static CS cs;
 
     /**
      * Saves a graph in a file
@@ -409,7 +409,7 @@ public class SubgraphIsomorphism {
      * @param newId the id of the new vertex
      * @return the copied vertex
      */
-    private static Vertex copyVertex(Vertex vertex, int newId){
+    public static Vertex copyVertex(Vertex vertex, int newId){
         // copy the attributes
         return new Vertex(newId, vertex.getLabel());
     }
@@ -1428,144 +1428,6 @@ public class SubgraphIsomorphism {
     }
 
     /**
-     * Refine the candidate set for the CS structure
-     * @param query the query graph
-     * @param target the target graph
-     * @param candidates the candidate set
-     */
-    public static void refineCS(Graph<Vertex, DefaultEdge> query, Graph<Vertex, DefaultEdge> target,
-                                Map<Vertex, Set<Vertex>> candidates){
-        boolean isRefined = true;
-        int count = 0;
-
-        // keep refining until we don't any more
-        while(isRefined){
-            isRefined = false;
-
-            // alternate between children and parent
-            boolean reverse = count % 2 != 0;
-            count++;
-
-            // set the parents/children to empty sets initially
-            Map<Vertex, Set<Vertex>> toCheck = new HashMap<>();
-            for(Vertex u : query.vertexSet()){
-                toCheck.put(u, new HashSet<>());
-            }
-
-            // add the parents/children
-            for(Vertex u: queryDAG.vertexSet()){
-                if(reverse){
-                    for(DefaultEdge e:queryDAG.incomingEdgesOf(u)){
-                        Vertex uP = queryDAG.getEdgeSource(e);
-                        toCheck.get(u).add(uP);
-                    }
-                }
-                else{
-                    for(DefaultEdge e:queryDAG.outgoingEdgesOf(u)){
-                        Vertex uP = queryDAG.getEdgeTarget(e);
-                        toCheck.get(u).add(uP);
-                    }
-                }
-            }
-
-            Set<Vertex> processed = new HashSet<>();
-            while(processed.size()<query.vertexSet().size()){
-                for(Vertex u: query.vertexSet()){
-                    if(processed.containsAll(toCheck.get(u))){
-                        processed.add(u);
-                        Set<Vertex> toRemove = new HashSet<>();
-                        for(Vertex v: candidates.get(u)){
-                            // create a new graph, which will be the bipartite graph
-                            Graph<Vertex, DefaultEdge> B = new SimpleGraph<>(DefaultEdge.class);
-                            // keep track of where the copy came from
-                            Map<Vertex, Vertex> copyToOriginal = new HashMap<>(); int id = 0;
-
-                            // keep track of u neighbors added
-                            Set<Vertex> uPVertices = new HashSet<>();
-                            Set<Vertex> vPVertices = new HashSet<>();
-
-                            // add the neighbors of v
-                            for(Vertex vP: Graphs.neighborListOf(target,v)){
-                                Vertex vPCopy = copyVertex(vP, id); id++;
-                                copyToOriginal.put(vPCopy, vP);
-
-                                B.addVertex(vPCopy);
-                                vPVertices.add(vPCopy);
-                            }
-
-                            // add the vertices to check
-                            for(Vertex uP: toCheck.get(u)) {
-                                Vertex uPCopy = copyVertex(uP, id);
-                                id++;
-                                copyToOriginal.put(uPCopy, uP);
-
-                                B.addVertex(uPCopy);
-                                uPVertices.add(uPCopy);
-                            }
-
-                            // add the edges
-                            for(Vertex uP: uPVertices){
-                                for(Vertex vP: vPVertices){
-                                    if(candidates.get(copyToOriginal.get(uP)).contains(copyToOriginal.get(vP))){
-                                        B.addEdge(uP, vP);
-                                    }
-                                }
-                            }
-
-                            // find the maximum matching of B
-                            HopcroftKarpMaximumCardinalityBipartiteMatching<Vertex, DefaultEdge> matchingAlgorithm =
-                                    new HopcroftKarpMaximumCardinalityBipartiteMatching<>(B, uPVertices, vPVertices);
-                            MatchingAlgorithm.Matching<Vertex, DefaultEdge> bipartiteMatching = matchingAlgorithm.getMatching();
-
-                            // matching does not contain all query vertices
-                            if(bipartiteMatching.getEdges().size() != uPVertices.size()){
-                                toRemove.add(v);
-                                isRefined = true;
-                            }
-
-                        }
-                        numRefined+=toRemove.size();
-                        candidates.get(u).removeAll(toRemove);
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Construct the CS structure
-     * @param target the target graph
-     * @param candidates the candidates
-     */
-    public static void materializeCS(Graph<Vertex, DefaultEdge> target, Map<Vertex, Set<Vertex>> candidates){
-        // CS is initially a graph with multiple edges between two vertices
-        CS = new Multigraph<>(LabeledEdge.class);
-        // iterate through the vertices
-        for(Vertex u: queryDAG.vertexSet()){
-            // and their parents
-            for(DefaultEdge e: queryDAG.incomingEdgesOf(u)){
-                Vertex uP = queryDAG.getEdgeSource(e);
-                // iterate through their candidates
-                for(Vertex vP : candidates.get(uP)){
-                    for(Vertex v: candidates.get(u)){
-                        // add new edge if there exists one within target graph
-                        if(target.containsEdge(v, vP)){
-                            if(!CS.containsVertex(v)){
-                                CS.addVertex(v);
-                            }
-                            if(!CS.containsVertex(vP)){
-                                CS.addVertex(vP);
-                            }
-
-                            CS.addEdge(vP, v, new LabeledEdge(uP+"-"+u));
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    /**
      * Finds the processing order with QuickSI.  First build the QI-sequence then return the corresponding vertices
      * to the vertices within the tree.
      * @param target the target graph
@@ -1842,7 +1704,7 @@ public class SubgraphIsomorphism {
                 if(currentFunction.containsKey(uP)) {
                     // find all of the possible vertices we can map to
                     Vertex vP = currentFunction.get(uP);
-                    for (LabeledEdge e1 : CS.edgeSet()) {
+                    for (LabeledEdge e1 : cs.getEdgeSet()) {
                         if (vP == queryDAG.getEdgeSource(e1)
                                 && e1.getLabel().equals(uP + "-" + u)) {
                             CM.add(queryDAG.getEdgeTarget(e1));
@@ -1991,7 +1853,7 @@ public class SubgraphIsomorphism {
                 continue;
             }
             // find which are symetric
-            if(Graphs.neighborListOf(CS, v).containsAll(Graphs.neighborListOf(CS, vP))){
+            if(cs.neighborsOf(v).containsAll(cs.neighborsOf(vP))){
                 pi.add(vP);
             }
         }
@@ -2612,9 +2474,8 @@ public class SubgraphIsomorphism {
             partialSolutions = 0;
             emptyCandidates = 0;
             conflicts = 0;
-            numRefined = 0;
-            refineCS(query, target, candidates);
-            materializeCS(target, candidates);
+
+            cs = new CS(query, target, candidates, queryDAG);
 
             // For each query node in the order, we will create a list of failing sets to record i
             // information of the backtracking process.
@@ -2631,8 +2492,7 @@ public class SubgraphIsomorphism {
                 queryDAG = constructDAGWithOrder(query, order);
             }
 
-            refineCS(query, target, candidates);
-            materializeCS(target, candidates);
+            cs = new CS(query, target, candidates, queryDAG);
 
             numSymetric = 0;
             subgraphIsomorphismVEQs(query, target, candidates, order, 0, new HashMap<>(), results, isInduced,
@@ -2694,9 +2554,8 @@ public class SubgraphIsomorphism {
             partialSolutions = 0;
             emptyCandidates = 0;
             conflicts = 0;
-            numRefined = 0;
-            refineCS(query, target, candidates);
-            materializeCS(target, candidates);
+
+            cs = new CS(query, target, candidates, queryDAG);
 
             // For each query node in the order, we will create a list of failing sets to record i
             // information of the backtracking process.
@@ -2713,8 +2572,7 @@ public class SubgraphIsomorphism {
                 queryDAG = constructDAGWithOrder(query, order);
             }
 
-            refineCS(query, target, candidates);
-            materializeCS(target, candidates);
+            cs = new CS(query, target, candidates, queryDAG);
 
             numSymetric = 0;
             totalNumberMatchings = subgraphIsomorphismVEQsNumeric(query, target, candidates, order, 0, new HashMap<>(), isInduced,
@@ -4370,7 +4228,7 @@ public class SubgraphIsomorphism {
                     "Number of partial solutions: "+partialSolutions+"\n"+
                     "Number of empty candidates: "+emptyCandidates+"\n"+
                     "Number of conflicts: "+conflicts+"\n"+
-                    "Number Refined: "+numRefined+
+                    "Number Refined: "+cs.getNumRefined()+
                     "\n\n";
             writer.append(output);
         }
