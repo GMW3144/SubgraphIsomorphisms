@@ -1,8 +1,0 @@
-Query Graph: graph231.txt, Target Graph: human_2KS9.grf
-Number Backtracking: 3299660
-Induced isomorphisms. Total number subgraph isomorphisms: 0
-# candidates algorithm: graphQL
-# processing order algorithm: dynamic order
-# backtracking algorithm: graphQL
-
-============================

@@ -1,3 +1,0 @@
-Used C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\FrequentDatasetMining\tenPercent\ecoli_K12_2KHO.grf frequent dataset mining 
-Combined two graphs:Vertex with attribute C and profile [C, C, H] occurs 1995 times within the graph 
-Vertex with attribute C and profile [C, C, C] occurs 1470 times within the graph 

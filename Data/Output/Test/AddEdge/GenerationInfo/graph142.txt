@@ -1,3 +1,0 @@
-Used C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\FrequentDatasetMining\tenPercent\bos_taurus_2RQV.grf frequent dataset mining 
-Combined two graphs:Vertex with attribute C and profile [C, C, H] occurs 380 times within the graph 
-Vertex with attribute C and profile [C, C, C] occurs 293 times within the graph 

@@ -1,2 +1,0 @@
-Used C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\FrequentDatasetMining\fivePercent\ecoli_1RF8.grf frequent dataset mining 
-Vertex with attribute C and profile [C, C, H] occurs 792 times within the graph 

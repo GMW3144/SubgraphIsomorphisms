@@ -1,3 +1,0 @@
-Used C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\FrequentDatasetMining\tenPercent\human_2DJ8.grf frequent dataset mining 
-Combined two graphs:Vertex with attribute C and profile [C, C, H] occurs 165 times within the graph 
-Vertex with attribute C and profile [C, C, N] occurs 143 times within the graph 

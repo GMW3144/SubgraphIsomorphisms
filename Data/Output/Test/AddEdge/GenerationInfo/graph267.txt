@@ -1,3 +1,0 @@
-Used C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\FrequentDatasetMining\tenPercent\rattus_norvegicus_1RGD.grf frequent dataset mining 
-Combined two graphs:Vertex with attribute C and profile [C, C, H] occurs 230 times within the graph 
-Vertex with attribute C and profile [C, C, C] occurs 174 times within the graph 

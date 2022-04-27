@@ -1,3 +1,0 @@
-Used C:\Users\Gabi\Desktop\IndependentStudy\GitHubProject\Data\Output\FrequentDatasetMining\tenPercent\backbones_2G5Z.grf frequent dataset mining 
-Combined two graphs:Vertex with attribute C and profile [C, C, H] occurs 569 times within the graph 
-Vertex with attribute C and profile [C, C, C] occurs 469 times within the graph 
