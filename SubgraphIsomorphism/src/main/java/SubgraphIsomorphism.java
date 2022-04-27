@@ -21,8 +21,6 @@ import java.util.Set;
 
 // Statistics
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
-import org.apache.commons.math3.stat.descriptive.StatisticalSummary;
-import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 
 // Graph Implementation
 import org.jgrapht.Graph;
@@ -34,7 +32,6 @@ import org.jgrapht.alg.shortestpath.GraphMeasurer;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.graph.DefaultWeightedEdge;
 import org.jgrapht.graph.DirectedAcyclicGraph;
-import org.jgrapht.graph.Multigraph;
 import org.jgrapht.graph.SimpleGraph;
 import org.jgrapht.graph.SimpleWeightedGraph;
 import org.jgrapht.traverse.BreadthFirstIterator;
@@ -58,9 +55,12 @@ public class SubgraphIsomorphism {
     // failing sets
     private static int fullSolutions = 0, partialSolutions = 0, emptyCandidates = 0, conflicts = 0;
     // veqs
-    private static int numSymetric = -1;
+    private static int numSymmetric = -1;
     // outlier value
     static double outlierValue = 1.5;
+
+    // wander joins, separate file
+    static WanderJoins wj = new WanderJoins();
 
 
     // algorithms
@@ -90,7 +90,7 @@ public class SubgraphIsomorphism {
 
     // error messages
     // error message if didn't find isomorphism algorithm
-    private static final String noAlgorithmFound = "Algorithm specified is not valid.\n" +
+    public static final String noAlgorithmFound = "Algorithm specified is not valid.\n" +
             "Specify one of the following algorithms: \n" +
             "\t "+GROUNDTRUTH+": finds the ground truth isomorphism.  Only uses LDA in pruning and BFS for ordering.\n" +
             "\t "+GRAPHQL+": uses the GraphQL algorithm.\n" +
@@ -1842,8 +1842,8 @@ public class SubgraphIsomorphism {
      * Calculates the symmetry within CS structure to use for VEQs
      * @param u the query vertex
      * @param v the target vertex
-     * @param candidates the canidate set
-     * @return a list of target vertices symetric to v given u in the CS structure
+     * @param candidates the candidate set
+     * @return a list of target vertices symmetric to v given u in the CS structure
      */
     public static List<Vertex> calcPi(Vertex u, Vertex v, Map<Vertex, Set<Vertex>> candidates){
         List<Vertex> pi = new ArrayList<>();
@@ -1852,7 +1852,7 @@ public class SubgraphIsomorphism {
             if(vP.equals(v)){
                 continue;
             }
-            // find which are symetric
+            // find which are symmetric
             if(cs.neighborsOf(v).containsAll(cs.neighborsOf(vP))){
                 pi.add(vP);
             }
@@ -1861,15 +1861,15 @@ public class SubgraphIsomorphism {
     }
 
     /**
-     * Create a matching using symetry
+     * Create a matching using symmetry
      * @param u the query vertex
      * @param v the target vertex
      * @param uP the parent vertex of u
      * @param currentFunction the current matchings
      * @param allFunctionsFound all possible matchings
      */
-    public static void symetricMatching(Vertex u, Vertex v, Vertex uP, Map<Vertex, Vertex> currentFunction,
-                                        List<Map<Vertex, Vertex>> allFunctionsFound){
+    public static void symmetricMatching(Vertex u, Vertex v, Vertex uP, Map<Vertex, Vertex> currentFunction,
+                                         List<Map<Vertex, Vertex>> allFunctionsFound){
         // if there is no conflict
         if(uP != null){
             Map<Vertex, Vertex> newFunction = new HashMap<>(currentFunction);
@@ -1936,12 +1936,12 @@ public class SubgraphIsomorphism {
             // iterate through C_M
             for(Vertex v: possibleVertices){
                 numBackTracking++;
-                // calculate the symetry at beginning
+                // calculate the symmetry at beginning
                 List<Vertex> pi = calcPi(u, v, candidates);
                 List<Vertex> piM = new ArrayList<>();
                 // check if v is equivalent
                 if(!equivalent.get(Map.of(u,v)).isEmpty()){
-                    // iterate through the equavalent vertices
+                    // iterate through the equivalent vertices
                     for(Vertex vEq : equivalent.get(Map.of(u,v))){
                         // iterate through all of their possible matchings
                         for(Map<Vertex, Vertex> MStar : TM.get(Map.of(u,vEq))){
@@ -1954,8 +1954,8 @@ public class SubgraphIsomorphism {
                                 }
                             }
 
-                            numSymetric++;
-                            symetricMatching(u, v, uP, currentFunction, allFunctionsFound);
+                            numSymmetric++;
+                            symmetricMatching(u, v, uP, currentFunction, allFunctionsFound);
                         }
                     }
                     continue;
@@ -2054,7 +2054,7 @@ public class SubgraphIsomorphism {
             Vertex u = getNextVertex(query, target, order, i, currentFunction, candidates);
             // compute C_M
             Set<Vertex> possibleVertices = getPossibleVertices(target, candidates, currentFunction, i, u);
-            // set v - inequivalent for each v in C_M(u)
+            // set v - equivalent for each v in C_M(u)
             for(Vertex v: possibleVertices){
                 equivalent.put(Map.of(u, v), new ArrayList<>());
             }
@@ -2062,12 +2062,12 @@ public class SubgraphIsomorphism {
             // iterate through C_M
             for(Vertex v: possibleVertices){
                 numBackTracking++;
-                // calculate the symetry at beginning
+                // calculate the symmetry at beginning
                 List<Vertex> pi = calcPi(u, v, candidates);
                 List<Vertex> piM = new ArrayList<>();
                 // check if v is equivalent
                 if(!equivalent.get(Map.of(u,v)).isEmpty()){
-                    // iterate through the equavalent vertices
+                    // iterate through the equivalent vertices
                     for(Vertex vEq : equivalent.get(Map.of(u,v))){
                         // iterate through all of their possible matchings
                         for(Map<Vertex, Vertex> MStar : TM.get(Map.of(u,vEq))){
@@ -2080,7 +2080,7 @@ public class SubgraphIsomorphism {
                                 }
                             }
 
-                            numSymetric++;
+                            numSymmetric++;
                             totalNumberMatchings++;
                         }
                     }
@@ -2382,8 +2382,8 @@ public class SubgraphIsomorphism {
      * @param target the target graph
      * @return the candidates
      */
-    private static Map<Vertex, Set<Vertex>> computeCandidates(Graph<Vertex, DefaultEdge> query,
-                                                              Graph<Vertex, DefaultEdge> target){
+    public static Map<Vertex, Set<Vertex>> computeCandidates(Graph<Vertex, DefaultEdge> query,
+                                                             Graph<Vertex, DefaultEdge> target){
         Map<Vertex, Set<Vertex>> candidates;
         // compute the candidates
         switch (algorithmNameC) {
@@ -2494,7 +2494,7 @@ public class SubgraphIsomorphism {
 
             cs = new CS(query, target, candidates, queryDAG);
 
-            numSymetric = 0;
+            numSymmetric = 0;
             subgraphIsomorphismVEQs(query, target, candidates, order, 0, new HashMap<>(), results, isInduced,
                     new HashMap<>(),new HashMap<>(),new HashMap<>(),new HashMap<>());
         }
@@ -2574,7 +2574,7 @@ public class SubgraphIsomorphism {
 
             cs = new CS(query, target, candidates, queryDAG);
 
-            numSymetric = 0;
+            numSymmetric = 0;
             totalNumberMatchings = subgraphIsomorphismVEQsNumeric(query, target, candidates, order, 0, new HashMap<>(), isInduced,
                     new HashMap<>(),new HashMap<>(),new HashMap<>(),new HashMap<>());
         }
@@ -4233,8 +4233,8 @@ public class SubgraphIsomorphism {
             writer.append(output);
         }
 
-        if(numSymetric!=-1){
-            writer.append("Symetric matchings found from VEQS: ").append(String.valueOf(numSymetric))
+        if(numSymmetric !=-1){
+            writer.append("Symmetric matchings found from VEQS: ").append(String.valueOf(numSymmetric))
                     .append("\n");
         }
 
@@ -4271,59 +4271,6 @@ public class SubgraphIsomorphism {
     }
 
     /**
-     * Finds the probability of a given walk
-     * @param order the processing order for the query graph
-     * @param candidates the candidates of the query vertices
-     * @param SEQq the QI-Sequence, tree and extra edge information
-     * @param i the current vertex in the walk that we are adding
-     * @param walk the current random walk
-     * @param target the target graph
-     * @return the probability of a random walk (0 if invalid walk)
-     */
-    public static double randomWalkWJ(ArrayList<Vertex> order, Map<Vertex, Set<Vertex>> candidates , QISequence SEQq,
-                                      int i, List<Vertex> walk, Graph<Vertex, DefaultEdge> target){
-        // we have reached the end of the walk
-        if(walk.size() == order.size()){
-            // multiply by identity
-            return 1;
-        }
-        // get the next vertex in the order
-        Vertex u = order.get(i);
-        // if we are at the start of the walk
-        if(i == 0){
-            Set<Vertex> possibleVertices = new HashSet<>(candidates.get(u));
-            // if there are no possible vertices for the first vertex
-            if(possibleVertices.size() == 0){
-                return 0;
-            }
-            // pick a random vertex add to walk
-            Vertex vNext = randomVertex(possibleVertices);
-            walk.add(vNext);
-            // the cost is currently the number of vertices we could have chosen from
-            return (possibleVertices.size()) * randomWalkWJ( order, candidates, SEQq, i+1, walk, target);
-        }
-
-        // get the parent of the current vertex
-        Vertex up = SEQq.getParent(u); int p = order.indexOf(up);
-        // get the parent of the vertex within the graph
-        Vertex vp = walk.get(p);
-        Set<Vertex> possibleVertices = new HashSet<>(candidates.get(u));
-        // get the children of the parent and see if they are within the current candidate set
-        possibleVertices.retainAll(Graphs.neighborListOf(target, vp));
-        possibleVertices.removeAll(walk);
-
-        // if we could not find any vertices to go to next
-        if(possibleVertices.size() == 0){
-            return 0;
-        }
-
-        // pick the next random vertex
-        Vertex vNext = randomVertex(possibleVertices);
-        walk.add(vNext);
-        return randomWalkWJ(order, candidates, SEQq, i+1, walk, target)*possibleVertices.size();
-    }
-
-    /**
      * Finds the average of the given values
      * @param values double values
      * @return average of values
@@ -4354,124 +4301,6 @@ public class SubgraphIsomorphism {
         }
 
         return mse/(values.size()-1);
-    }
-
-    /**
-     * Finds the confidence interval for a given set of values
-     * @param stats the cost values
-     * @param zScore the alpha+1/2 quantile of the normal distribution with mean 0 and variance 1
-     * @return the confidence interval
-     */
-    public static double computeConfidenceInterval(StatisticalSummary stats, double zScore){
-        // the average
-        double variance = Math.sqrt(stats.getVariance());
-
-        return zScore * variance / Math.sqrt(stats.getN());
-    }
-
-    /**
-     * Performs Wander Join to estimate the number of matchings or backtrackings for a given isomorphism
-     * @param query the query graph
-     * @param target the target graph
-     * @param gamma the gamma value for GraphQL
-     * @param tau the confidence interval threshold
-     * @param maxEpoch the maximum number of random walks
-     * @param zScore the z score for confidence interval
-     * @param isInduced if the isomorphism is induced
-     * @return the overall estimation for the subgraph isomorphism
-     */
-    public static double wanderJoins(Graph<Vertex, DefaultEdge> query, Graph<Vertex, DefaultEdge> target, double gamma,
-                                  double tau, int maxEpoch, double zScore, boolean isInduced){
-        // compute candidates
-        Map<Vertex, Set<Vertex>> candidates = computeCandidates(query, target);
-        if(candidates == null){
-            System.out.println("Invalid Candidates.  Might be invalid algorithm:");
-            System.out.println(noAlgorithmFound);
-            // something went wrong
-            return -1;
-        }
-        // compute processing order
-        ArrayList<Vertex> order = computeProcessingOrder(query, target, candidates, gamma);
-        if(order == null){
-            System.out.println("Invalid Processing Order.  Might be invalid algorithm:");
-            System.out.println(noAlgorithmFound);
-            // something went wrong
-            return -1;
-        }
-
-        // compute the spanning tree, must have one root
-        QISequence SEQq = buildSpanningTreeWithOrder(query, order);
-
-        // keep track of the costs we have seen
-        SummaryStatistics stats = new SummaryStatistics();
-
-        while (stats.getN()<maxEpoch){
-            // the walk is originally empty
-            List<Vertex> walk = new ArrayList<>();
-            // get the cost of the walk
-            double cost = randomWalkWJ(order, candidates, SEQq, 0, walk, target);
-
-            if (cost != 0) {
-                // if it is not an invalid walk, need to check extra edges
-                Map<Vertex, List<Vertex>> extraEdges = SEQq.getEdge();
-
-                for (Vertex u1 : extraEdges.keySet()) {
-                    for (Vertex u2 : extraEdges.get(u1)) {
-                        // get the location of the vertices in the edge within the order and walk
-                        int i1 = order.indexOf(u1);
-                        int i2 = order.indexOf(u2);
-                        // get the corresponding vertices within the walk
-                        Vertex v1 = walk.get(i1);
-                        Vertex v2 = walk.get(i2);
-
-                        // if there is not a corresponding edge
-                        if (!target.containsEdge(v1, v2)) {
-                            cost = 0;
-                            break;
-                        }
-                    }
-                }
-
-                // also check for induced
-                if (isInduced) {
-                    Map<Vertex, List<Vertex>> noEdge = SEQq.getNoEdge();
-                    for (Vertex u1 : noEdge.keySet()) {
-                        for (Vertex u2 : noEdge.get(u1)) {
-                            // get the location of the vertices in the edge within the order and walk
-                            int i1 = order.indexOf(u1);
-                            int i2 = order.indexOf(u2);
-                            // get the corresponding vertices within the walk
-                            Vertex v1 = walk.get(i1);
-                            Vertex v2 = walk.get(i2);
-
-                            // if there is not a corresponding edge
-                            if (target.containsEdge(v1, v2)) {
-                                cost = 0;
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-
-
-            // add the cost to the cost values
-            stats.addValue(cost);
-
-            // every 20 check the confidence value
-            if(stats.getN()%1000 == 0){
-                double conf = computeConfidenceInterval(stats, zScore);
-                if(conf<tau) {
-                    break;
-                }
-            }
-        }
-
-        // average the cost values
-        double avgCost = stats.getMean();
-
-        // round to nearest integer
-        return Math.round(avgCost);
     }
 
     /**
@@ -4509,7 +4338,7 @@ public class SubgraphIsomorphism {
         }
 
         // compute the estimation
-        double estimation =  wanderJoins(queryGraph, targetGraph, gamma, tau, maxEpoch, zAlpha, isInduced);
+        double estimation =  wj.wanderJoins(queryGraph, targetGraph, gamma, tau, maxEpoch, zAlpha, isInduced);
         if(estimation == -1){
             BufferedWriter writer = new BufferedWriter(new FileWriter(outputFileName));
             writer.write("Something went wrong");
@@ -4631,7 +4460,7 @@ public class SubgraphIsomorphism {
             }
             boolean isInduced = induceString.equals("induced");
 
-            double estimatedNumber = wanderJoins(query, target, gamma, tau, maxEpoch, zScore, isInduced);
+            double estimatedNumber = wj.wanderJoins(query, target, gamma, tau, maxEpoch, zScore, isInduced);
             if(estimatedNumber == -1){
                 writer.append("Something went wrong!");
                 return;
@@ -5026,7 +4855,7 @@ public class SubgraphIsomorphism {
                 failedAttempts = 0;
 
                 // estimate the number of matchings
-                double estimate = wanderJoins(query, target, gamma, tau, maxEpoch, zScore, isInduced);
+                double estimate = wj.wanderJoins(query, target, gamma, tau, maxEpoch, zScore, isInduced);
 
                 // add to estimate random walks map
                 if (!estimationRandomWalk.containsKey(estimate)) {
@@ -5295,7 +5124,7 @@ public class SubgraphIsomorphism {
         int maxNumFailedProp = 1000;
         final List<String> subgraphMethods = new ArrayList<>(List.of(RANDOM_NODE_NEIGHBOR, RANDOM_WALK));
 
-        // caluclate outlier
+        // calculate outlier
         outlierValue = 3;
 
         // format of the graphs
@@ -5676,6 +5505,5 @@ public class SubgraphIsomorphism {
         System.out.println();
         System.out.println(mainMethod + " started at "+startDate);
         System.out.println(mainMethod + " ended at "+ endDate);
-
     }
 }
