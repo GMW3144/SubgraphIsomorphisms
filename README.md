@@ -28,7 +28,7 @@ Finds the average number of backtracking and matchings for given isomorphisms.<b
 - **TestIsomorphism \<groundTruthFile\> \<queryFolder\> \<targetFolder\> \<outputFile\> -**
 Test the subgraph isomorphisms within the ground truth file. Must provide the location of the query and target folders.  If path is contained within ground truth folder, then give argument '\_'. If there is any errors in the isomorphism it will be recorded in the output file. <br />
 - **Comparison \<targetLocationName\> \<outputFolderName\> \<queryGraphsFolder\> -**
-Compares the algorithms against each other, once for processing order and again for backtracking. targetLocationName is the target graph and outputFolderName is where we will output the comparisons to.  The queryGraphsFolder contains all of the query graphs.
+Compares the algorithms against each other, once for processing order and again for backtracking. targetLocationName is the target graph and outputFolderName is where we will output the comparisons to.  The queryGraphsFolder contains all of the query graphs (Note: best to use RandomGraphWithProp output).
 
 We must give an algorithm for the pruning, ordering, and backtracking.  We set these within fields in the main function.  We also must set any values within the main function such as gamma for graphQL and if we want the subgraph isomorhism to be induced.  We can choose from one of the following:<br />
 - **GROUNDTRUTH**: finds the ground truth isomorphism.  Only uses LDA in pruning and BFS for ordering.<br />
