@@ -7,31 +7,39 @@ import matplotlib.colorbar as colorbar
 import seaborn as sns
 from textwrap import wrap
 
-def readInputDataOneFile(dataFolder):
+
+"""
+Read the output that is contained in an individual file
+"""
+def readInputDataOneFile(dataFolder, minSize, maxSize, inc):
     graphInformation = {}  # size - graph info
 
+
+    # the maximum degree and diameter value
     maxDe = 6
     maxDi = 10
 
-    # iterate through the graph stats
+    # iterate through the stats, ignore the other files
     for statsFile in os.listdir(dataFolder):
         if ("stats" not in statsFile):
             continue
+        # get the size of the graph
         n = statsFile.split("_")[1]
-        if(n==60):
-            print("here")
+        # get the density and diameter
         density = statsFile.split("_")[3]
         diameter = statsFile.split("_")[5]
 
-        # if the list is 0 then set all values to 0
+        # key
         graphStructureInformation = "n" + n + "_de" + density + "_di" + diameter
 
         # read through graph information
         file = open(dataFolder + statsFile, 'r')
         count = 0
 
+        # number of matchings and graphs
         M = 0
         I = 0
+        # keep track of the current values too
         M_current = 0
         I_current = 0
 
@@ -39,19 +47,23 @@ def readInputDataOneFile(dataFolder):
         foundM = False
         foundI = False
 
+        # iterate through file
         for line in file.readlines():
             line = line.strip().lower()
+            # if there isn't any hard-to-find instances, set number of matchings and number hard-to-find cases to None
             if (count == 0 and line != "hard-to-find"):
                 M = None
                 I = None
-
                 break
 
+            # find the number of matchings (for given query graph)
             if ("matchings" in line):
                 M_current = float(line.split(":")[1].strip())
                 foundM = True
 
+            # find the number of hard-to-find cases (add up number isomorphic)
             if ("isomorphic graphs" in line):
+                # null - no isomorphic cases, so one
                 if (line.split(":")[1].strip() == "null"):
                     I_current = 1
                 else:
@@ -59,6 +71,7 @@ def readInputDataOneFile(dataFolder):
                     M_current = M_current * I_current
                 foundI = True
 
+            # if found both M and I, then find next hard-to-find instance
             if(foundM and foundI):
                 M +=M_current
                 I +=I_current
@@ -71,14 +84,16 @@ def readInputDataOneFile(dataFolder):
             count += 1
         file.close()
 
+        # find the average number of matchings, and the number of hard-to-find instances
         if (M != None ):
             graphInformation[graphStructureInformation] = {"M": M / I, "I": I}
         else:
             graphInformation[graphStructureInformation] = {"M": None, "I": None}
 
-    for n in range(10, 101, 10):
-        for density in range(1, 7):
-            for diameter in range(1, 11):
+    # set all the cases where it did not run in time, or stopped while running to -1
+    for n in range(minSize, maxSize+1, inc):
+        for density in range(1, maxDe+1):
+            for diameter in range(1, maxDi+1):
                 # if the list is 0 then set all values to 0
                 graphStructureInformation = "n" + str(n) + "_de" + str(density) + "_di" + str(diameter)
 
@@ -87,9 +102,13 @@ def readInputDataOneFile(dataFolder):
 
     return (graphInformation, maxDe, maxDi)
 
-def readInputDataOneFolder(dataFolder):
+"""
+Read the data when all information is in one file (one folder per hard-to-find instance)
+"""
+def readInputDataOneFolder(dataFolder, minSize, maxSize, inc):
     graphInformation = {}  # size - graph info
 
+    # the maximum degree and diameter
     maxDe = 6
     maxDi = 10
 
@@ -97,6 +116,7 @@ def readInputDataOneFolder(dataFolder):
     for statsFile in os.listdir(dataFolder):
         if(statsFile.split("_")[6]!="stats"):
             continue
+        # size of graph, density, and diameter
         n = statsFile.split("_")[1]
         density = statsFile.split("_")[3]
         diameter = statsFile.split("_")[5]
@@ -104,6 +124,7 @@ def readInputDataOneFolder(dataFolder):
         # if the list is 0 then set all values to 0
         graphStructureInformation = "n" + n + "_de" + density + "_di" + diameter
 
+        # get the previous total number of matchings and hard-to-find instances, if one exists
         if (graphStructureInformation in graphInformation and graphInformation[graphStructureInformation] != 0):
             I = graphInformation[graphStructureInformation]["I"]
             M = graphInformation[graphStructureInformation]["M"]*I
@@ -118,17 +139,22 @@ def readInputDataOneFolder(dataFolder):
         file = open(dataFolder+statsFile, 'r')
         count = 0
 
+        # keep track of the current number of matchings and hard-to-find cases
         M_current = 0
         I_current = 0
+        # iterate through the file
         for line in file.readlines():
             line = line.strip().lower()
+            # only keep track of hard-to-find cases
             if (count == 0 and line != "hard-to-find"):
                 break
 
+            # get the number of matchings
             if ("matchings" in line):
                 M_current = float(line.split(":")[1].strip())
                 foundM = True
 
+            # get the number of hard-to-find cases
             if ("isomorphic graphs" in line):
                 if (line.split(":")[1].strip() == "null"):
                     I_current = 1
@@ -144,6 +170,7 @@ def readInputDataOneFolder(dataFolder):
 
         file.close()
 
+        # add the current to the running total
         if (foundM and foundI):
             if (M == None or I == None):
                 M = 0
@@ -151,24 +178,30 @@ def readInputDataOneFolder(dataFolder):
             M += M_current
             I += I_current
 
+        # store the current information (average number of matchings and total number of hard-to-find instances)
         if (M != None):
             graphInformation[graphStructureInformation] = {"M": M / I, "I": I}
         else:
             graphInformation[graphStructureInformation] = {"M": M, "I": I}
 
-    for n in range(10, 51, 10):
-        for density in range(1, 7):
-            for diameter in range(1, 11):
+    # add -1 for all of the cases that don't run in time
+    for n in range(minSize, maxSize+1, inc):
+        for density in range(1, maxDe+1):
+            for diameter in range(1, maxDi+1):
                 # if the list is 0 then set all values to 0
                 graphStructureInformation = "n" + str(n) + "_de" + str(density) + "_di" + str(diameter)
 
                 if(graphStructureInformation not in graphInformation):
-                    graphInformation[graphStructureInformation] = {"M": None, "I":None}
+                    graphInformation[graphStructureInformation] = {"M": -1, "I":-1}
 
     return (graphInformation, maxDe, maxDi)
 
+"""
+Read input when all data is in separate folders
+"""
 def readInputData(dataFolder):
     graphInformation = {} # size - graph info
+    # find the maximum degree and diameter
     maxDe = 0
     maxDi = 0
     # iterate through the graph sizes
@@ -180,6 +213,7 @@ def readInputData(dataFolder):
         # iterate through the graph densities and diameters
         graphStructure = dataFolder+dataSubfolder+"\\"
         for graphStructSubfolder in os.listdir(graphStructure):
+            # get the density and diameter, find the maximum
             density = graphStructSubfolder.split("_")[0][2:]
             diameter = graphStructSubfolder.split("_")[1][2:]
             if(int(density)>maxDe):
@@ -187,16 +221,17 @@ def readInputData(dataFolder):
             if(float(diameter)>maxDi):
                 maxDi = int(diameter)
 
-
             # iterate through the information for graphs
             graphData = graphStructure+graphStructSubfolder+"\\GenerationInfo\\"
 
             # if the list is 0 then set all values to 0
             graphStructureInformation = "n"+n+"_de"+density+"_di"+diameter
 
+            # if there are no hard-to-find instances
             if(len(os.listdir(graphData))==0):
                 graphInformation[graphStructureInformation] = {"M": None, "I":None}
             else:
+                # average number of matchings and hard-to-find instances
                 M = None
                 I = None
                 # iterate through the graphs constructed
@@ -208,17 +243,22 @@ def readInputData(dataFolder):
                     file = open(graphData+graphConstruction, 'r')
                     count = 0
 
+                    # keep track of the current matchings and hard-to-find cases
                     M_current = 0
                     I_current = 0
+                    # read through the file
                     for line in file.readlines():
                         line = line.strip().lower()
+                        # only keep if hard-to-find
                         if(count == 0 and line != "hard-to-find"):
                             break
 
+                        # find the number of matchings
                         if("matchings" in line):
                             M_current = float(line.split(":")[1].strip())
                             foundM = True
 
+                        # find the number of hard-to-find instances
                         if("isomorphic graphs" in line):
                             if(line.split(":")[1].strip() == "null"):
                                 I_current = 1
@@ -234,6 +274,7 @@ def readInputData(dataFolder):
 
                     file.close()
 
+                    # update the running totals
                     if(foundM and foundI):
                         if(M==None or I==None):
                             M=0
@@ -241,6 +282,7 @@ def readInputData(dataFolder):
                         M+=M_current
                         I+=I_current
 
+                # find the average number of matchings and hard-to-find instances
                 if (M != None):
                     graphInformation[graphStructureInformation] = {"M": M/I, "I": I}
                 else:
@@ -248,8 +290,12 @@ def readInputData(dataFolder):
 
     return (graphInformation, maxDe, maxDi)
 
+"""
+Construct the heat map given the lower and larger values, and the values that did not output in time
+"""
 def constructHeatMap(size, datapoints, minM, maxM, trueMax, folder, outlierMaxPointsX, outlierMaxPointsY,
                              outlierMaxM, noOuputx, noOuputy, type, i, ax):
+    # the location of the sub plot
     if(i<5):
         row = 0
     else:
@@ -271,6 +317,9 @@ def constructHeatMap(size, datapoints, minM, maxM, trueMax, folder, outlierMaxPo
                             cmap = "gist_heat", s=10)
         return True
 
+"""
+Create the super heat map with different subplots
+"""
 def plotSuperHeatMap(heatMapsInfo, minM, maxM, trueMax, folder, outlierMaxInfo, noOutput, type):
     fig, ax = plt.subplots(nrows=2, ncols=5, sharey=True, sharex=True)
 
@@ -312,75 +361,94 @@ def plotSuperHeatMap(heatMapsInfo, minM, maxM, trueMax, folder, outlierMaxInfo, 
         plt.savefig(folder + "count" + endOfString + ".pdf")
     plt.close()
 
+"""
+Extract and plot the values
+"""
 def plotValues(graphInformation, maxDe, maxDi, minSize, maxSize, folder, type):
+    # the heat map values
     heatMapsInfo = {}
+    # the max number of matchings (or hard-to-find cases)
     capMax = 10000000
+    # keep track of the maximum values for heat map and larger values, for color bar
     maxM = 0
     trueMax = 0
     minM = -1
 
+    # keep track of the outlier values
     outlierMaxInfo = {}
-    outlierMinInfo = {}
-
+    # keep track of properties did not run in time
     noOuput = {}
 
+    # iterate through the information
     for key in graphInformation:
+        # size of graph
         n = int(key.split("_")[0][1:])
+        # must be within parameters (only 10 graphs can be outputed)
         if(n<minSize or n>maxSize):
             continue
         if (n not in heatMapsInfo):
+            # set up the heat map data
             heatMapsInfo[n] = np.zeros((maxDi+1,maxDe+1))
             outlierMaxInfo[n] = ([], [], [])
-            outlierMinInfo[n] = ([], [], [])
-
 
             noOuput[n] = ([], [])
+        # get the degree and diameter
         de = int(key.split("_")[1][2:])
         di = int(key.split("_")[2][2:])
 
+        # average number matching or number hard-to-find
         val = graphInformation[key][type]
-        # if didnt compute in time
+        # if didn't compute in time
         if(val==-1):
             noOuput[n][1].append(di+.5)
             noOuput[n][0].append(de+.5)
             heatMapsInfo[n][di][de] = None
             continue
 
+        # get the value information, cap if too large
         if(val!= None and val>capMax):
+            # keep track of maximum values
             if(val>trueMax):
                 trueMax = val
             outlierMaxInfo[n][1].append(di+.5)
             outlierMaxInfo[n][0].append(de+.5)
             outlierMaxInfo[n][2].append(val)
             val = capMax
+        # keep track of maximum values
         if (val!= None and val>maxM):
             maxM = val
         if(val!=None and (minM==-1 or val<minM)):
             minM = val
 
+        # store heat map data
         heatMapsInfo[n][di][de] = val
 
+    # plot heat maps
     plotSuperHeatMap(heatMapsInfo, minM, maxM, trueMax, folder, outlierMaxInfo, noOuput, type)
 
 
+"""
+Create a heat map that keep track of probability that we are able to construct query graph
+"""
 def constructProbHeatMap(inputFile, folder, type, maxSize, maxDegree):
     # read through graph information
     file = open(inputFile, 'r')
-    outlierMaxInfo = ([],[],[])
-    noOutput =([],[],[])
-
+    # keep track of data for heat map
     heatMapsInfo = np.zeros((maxSize+1, maxDegree+1))
 
     cnt = 0
+    # read through the lines in the file
     for line in file.readlines():
         if(cnt==0):
             cnt+=1
             continue
         line = line.strip().lower()
         info = line.split(",")
+        # get the number of vertices, degree, and probability
         n = int(info[0].split(":")[1])
         de = int(float(info[1].split(":")[1].split('---')[0]))
 
+        # store to display in heat map
         prob = float(info[1].split(":")[1].split('---')[1])
         heatMapsInfo[(n)//10][de] = prob
 
@@ -400,26 +468,30 @@ def constructProbHeatMap(inputFile, folder, type, maxSize, maxDegree):
 
 
 if __name__ == '__main__':
+    # what heat map are we trying to create?
     heatMapType = "probability"
     if(heatMapType == "probability"):
         #PROBABILITY HEAT MAPS
         inputFile = 'C:\\Users\\Gabi\\Desktop\\IndependentStudy\\GitHubProject\\Data\\Output\\HeatMap\\Yeast\\Probability\\degreeComp.txt'
         folder ='C:\\Users\\Gabi\\Desktop\\IndependentStudy\\GitHubProject\\Data\\Output\\HeatMap\\Yeast\\Probability\\'
 
-        maxSize = 60
+        # the maximum size and degree
+        maxSize = 600
         maxDegree = 6
 
-        constructProbHeatMap(inputFile, folder+"Matchings\\", "M", maxSize, maxDegree)
+        constructProbHeatMap(inputFile, folder+"Matchings\\", "M", maxSize//10, maxDegree)
     if(heatMapType == "hardToFind"):
         #HARD-TO-FIND heatmaps
-        dataFolder = "C:\\Users\\Gabi\\Desktop\\IndependentStudy\\GitHubProject\\Data\\Output\\HeatMap\\Yeast\\Attempt5\\Yeast_Induced_Copy\\"
-        (graphInformation, maxDe, maxDi) = readInputDataOneFile(dataFolder+"Yeast_Induced\\")
 
         # will only put 10 graphs at a time in figure, so must adjust
         # right now set for graphs between 10 and 100 with increments of 10
         inc = 10
-        minSize=10
-        maxSize=100
+        minSize = 10
+        maxSize = 100
+
+        dataFolder = "C:\\Users\\Gabi\\Desktop\\IndependentStudy\\GitHubProject\\Data\\Output\\HeatMap\\Yeast\\Attempt5\\Yeast_Induced_Copy\\"
+        # recommended to stick with this one with current java file
+        (graphInformation, maxDe, maxDi) = readInputDataOneFile(dataFolder+"Yeast_Induced\\", minSize, maxSize, inc)
         for n in range(minSize, maxSize, inc*10):
             plotValues(graphInformation, maxDe, maxDi, n, n+inc*10, dataFolder+"HeatMaps\\Matchings\\", "M")
             plotValues(graphInformation, maxDe, maxDi, n, n+inc*10, dataFolder+"HeatMaps\\Isomorphisms\\", "I")

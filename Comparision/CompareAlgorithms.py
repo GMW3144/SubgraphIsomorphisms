@@ -3,7 +3,9 @@ import matplotlib.pyplot as plt
 import itertools
 import math
 
-# get the algorithm infmoration from how we store it
+"""
+Get the algorithm information from how we store it
+"""
 def getAlgorithmAndGraphInfo(name):
     info = name.split("_")
     # algo info
@@ -16,7 +18,9 @@ def getAlgorithmAndGraphInfo(name):
 
     return (algoB, algoPO, algoC, size)
 
-# print table in latex form and store infomration for later use
+"""
+Print table in latex form and store information for later use
+"""
 def constructTableSize(folder, comparing):
     # table in latex format
     table = ""
@@ -31,7 +35,7 @@ def constructTableSize(folder, comparing):
 
         (algoB, algoPO, algoC, size) = getAlgorithmAndGraphInfo(fileName[:-4])
 
-        #add information to the table
+        # add information to the table
         if(comparing == "backtracking"):
             if(algoPO != "graphQL"):
                 continue
@@ -59,10 +63,13 @@ def constructTableSize(folder, comparing):
         table = table + "\\\\ \\hline \n"
 
         storeInfo[fileName[:-4]] = results
-
+    # rows within LaTex file
     print(table)
     return storeInfo
 
+"""
+Create the line plot that compares different algorithms
+"""
 def plotLine(datapoints, algo, uselog):
     sortedVals = {}
     # sort datapoints
@@ -79,9 +86,12 @@ def plotLine(datapoints, algo, uselog):
         x.append(xVal)
         y.append(sortedVals[xVal])
 
+    # plot sorted data points
     plt.plot(x, y, label=algo)
 
-# create a datapoint for a given algorithm
+"""
+Create a datapoint for a given algorithm
+"""
 def addDataPoint(algo, plotValues, size, backtracking):
     if (algo not in plotValues):
         plotValues[algo] = ([], [])
@@ -90,7 +100,9 @@ def addDataPoint(algo, plotValues, size, backtracking):
     plotValues[algo][0].append(float(size))
     plotValues[algo][1].append(float(backtracking))
 
-# plot the information comparing the algorithm
+"""
+Plot the information comparing the algorithm
+"""
 def plotCharts(storeInfo, comparing, outputFolder):
     datapoints = {}
 
@@ -130,8 +142,11 @@ def plotCharts(storeInfo, comparing, outputFolder):
 if __name__ == '__main__':
     dataFolder = "C:\\Users\\Gabi\\Desktop\\IndependentStudy\\GitHubProject\\Data\\Output\\CompareAlgo\\Attempt2\\induced2\\"
     outputFolder = "C:\\Users\\Gabi\\Desktop\\IndependentStudy\\GitHubProject\\Data\\Output\\CompareAlgo\\Attempt2\\induced2\\output\\"
+
     storeInfo = constructTableSize(dataFolder, "backtracking")
     plotCharts(storeInfo, "backtracking", outputFolder)
+
     print("==================")
+
     storeInfo =constructTableSize(dataFolder, "processing order")
     plotCharts(storeInfo, "processing order", outputFolder)
